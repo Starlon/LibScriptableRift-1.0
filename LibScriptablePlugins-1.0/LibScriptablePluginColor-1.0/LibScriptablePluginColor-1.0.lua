@@ -1,6 +1,6 @@
 -- Most of this file is largely borrowed from Pitbull_Luatexts, thanks to ckknight
 local MAJOR = "LibScriptablePluginColor-1.0"
-local MINOR = 19
+local MINOR = 20
 
 local ScriptEnv = {}
 
@@ -141,12 +141,12 @@ end
 ScriptEnv.RGB2Black = RGB2Black
 
 --- Return RGB values from HSV colorspace values.
--- @usage RGBFromHSV(h, s, v)
+-- @usage HSV2RGB(h, s, v)
 -- @param h Hue value, ranging from 0 to 360
 -- @param s Satration value, ranging from 0 to 1
 -- @param v Value value, ranging from 0 to 1
 -- @return Red, green, and blue values from the HSV values provided.
-function RGB2HSV (h, s, v)
+function HSV2RGB (h, s, v)
 	local i
 	local f, w, q, t
 	local r, g, b = 0, 0, 0

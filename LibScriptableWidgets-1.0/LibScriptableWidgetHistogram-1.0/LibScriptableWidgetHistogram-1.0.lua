@@ -1,5 +1,5 @@
 local MAJOR = "LibScriptableWidgetHistogram-1.0" 
-local MINOR = 19
+local MINOR = 20
 
 assert(LibStub, MAJOR.." requires LibStub") 
 local WidgetHistogram = LibStub:NewLibrary(MAJOR, MINOR)

@@ -1,6 +1,6 @@
 
 local MAJOR = "LibScriptablePluginTransition-1.0"
-local MINOR = 19
+local MINOR = 20
 assert(LibStub, MAJOR.." requires LibStub")
 local PluginTransition = LibStub:NewLibrary(MAJOR, MINOR)
 if not PluginTransition then return end
