@@ -1,5 +1,5 @@
 local MAJOR = "LibScriptablePluginSpell-1.0" 
-local MINOR = 20
+local MINOR = 21
 
 local PluginSpell = LibStub:NewLibrary(MAJOR, MINOR)
 if not PluginSpell then return end

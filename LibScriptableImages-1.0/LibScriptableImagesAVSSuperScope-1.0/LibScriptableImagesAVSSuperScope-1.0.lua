@@ -3,7 +3,7 @@
 -- All rights reserved.
 
 local MAJOR = "LibScriptableImagesAVSSuperScope-1.0"
-local MINOR = 20
+local MINOR = 21
 assert(LibStub, MAJOR.." requires LibStub")
 local LibAVSSuperScope = LibStub:NewLibrary(MAJOR, MINOR)
 if not LibAVSSuperScope then return end

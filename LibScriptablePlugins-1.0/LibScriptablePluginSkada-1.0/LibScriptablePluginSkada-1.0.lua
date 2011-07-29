@@ -1,5 +1,5 @@
 local MAJOR = "LibScriptablePluginSkada-1.0" 
-local MINOR = 20
+local MINOR = 21
 
 local PluginSkada = LibStub:NewLibrary(MAJOR, MINOR)
 if not PluginSkada then return end
