@@ -32,6 +32,10 @@ local function rfind(str, char)
 	end
 end
 
+LibWidget.defaults = {
+	minStrata = 5,
+}
+
 --- Create a new LibScriptableWidget object
 -- @usage WidgetText:New(child, visitor, name, config, row, col, layer, typeOf, errorLevel)
 -- @param visitor An LibScriptableCore-1.0 object, or provide your own
@@ -67,12 +71,17 @@ function LibWidget:New(child, visitor, name, config, row, col, layer, typeOf, er
 	obj.name = name
 	obj.config = config
 	obj.persistent = config.persistent
+	obj.minStrata = config.minStrata or self.defaults.minStrata
 	obj.row = row
 	obj.col = col
 	obj.layer = layer
 	obj.type = typeOf
 	obj.errorLevel = errorLevel
 	obj.lcd = visitor.lcd
+
+	if type(visitor.widgets) == "table" then
+		visitor.widgets[name] = child
+	end
 	
 	local pos1 = name:find(":")
 	local pos2 = rfind(name, ":")
@@ -83,8 +92,6 @@ function LibWidget:New(child, visitor, name, config, row, col, layer, typeOf, er
 	obj.started = false
 	obj.errorLevel = errorLevel or 3
 	
-	obj.IntersectUpdate = self.IntersectUpdate
-
 	for k, v in pairs(obj) do
 		child[k] = v
 	end
@@ -112,6 +119,7 @@ end
 -- @param objects A table of widgets.
 -- @return Nothing
 function LibWidget.IntersectUpdate(objects)
+do return end
 	assert(type(objects) == "table", "Invalid argument to IntersectUpdate")
 	local frame = GetMouseFocus()
 	if frame and frame ~= UIParent and frame ~= WorldFrame then
@@ -150,6 +158,12 @@ end
 local strataNameList = {
 	"TOOLTIP", "FULLSCREEN_DIALOG", "FULLSCREEN", "DIALOG", "HIGH", "MEDIUM", "LOW", "BACKGROUND"
 }
+
+LibWidget.strata = {}
+
+for i, v in ipairs(strataNameList) do
+	LibWidget.strata[v] = i
+end
 
 local strataLocaleList = {
 	L["Tooltip"], L["Fullscreen Dialog"], L["Fullscreen"], L["Dialog"], L["High"], L["Medium"], L["Low"], L["Background"]
@@ -251,7 +265,7 @@ function LibWidget:GetOptions(db, callback, data)
 				end,
 				order = 8
 			},
-			--[[intersect = {
+			intersect = {
 				name = "Intersect Frames",
 				desc = "Whether to check for intersecting frames or not",
 				type = "toggle",
@@ -339,7 +353,15 @@ function LibWidget:GetOptions(db, callback, data)
 					db.intersectyPad2 = nil
 				end,
 				order = 12
-			}]]
+			},
+			minStrata = {
+				name = "Minimum Intersect Strata",
+				type = "select",
+				values = LibWidget.strata,
+				get = function() return db.minStrata or LibWidget.defaults.minStrata end,
+				set = function(info, v) db.minStrata = v end,
+				order = 13
+			}
 		}
 	}
 	for i, point in ipairs(db.points or {}) do

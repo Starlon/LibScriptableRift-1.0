@@ -83,6 +83,7 @@ function WidgetHistogram:New(visitor, name, config, row, col, layer, errorLevel,
 
 	obj.widget = LibWidget:New(obj, visitor, name, config, row, col, layer, widgetType, env, errorLevel)
 
+	obj.IntersectUpdate = self.IntersectUpdate
 
     obj.callback = callback
 	obj.data = data
@@ -153,21 +154,27 @@ function WidgetHistogram:Resize(rows, cols, old_rows, old_cols)
     self:Update();
 end
 
+local touched = {}
 --- Update whether frames intersect with the mouse's focus
 -- @usage IntersectUpdate(objects)
 -- @param objects A table of widgets.
 -- @return Nothing
-function WidgetHistogram.IntersectUpdate(histograms)
-	assert(type(histograms) == "table", "Invalid argument to IntersectUpdate")
+function WidgetHistogram:IntersectUpdate()
+	local widget = self
 	local frame = GetMouseFocus()
-	if frame and frame ~= UIParent and frame ~= WorldFrame  then
-		for k, widget in pairs(histograms) do
-			for i, bar in ipairs(widget.bars or {}) do
+	touched[frame] = true
+	for i, bar in ipairs(widget.bars or {}) do
+		local strata = LibWidget.strata[frame:GetFrameStrata()]
+		if type(frame) == "table" and frame.GetFrameStrata and frame:IsShown() and strata and strata > widget.minStrata then
+			for frame, _ in pairs(touched) do
 				if widget.config.intersect then
-					if Utils.Intersect(frame, bar, widget.config.intersectxPad1 or widget.config.itnersectPad or 0, widget.config.intersectyPad1 or widget.config.intersectPad or 0, widget.config.intersectxPad2 or widget.config.intersectPad or 0, widget.config.intersectyPad2 or widget.config.intersectPad or 0) then
-						bar.hidden = true
+					if not bar.hidden and Utils.Intersect(frame, bar, widget.config.intersectxPad1 or widget.config.itnersectPad or 0, widget.config.intersectyPad1 or widget.config.intersectPad or 0, widget.config.intersectxPad2 or widget.config.intersectPad or 0, widget.config.intersectyPad2 or widget.config.intersectPad or 0) then
+						bar.hidden = frame
 						bar:Hide()
-					elseif not Utils.Intersect(frame, bar, widget.config.intersectxPad1 or widget.config.intersectPad or 0, widget.config.intersectyPad1 or widget.config.intersectPad or 0, widget.config.intersectxPad2 or widget.config.intersectPad or 0, widget.config.intersectyPad2 or widget.config.intersectPad or 0) and bar.hidden then
+					end
+			end
+			for frame, _ in pairs(touched) do
+					if bar.hidden and not Utils.Intersect(bar.hidden, bar, widget.config.intersectxPad1 or widget.config.intersectPad or 0, widget.config.intersectyPad1 or widget.config.intersectPad or 0, widget.config.intersectxPad2 or widget.config.intersectPad or 0, widget.config.intersectyPad2 or widget.config.intersectPad or 0) then
 						bar.hidden = false
 						bar:Show()
 					end

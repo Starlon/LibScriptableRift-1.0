@@ -247,7 +247,7 @@ function DriverCharacter:RebuildOpts(visitor, db)
 end
 
 function DriverCharacter:KeyEvent(modifier, up)
-	self.core:KeyEvent(modifier, up)
+	--self.core:KeyEvent(modifier, up)
 end
 
 function DriverCharacter:SetCell(row, col, char, bold)

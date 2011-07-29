@@ -233,5 +233,5 @@ function LibDriverQTip:RebuildOpts(visitor, db)
 end
 
 function LibDriverQTip:KeyEvent(modifier, up)
-	self.core:KeyEvent(modifier, up)
+	--self.core:KeyEvent(modifier, up)
 end

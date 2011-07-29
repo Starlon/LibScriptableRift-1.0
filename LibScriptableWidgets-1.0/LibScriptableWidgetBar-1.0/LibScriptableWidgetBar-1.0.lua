@@ -167,22 +167,25 @@ function WidgetBar:Resize(rows, cols, old_rows, old_cols)
     self:Update();
 end
 
+local touched = {}
 --- Check for frames intersecting the mouse's focus
 -- @usage object:IntersectUpdate(bars)
 -- @param bars A list of WidgetBar objects
 -- @return Nothing
-function WidgetBar.IntersectUpdate(bars)
-	assert(type(bars) == "table", "Invalid argument to IntersectUpdate " .. type(bars))
+function WidgetBar:IntersectUpdate()
 	local frame = GetMouseFocus()
-	if frame and frame ~= UIParent and frame ~= WorldFrame then
-		for k, widget in pairs(type(bars) == "table" and bars or {}) do
-			if widget.config.intersect then
-				if environment.Intersect(frame, widget.bar, widget.config.intersectxPad1 or widget.config.intersectPad or 0, widget.config.intersectyPad1 or widget.config.intersectPad or 0, widget.config.intersectxPad2 or widget.config.intersectPad or 0, widget.config.intersectyPad2 or widget.config.intersectPad or 0) then
-					widget.hidden = true
-					widget.bar:Hide()
-				elseif not environment.Intersect(frame, widget.bar, widget.config.intersectxPad1 or widget.config.intersectPad or 0, widget.config.intersectyPad1 or widget.config.intersectPad or 0, widget.config.intersectxPad2 or widget.config.intersectPad or 0, widget.config.intersectyPad2 or widget.config.intersectPad or 0) and widget.hidden then
-					widget.hidden = false
-					widget.bar:Show()
+	touched[frame] = true
+	for frame, _ in pairs(touched) do
+		-- there's a bug here. self.config should always exist.
+		if type(frame) == "table" and frame.GetFrameStrata and frame:IsShown() and self.config and self.config.intersect then
+			local strata = LibWidget.strata[frame:GetFrameStrata()]
+			if strata and strata > self.minStrata then
+				if self.environment.Intersect(frame, self.bar, self.config.intersectxPad1 or self.config.intersectPad or 0, self.config.intersectyPad1 or self.config.intersectPad or 0, self.config.intersectxPad2 or self.config.intersectPad or 0, self.config.intersectyPad2 or self.config.intersectPad or 0) then
+					self.hidden = true
+					self.bar:Hide()
+				elseif not self.environment.Intersect(frame, self.bar, self.config.intersectxPad1 or self.config.intersectPad or 0, self.config.intersectyPad1 or self.config.intersectPad or 0, self.config.intersectxPad2 or self.config.intersectPad or 0, self.config.intersectyPad2 or self.config.intersectPad or 0) and self.hidden then
+					self.hidden = false
+					self.bar:Show()
 				end
 			end
 		end

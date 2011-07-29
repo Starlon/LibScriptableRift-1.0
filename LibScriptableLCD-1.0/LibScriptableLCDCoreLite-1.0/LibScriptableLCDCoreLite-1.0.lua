@@ -219,6 +219,20 @@ function LibCore:RegisterDriver(driver)
 	LibCore.driverDict[driver] = #LibCore.driverList
 end
 
+function KeyEvent(_, modifier, up)
+	for _, core in pairs(objects) do
+		for k, v in pairs(core.widgets) do
+			if v.type["key"] then
+				v:KeyEvent(modifier, up)
+			end
+		end
+	end
+end
+
+local keyEventFrame = CreateFrame("Frame")
+keyEventFrame:RegisterEvent("MODIFIER_STATE_CHANGE")
+keyEventFrame:RegisterEvent("OnEvent", KeyEvent)
+
 function LibCore:RebuildOpts(visitor, db)
 	local options = {
 --[[		name = {

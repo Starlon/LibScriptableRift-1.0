@@ -95,6 +95,7 @@ assert(PluginRecount, MAJOR .. " requires LibScriptablePluginRecount-1.0")
 local pool = setmetatable({}, {__mode = "k"})
 local objects = {}
 local objectDicts = {}
+local keyEventFrame = CreateFrame("Frame")
 
 if not LibCore.__index then
 	LibCore.__index = LibCore
@@ -128,10 +129,6 @@ function LibCore:New(visitor, environment, name, config, typeOf, errorLevel)
 		pool[obj] = nil
 	else
 		obj = {}
-		obj.widget_templates = {}
-		obj.widgets = {}
-		obj.static_widgets = {}
-		obj.layouts = {}
 	end
 
 	if type(config) == "string" then
@@ -143,7 +140,12 @@ function LibCore:New(visitor, environment, name, config, typeOf, errorLevel)
 	tinsert(objects, obj)
 	
 	assert(type(name) == "string" and config[name], name .. " not found in config.")
-	
+
+	obj.widget_templates = {}
+	obj.widgets = {}
+	obj.static_widgets = {}
+	obj.layouts = {}
+
 	obj.visitor = visitor
 	obj.environment = environment
 	obj.typeOf = typeOf
@@ -158,7 +160,10 @@ function LibCore:New(visitor, environment, name, config, typeOf, errorLevel)
 	obj.error = LibError:New(MAJOR, errorLevel)
 	obj.errorLevel = errorLevel
 	
+	environment.widgets = obj.widgets
 	environment.visitor = obj
+	environment._G = _G
+	environment.environment = environment
 	
 	-- Plugins
 	PluginRangeCheck:New(environment)
@@ -191,8 +196,6 @@ function LibCore:New(visitor, environment, name, config, typeOf, errorLevel)
 	PluginSkada:New(environment)
 	PluginRecount:New(environment)
 	
-	environment._G = _G
-	environment.environment = environment
 
 	environment.WidgetText = WidgetText
 	environment.WidgetBar = WidgetBar
@@ -247,6 +250,10 @@ end
 function LibCore:Stop()
 	self:StopLayout()
 	self.timer:Stop()
+end
+
+function LibCore:AddWidget(widg)
+	self.widgest[widget.name] = widg
 end
 
 function LibCore:CFGSetup()
@@ -660,18 +667,26 @@ int LibCore::MoveWidget(std::string widget, int row, int col) {
 }
 ]]
 
-function LibCore:KeyEvent(modifier, up)
-	for k, v in pairs(self.widgets) do
-		if v.type["key"] then
-			v:KeyEvent(modifier, up)
-		end
-	end
-end
 
 function LibCore:RegisterDriver(driver)
 	tinsert(LibCore.driverList, driver)
 	LibCore.driverDict[driver] = #LibCore.driverList
 end
+
+function KeyEvent(_, modifier, up)
+	for _, core in pairs(objects) do
+		for k, v in pairs(core.widgets) do
+			if v.type["key"] then
+print("hmmmmm")
+				v:KeyEvent(modifier, up)
+			end
+		end
+	end
+end
+
+local keyEventFrame = CreateFrame("Frame")
+keyEventFrame:RegisterEvent("MODIFIER_STATE_CHANGE")
+keyEventFrame:RegisterEvent("OnEvent", KeyEvent)
 
 function LibCore:RebuildOpts(visitor, db)
 	local options = {

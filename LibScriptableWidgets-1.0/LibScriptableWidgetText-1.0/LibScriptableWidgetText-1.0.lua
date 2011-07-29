@@ -203,6 +203,8 @@ function WidgetText:Init(config)
 	obj.visitor = visitor
 	obj.errorLevel = errorLevel or 3
 
+	obj.unitOverride = config.unitOverride
+
 	if obj.value then obj.value:Del() end
 	obj.value = LibProperty:New(self, visitor, name .. " string", config.value, "", errorLevel) -- text of marquee
 	
@@ -533,7 +535,8 @@ function textScroll(self)
 	end
 
 	if self.dogtag then
-		local kvargs = newKVargs(self.visitor.environment.unit or "mouseover")
+		local unit = type(self.unitOverride) == "string" and self.unitOverride or self.visitor.environment.unit or "mouseover"
+		local kvargs = newKVargs(unit)
 		self.buffer = LibDogTag:Evaluate(self.buffer, "Unit", kvargs)
 		delKVargs(kvargs)
 	end
@@ -566,8 +569,8 @@ function textUpdate(self)
     if (self.precision == 0xBABE) then
         str = self.value:P2S();
     else
-		local fmt = format("return format(\"%%.%df\", %s)", self.precision, self.value:P2S())
-		--str = LibEvaluator.ExecuteCode(self.visitor.environment, "precision", fmt)
+	local fmt = format("return format(\"%%.%df\", %f)", self.precision, self.value:P2N())
+	str = LibEvaluator.ExecuteCode(self.visitor.environment, "precision", fmt)
     end
 
     if str == "" or str ~= self.string then
