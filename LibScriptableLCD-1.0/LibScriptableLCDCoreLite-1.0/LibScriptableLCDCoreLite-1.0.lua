@@ -176,7 +176,7 @@ function LibCore:New(environment, name, errorLevel)
 	
 	environment._G = _G
 	environment.environment = environment
-	environment.null = {}
+	environment.null = { }
 
 	environment.WidgetText = WidgetText
 	environment.WidgetBar = WidgetBar
