@@ -46,8 +46,9 @@ LibWidget.defaults = {
 -- @param layer This widget's layer
 -- @param type Dict of widget types.
 -- @param errorLevel The error level for this object.
+-- @param frame An optional UI Frame object. This will be used in IntersectUpdate().
 -- @return A new LibScriptableWidgetText object
-function LibWidget:New(child, visitor, name, config, row, col, layer, typeOf, errorLevel) 
+function LibWidget:New(child, visitor, name, config, row, col, layer, typeOf, errorLevel, frame) 
 	
 	assert(type(child) == "table", "No child")
 	assert(type(visitor) == "table", "No visitor")
@@ -77,6 +78,7 @@ function LibWidget:New(child, visitor, name, config, row, col, layer, typeOf, er
 	obj.layer = layer
 	obj.type = typeOf
 	obj.errorLevel = errorLevel
+	obj.frame = frame
 	obj.lcd = visitor.lcd
 
 	if type(visitor.widgets) == "table" then
@@ -116,21 +118,22 @@ end
 
 --- Check for intersecting frames.
 -- @usage IntersectUpdate(objects)
--- @param objects A table of widgets.
+-- @param frame An optional Frame object.
 -- @return Nothing
-function LibWidget.IntersectUpdate(objects)
+function LibWidget:IntersectUpdate(frame)
+print("hmmmmm")
 do return end
-	assert(type(objects) == "table", "Invalid argument to IntersectUpdate")
-	local frame = GetMouseFocus()
-	if frame and frame ~= UIParent and frame ~= WorldFrame then
-		for k, widget in pairs(objects) do
-			if widget.config and widget.config.intersect then
-				if Utils.Intersect(frame, widget.frame, widget.config.intersectxPad1 or widget.config.intersectPad or 0, widget.config.intersectyPad1 or widget.config.intersectPad or 0, widget.config.intersectxPad2 or widget.config.intersectPad or 0, widget.config.intersectyPad2 or widget.config.intersectPad or 0) then
-					widget.hidden = true
-					widget.frame:Hide()
-				elseif widget.hidden then
-					widget.hidden = false
-					widget.frame:Show()
+	local frame = frame or _G["ChatFrame1"]
+	if self.frame and frame and frame ~= UIParent and frame ~= WorldFrame then
+		for k, self in pairs(objects) do
+			if self.config and self.config.intersect then
+				if Utils.Intersect(frame, self.frame, self.config.intersectxPad1 or self.config.intersectPad or 0, self.config.intersectyPad1 or self.config.intersectPad or 0, self.config.intersectxPad2 or self.config.intersectPad or 0, self.config.intersectyPad2 or self.config.intersectPad or 0) then
+					self.hidden = frame
+					self.alpha = self.frame:GetAlpha()
+					self.frame:SetAlpha(0)
+				elseif Utils.Intersect(self.hidden, self.frame, self.config.intersectxPad1 or self.config.intersectPad or 0, self.config.intersectyPad1 or self.config.intersectPad or 0, self.config.intersectxPad2 or self.config.intersectPad or 0, self.config.intersectyPad2 or self.config.intersectPad or 0) then
+					self.hidden = false
+					self.frame:SetAlpha(self.alpha)
 				end
 			end
 		end
