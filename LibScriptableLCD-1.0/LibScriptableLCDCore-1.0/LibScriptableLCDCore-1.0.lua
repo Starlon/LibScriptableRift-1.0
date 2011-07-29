@@ -164,6 +164,7 @@ function LibCore:New(visitor, environment, name, config, typeOf, errorLevel)
 	environment.visitor = obj
 	environment._G = _G
 	environment.environment = environment
+	environment.null = {}
 	
 	-- Plugins
 	PluginRangeCheck:New(environment)
