@@ -678,7 +678,6 @@ function KeyEvent(_, modifier, up)
 	for _, core in pairs(objects) do
 		for k, v in pairs(core.widgets) do
 			if v.type["key"] then
-print("hmmmmm")
 				v:KeyEvent(modifier, up)
 			end
 		end
