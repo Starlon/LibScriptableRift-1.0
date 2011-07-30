@@ -372,7 +372,7 @@ ScriptEnv.ThreatStatusColor = ThreatStatusColor
 -- @param max The maximum percent of health
 -- @return Red, green, and blue
 local function HPColor(cur, max)
-	local perc = cur / max
+	local perc = cur / (max <= 0 and .00001 or max)
 	local r1, g1, b1
 	local r2, g2, b2
 	if perc <= 0.5 then

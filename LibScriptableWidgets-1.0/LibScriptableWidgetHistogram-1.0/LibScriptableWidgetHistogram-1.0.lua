@@ -241,7 +241,7 @@ function WidgetHistogram:Update()
 	if self.color.is_valid then
 		r, g, b, a = self.color.res1, self.color.res2, self.color.res3, self.color.res4
 	else
-		r, g, b, a = 0, 1, 0
+		r, g, b, a = 1, 0, 0, 1
 	end
 	
 	local max, min
