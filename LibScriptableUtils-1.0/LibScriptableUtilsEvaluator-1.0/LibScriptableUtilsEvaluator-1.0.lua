@@ -82,6 +82,6 @@ do
 	--- Retrieve a piece of code's runnable object
 	--
 	LibEvaluator.GetRunnable = function(self, tag, code, dontSandbox, defval)
-		LibEvaluator.ExecuteCode(self, tag, code, dontSandbox, defval, true, false)
+		return LibEvaluator.ExecuteCode(self, tag, code, dontSandbox, defval, true, false)
 	end
 end

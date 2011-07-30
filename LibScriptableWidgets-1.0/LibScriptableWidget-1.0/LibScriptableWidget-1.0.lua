@@ -12,6 +12,8 @@ local LibError = LibStub("LibScriptableUtilsError-1.0", true)
 assert(LibError, MAJOR .. " requires LibScriptableUtilsError-1.0")
 local Utils = LibStub("LibScriptablePluginUtils-1.0")
 assert(Utils, MAJOR .. " requires LibScriptablePluginUtils-1.0")
+local LibEvaluator = LibStub("LibScriptableUtilsEvaluator-1.0")
+assert(LibEvaluator, MAJOR .. " requires LibScriptableUtilsEvaluator-1.0")
 local Locale = LibStub("AceLocale-3.0", true)
 assert(Locale, MAJOR .. " requires AceLocale-3.0")
 local L = Locale:GetLocale("LibScriptable-1.0")
@@ -33,16 +35,32 @@ local function rfind(str, char)
 	end
 end
 
+local SCRIPT_SHOW, SCRIPT_HIDE, SCRIPT_SHOWN, SCRIPT_HIDDEN = 1, 2, 3, 4
+
+local function runScript(widget, runnable)
+	return widget.runnable[runnable]()	
+end
+
 LibWidget.defaults = {
 	frameName = "GameTooltip",
 	intersectFrameName = "ChatFrame1",
+	scriptShow = "self.frame:SetAlpha(self.alpha or 1)",
+	scriptHide = "self.frame:SetAlpha(0)",
+	scriptShown = "return self.frame:GetAlpha() > 0",
+	scriptHidden = "return self.frame:GetAlpha() == (self.alpha or 1)",
 	strata = 1,
 	level = 1,
 	alwaysShown = false,
 	intersect = true,
 	minStrata = 5,
+	intersectPad = 0,
+	intersectxPad1 = 0,
+	intersectyPad1 = 0,
+	intersectxPad2 = 0,
+	intersectyPad2 = 0
 }
 local defaults = LibWidget.defaults
+
 --[[
 local function GameTooltip_SetDefaultAnchor(this, owner) 
 	for obj in pairs(objects) do
@@ -98,6 +116,10 @@ function LibWidget:New(child, visitor, name, config, row, col, layer, typeOf, er
 	obj.minStrata = config.minStrata or defaults.minStrata
 	obj.template = config.template or defaults.template
 	obj.frameType = config.frameType or defaults.frameType
+	obj.scriptShow = config.scriptShow or defaults.scriptShow
+	obj.scriptHide = config.scriptHide or defaults.scriptHide
+	obj.scriptShown = config.scriptShown or defaults.scriptShown
+	obj.scriptHidden = config.scriptHidden or defaults.scriptHidden
 
 	obj.frame = _G[obj.frameName]
 	obj.internalFrame = CreateFrame("Frame")
@@ -107,6 +129,11 @@ function LibWidget:New(child, visitor, name, config, row, col, layer, typeOf, er
 	obj.internalFrame:SetParent(obj.intersectFrame)
 	obj.internalFrame.obj = obj
 
+	obj.runnable = {}
+	obj.runnable[SCRIPT_SHOW] = LibEvaluator.GetRunnable(visitor.environment, "SCRIPT_SHOW", obj.scriptShow)
+	obj.runnable[SCRIPT_HIDE] = LibEvaluator.GetRunnable(visitor.environment, "SCRIPT_HIDE", obj.scriptHide)
+	obj.runnable[SCRIPT_SHOWN] = LibEvaluator.GetRunnable(visitor.environment, "SCRIPT_SHOWN", obj.scriptShown)
+	obj.runnable[SCRIPT_HIDDEN] = LibEvaluator.GetRunnable(visitor.environment, "SCRIPT_HIDDEN", obj.scriptHidden)
 	obj.child = child
 	obj.visitor = visitor
 	obj.environment = visitor.environment
@@ -173,12 +200,11 @@ function LibWidget:IntersectUpdate(frame, intersectFrame)
 	local frame = frame or self.frame
 	local intersectFrame = intersectFrame or self.intersectFrame
 	if frame then
-			if self.config and self.config.intersect then
-				if frame:GetAlpha() > 0 and Utils.Intersect(frame, intersectFrame, self.config.intersectxPad1 or self.config.intersectPad or 0, self.config.intersectyPad1 or self.config.intersectPad or 0, self.config.intersectxPad2 or self.config.intersectPad or 0, self.config.intersectyPad2 or self.config.intersectPad or 0) then
-					self.alpha = self.frame:GetAlpha()
-					self.frame:SetAlpha(0)
-				elseif frame:GetAlpha() == frame.alpha and not Utils.Intersect(self.hidden, intersectFrame, self.config.intersectxPad1 or self.config.intersectPad or 0, self.config.intersectyPad1 or self.config.intersectPad or 0, self.config.intersectxPad2 or self.config.intersectPad or 0, self.config.intersectyPad2 or self.config.intersectPad or 0) then
-					self.frame:SetAlpha(self.alpha)
+			if self.intersect then
+				if runScript(self, SCRIPT_SHOWN) and Utils.Intersect(frame, intersectFrame, self.intersectxPad1 or self.intersectPad or 0, self.intersectyPad1 or self.intersectPad or 0, self.intersectxPad2 or self.intersectPad or 0, self.intersectyPad2 or self.intersectPad or 0) then
+					runScript(self, SCRIPT_HIDE)
+				elseif runScript(self, SCRIPT_HIDDEN) and not Utils.Intersect(frame, intersectFrame, self.intersectxPad1 or self.intersectPad or 0, self.intersectyPad1 or self.intersectPad or 0, self.intersectxPad2 or self.intersectPad or 0, self.intersectyPad2 or self.intersectPad or 0) then
+					runScript(self, SCRIPT_SHOW)
 				end
 			end
 	end

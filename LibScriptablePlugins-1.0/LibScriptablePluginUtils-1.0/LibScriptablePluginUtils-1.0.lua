@@ -435,7 +435,7 @@ local NOCOORD = -1
 -- @param frame2yPad2 Padding for bottom of frame2
 -- @return True if the two frames intersect, false otherwise
 function PluginUtils.Intersect(frame1, frame2, frame1xPad1, frame1yPad1, frame1xPad2, frame1yPad2, frame2xPad1, frame2yPad1, frame2xPad2, frame2yPad2)
-	if type(frame1) ~= "table" or type(frame2) ~= "table" then LibError:Print("Intersect received invalid frame parameter."); return false end
+	if type(frame1) ~= "table" or type(frame2) ~= "table" then LibError:Print(MAJOR .. " PluginUtils.Intersect received invalid frame parameter. Two frames are required."); return false end
 	
 	if frame1 == frame2 then return true end
 		
