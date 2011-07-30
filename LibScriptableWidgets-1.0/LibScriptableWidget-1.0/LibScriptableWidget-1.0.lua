@@ -469,7 +469,7 @@ function LibWidget:GetOptions(db, callback, data)
 				type = "input",
 				multiline = true,
 				width = "full",
-				get = function() return db.showScript or defaults.showScript end,
+				get = function() return db.hideScript or defaults.hideScript end,
 				set = function(info, v) 
 					db.hideScript = v
 					db.hideScriptDirty = true
