@@ -17,6 +17,7 @@ assert(Locale, MAJOR .. " requires AceLocale-3.0")
 local L = Locale:GetLocale("LibScriptable-1.0")
 
 local pool = setmetatable({}, {__mode = "k"})
+local objects = {}
 
 if not LibWidget.__index then
 	LibWidget.__index = LibWidget
@@ -33,9 +34,26 @@ local function rfind(str, char)
 end
 
 LibWidget.defaults = {
+	frameName = "GameTooltip",
+	intersectFrameName = "ChatFrame1",
+	strata = 1,
+	level = 1,
+	alwaysShown = false,
+	intersect = true,
 	minStrata = 5,
 }
+local defaults = LibWidget.defaults
+--[[
+local function GameTooltip_SetDefaultAnchor(this, owner) 
+	for obj in pairs(objects) do
+		if obj.internalFrame:GetParent():GetName() == "GameTooltip" then
+			obj.hidden = false
+		end
+	end
+end
 
+hooksecurefunc("GameTooltip_SetDefaultAnchor", GameTooltip_SetDefaultAnchor)
+]]
 --- Create a new LibScriptableWidget object
 -- @usage WidgetText:New(child, visitor, name, config, row, col, layer, typeOf, errorLevel)
 -- @param visitor An LibScriptableCore-1.0 object, or provide your own
@@ -46,9 +64,8 @@ LibWidget.defaults = {
 -- @param layer This widget's layer
 -- @param type Dict of widget types.
 -- @param errorLevel The error level for this object.
--- @param frame An optional UI Frame object. This will be used in IntersectUpdate().
 -- @return A new LibScriptableWidgetText object
-function LibWidget:New(child, visitor, name, config, row, col, layer, typeOf, errorLevel, frame) 
+function LibWidget:New(child, visitor, name, config, row, col, layer, typeOf, errorLevel) 
 	
 	assert(type(child) == "table", "No child")
 	assert(type(visitor) == "table", "No visitor")
@@ -65,20 +82,41 @@ function LibWidget:New(child, visitor, name, config, row, col, layer, typeOf, er
 	else
 		obj = {}
 	end
+
 	
+	obj.frameName = config.frameName or defaults.frameName
+	obj.intersectFrameName = config.intersectFrameName or defaults.intersectFrameName
+	obj.strata = config.strata or defaults.strata
+	obj.level = config.level or defaults.level
+	obj.alwaysShown = config.alwaysShown or defaults.alwaysShown
+	obj.intersect = config.intersect or defaults.intersect
+	obj.intersectxPad1 = config.intersectxPad1 or defaults.intersectxPad1
+	obj.intersectyPad1 = config.intersectyPad1 or defaults.intersectyPad1
+	obj.intersectxPad2 = config.intersectxPad2 or defaults.intersectxPad2
+	obj.intersectyPad2 = config.intersectyPad2 or defaults.intersectyPad2
+	obj.intersectPad = config.intersectPad or defaults.intersectPad
+	obj.minStrata = config.minStrata or defaults.minStrata
+	obj.template = config.template or defaults.template
+	obj.frameType = config.frameType or defaults.frameType
+
+	obj.frame = _G[obj.frameName]
+	obj.internalFrame = CreateFrame("Frame")
+	obj.intersectFrame = _G[obj.intersectFrameName]
+	obj.intersectFrame:HookScript("OnShow", self.OnShow)
+	obj.intersectFrame:HookScript("OnHide", self.OnHide)
+	obj.internalFrame:SetParent(obj.intersectFrame)
+	obj.internalFrame.obj = obj
+
 	obj.child = child
 	obj.visitor = visitor
 	obj.environment = visitor.environment
 	obj.name = name
 	obj.config = config
-	obj.persistent = config.persistent
-	obj.minStrata = config.minStrata or self.defaults.minStrata
 	obj.row = row
 	obj.col = col
 	obj.layer = layer
 	obj.type = typeOf
 	obj.errorLevel = errorLevel
-	obj.frame = frame
 	obj.lcd = visitor.lcd
 
 	if type(visitor.widgets) == "table" then
@@ -100,6 +138,8 @@ function LibWidget:New(child, visitor, name, config, row, col, layer, typeOf, er
 	
 	setmetatable(obj, self)
 
+	objects[obj] = true
+
 	obj.deleted = false
 	
 	return obj	
@@ -111,25 +151,34 @@ end
 -- @return Nothing
 function LibWidget:Del()
 	pool[self] = true
+	objects[self] = nil
 	self.deleted = true
 end
     
+function LibWidget:OnShow()
+	--self.obj.hidden = false
+end
 	
+function LibWidget:OnHide()
+end
+
+function LibWidget:FadeOut()
+end
 
 --- Check for intersecting frames.
 -- @usage IntersectUpdate(objects)
 -- @param frame An optional Frame object.
 -- @return Nothing
-function LibWidget:IntersectUpdate(frame)
-print("hmmmmm")
-	local frame = frame or _G["ChatFrame1"]
-	if self.frame and frame then
+function LibWidget:IntersectUpdate(frame, intersectFrame)
+	local frame = frame or self.frame
+	local intersectFrame = intersectFrame or self.intersectFrame
+	if frame then
 			if self.config and self.config.intersect then
-				if not self.hidden and Utils.Intersect(frame, self.frame, self.config.intersectxPad1 or self.config.intersectPad or 0, self.config.intersectyPad1 or self.config.intersectPad or 0, self.config.intersectxPad2 or self.config.intersectPad or 0, self.config.intersectyPad2 or self.config.intersectPad or 0) then
+				if (not self.hidden or frame:GetAlpha() > 0) and Utils.Intersect(frame, intersectFrame, self.config.intersectxPad1 or self.config.intersectPad or 0, self.config.intersectyPad1 or self.config.intersectPad or 0, self.config.intersectxPad2 or self.config.intersectPad or 0, self.config.intersectyPad2 or self.config.intersectPad or 0) then
 					self.hidden = frame
 					self.alpha = self.frame:GetAlpha()
-					self.frame:SetAlpha(0)
-				elseif self.hidden and Utils.Intersect(self.hidden, self.frame, self.config.intersectxPad1 or self.config.intersectPad or 0, self.config.intersectyPad1 or self.config.intersectPad or 0, self.config.intersectxPad2 or self.config.intersectPad or 0, self.config.intersectyPad2 or self.config.intersectPad or 0) then
+					--self.frame:SetAlpha(0)
+				elseif self.hidden and not Utils.Intersect(self.hidden, intersectFrame, self.config.intersectxPad1 or self.config.intersectPad or 0, self.config.intersectyPad1 or self.config.intersectPad or 0, self.config.intersectxPad2 or self.config.intersectPad or 0, self.config.intersectyPad2 or self.config.intersectPad or 0) then
 					self.hidden = false
 					self.frame:SetAlpha(self.alpha)
 				end
