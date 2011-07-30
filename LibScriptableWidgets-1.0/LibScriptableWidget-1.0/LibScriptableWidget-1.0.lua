@@ -122,21 +122,18 @@ end
 -- @return Nothing
 function LibWidget:IntersectUpdate(frame)
 print("hmmmmm")
-do return end
 	local frame = frame or _G["ChatFrame1"]
-	if self.frame and frame and frame ~= UIParent and frame ~= WorldFrame then
-		for k, self in pairs(objects) do
+	if self.frame and frame then
 			if self.config and self.config.intersect then
-				if Utils.Intersect(frame, self.frame, self.config.intersectxPad1 or self.config.intersectPad or 0, self.config.intersectyPad1 or self.config.intersectPad or 0, self.config.intersectxPad2 or self.config.intersectPad or 0, self.config.intersectyPad2 or self.config.intersectPad or 0) then
+				if not self.hidden and Utils.Intersect(frame, self.frame, self.config.intersectxPad1 or self.config.intersectPad or 0, self.config.intersectyPad1 or self.config.intersectPad or 0, self.config.intersectxPad2 or self.config.intersectPad or 0, self.config.intersectyPad2 or self.config.intersectPad or 0) then
 					self.hidden = frame
 					self.alpha = self.frame:GetAlpha()
 					self.frame:SetAlpha(0)
-				elseif Utils.Intersect(self.hidden, self.frame, self.config.intersectxPad1 or self.config.intersectPad or 0, self.config.intersectyPad1 or self.config.intersectPad or 0, self.config.intersectxPad2 or self.config.intersectPad or 0, self.config.intersectyPad2 or self.config.intersectPad or 0) then
+				elseif self.hidden and Utils.Intersect(self.hidden, self.frame, self.config.intersectxPad1 or self.config.intersectPad or 0, self.config.intersectyPad1 or self.config.intersectPad or 0, self.config.intersectxPad2 or self.config.intersectPad or 0, self.config.intersectyPad2 or self.config.intersectPad or 0) then
 					self.hidden = false
 					self.frame:SetAlpha(self.alpha)
 				end
 			end
-		end
 	end
 end
 	

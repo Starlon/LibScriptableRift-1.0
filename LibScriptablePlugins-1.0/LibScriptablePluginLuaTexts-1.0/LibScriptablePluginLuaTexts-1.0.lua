@@ -1621,7 +1621,7 @@ function PluginLuaTexts:OnEvent(event, unit, ...)
 end
 
 local lastUpdate = 0
-local updateTimer = LibTimer:New(MAJOR .. " updateTimer", 100, true, function()
+local updateTimer = LibTimer:New(MAJOR .. " updateTimer", 500, true, function()
 	fix_cast_data()
 	
 	if GetTime() - lastUpdate > 1 then

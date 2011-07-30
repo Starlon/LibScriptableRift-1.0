@@ -1,6 +1,6 @@
 -- This file is Copyright (c) 2007-2010, Ace3 Development Team
 -- All rights reserved.
-
+local name, addon = ...
 local MAJOR = "LibScriptableUtilsTimer-1.0" 
 local MINOR = 21
 assert(LibStub, MAJOR.." requires LibStub") 
@@ -17,7 +17,7 @@ local update
 local OnFinish
 local tconcat = table.concat
 
-LibTimer.frame = CreateFrame("Frame", MAJOR)
+LibTimer.frame = CreateFrame("Frame")
 
 if not LibTimer.__index then
 	LibTimer.__index = LibTimer
@@ -28,10 +28,8 @@ end
 -- want to making any more AnimationGroup and Animation objects than necessary.
 local timerCache = {}
 local function new()
-	local timer = next(timerCache)
-	if timer then
-		timerCache[timer] = nil
-	else
+	local timer = table.remove(timerCache)
+	if not timer then
 		local ag = LibTimer.frame:CreateAnimationGroup()
 		timer = ag:CreateAnimation("Animation")
 	end
@@ -41,7 +39,6 @@ end
 local function del(timer)
 	if not timer then return end
 	timerCache[timer] = true
-	return nil
 end
 
 --[[
@@ -154,6 +151,7 @@ function LibTimer:Start(duration, data, func)
 		self.duration = duration / 1000
 	end
 		
+print(self.name)
 	if self.duration == 0 then return end
 	
 	self.startTime = GetTime()
@@ -219,4 +217,5 @@ function OnFinished(self, elapsed)
 	else
 		self.obj.callback(self.obj.data)
 	end
+	print(self.obj.name)
 end

@@ -541,6 +541,8 @@ function textScroll(self)
 		delKVargs(kvargs)
 	end
 
+	if self.clearOverride then self.unitOverride = false; self.clearOverride = false end
+
 	if self.buffer ~= self.oldBuffer or self.config.updateAnyways then
 		self:Draw()
 	end
