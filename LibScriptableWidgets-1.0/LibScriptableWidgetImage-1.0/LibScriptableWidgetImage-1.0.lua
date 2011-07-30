@@ -1,5 +1,5 @@
 local MAJOR = "LibScriptableWidgetImage-1.0"
-local MINOR = 21
+local MINOR = 22
 
 assert(LibStub, MAJOR.." requires LibStub")
 local WidgetImage = LibStub:NewLibrary(MAJOR, MINOR)

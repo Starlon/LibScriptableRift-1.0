@@ -1,5 +1,5 @@
 local MAJOR = "LibScriptablePluginTalents-1.0"
-local MINOR = 21
+local MINOR = 22
 local PluginTalents = LibStub:NewLibrary(MAJOR, MINOR)
 if not PluginTalents then return end
 --local GroupTalents = LibStub("LibGroupTalents-1.0", true)

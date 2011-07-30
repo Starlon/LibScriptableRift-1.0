@@ -1,5 +1,5 @@
 local MAJOR = "LibScriptableWidgetTimer-1.0" 
-local MINOR = 21
+local MINOR = 22
 
 assert(LibStub, MAJOR.." requires LibStub") 
 local WidgetTimer = LibStub:NewLibrary(MAJOR, MINOR)
