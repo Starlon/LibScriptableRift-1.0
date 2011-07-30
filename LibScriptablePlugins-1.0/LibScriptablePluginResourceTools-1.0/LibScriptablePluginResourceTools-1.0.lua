@@ -146,7 +146,7 @@ function PluginResourceTools.UpdateCPU()
 						
 		local cpu = GetAddOnCPUUsage(addon)
 		
-		local cpuperc = cpu / totalcpu * 100
+		local cpuperc = cpu / (totalcpu <= 0 and .00001 or totalcpu) * 100
 		local cpudiff = oldcpu[addon] and oldcpu[addon][1] and (cpu - oldcpu[addon][1]) or 0
 		local totaldiff = oldtotalcpu and (totalcpu - oldtotalcpu) or 0
 
