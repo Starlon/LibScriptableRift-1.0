@@ -6,7 +6,7 @@ if not LibScriptableError then return end
 local pool = setmetatable({}, {__mode = "k"})
 LibScriptableError.defaultTexts = {"Quiet",  "Normal", "Verbose"}
 
-local DEFAULT_LEVEL = #LibScriptableError.defaultTexts
+local DEFAULT_LEVEL = 2
 -- 3 verbose
 -- 2 warning
 -- 1 quiet

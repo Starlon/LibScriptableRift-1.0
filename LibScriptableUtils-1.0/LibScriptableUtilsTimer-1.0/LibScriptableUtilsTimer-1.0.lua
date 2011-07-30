@@ -151,7 +151,6 @@ function LibTimer:Start(duration, data, func)
 		self.duration = duration / 1000
 	end
 		
-print(self.name)
 	if self.duration == 0 then return end
 	
 	self.startTime = GetTime()
@@ -217,5 +216,5 @@ function OnFinished(self, elapsed)
 	else
 		self.obj.callback(self.obj.data)
 	end
-	print(self.obj.name)
+	self.obj.error:Print(("Refresh %s"):format(date("%H:%M:%S")), 3)
 end
