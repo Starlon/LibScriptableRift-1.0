@@ -199,15 +199,15 @@ function LibTimer:Stop()
 end
 
 --- Return the timer's remaining duration
--- @usage object:TimeRemaining()
+-- @usage object:TimeLapsed()
 -- @return The remaining duration
+function LibTimer:TimeLapsed()
+	if type(self.startTime) ~= "number" then return 0 end
+	return GetTime() - self.startTime
+end
+
+--- Deprecated
 function LibTimer:TimeRemaining()
-	if type(self.startTime) ~= "number" or not self.active then return 0 end
-	
-	local time = GetTime()
-	local diff = time - self.startTime
-	
-	return time -  diff
 end
 
 function OnFinished(self, elapsed)
@@ -216,5 +216,5 @@ function OnFinished(self, elapsed)
 	else
 		self.obj.callback(self.obj.data)
 	end
-	self.obj.error:Print(("Refresh - %s"):format(date("%H:%M:%S")), 3)
+	self.obj.error:Print(("Lapsed - %f"):format(self.obj:TimeLapsed()), 3)
 end
