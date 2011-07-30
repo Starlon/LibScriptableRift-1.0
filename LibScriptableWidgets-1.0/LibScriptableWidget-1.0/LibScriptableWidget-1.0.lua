@@ -174,12 +174,10 @@ function LibWidget:IntersectUpdate(frame, intersectFrame)
 	local intersectFrame = intersectFrame or self.intersectFrame
 	if frame then
 			if self.config and self.config.intersect then
-				if (not self.hidden or frame:GetAlpha() > 0) and Utils.Intersect(frame, intersectFrame, self.config.intersectxPad1 or self.config.intersectPad or 0, self.config.intersectyPad1 or self.config.intersectPad or 0, self.config.intersectxPad2 or self.config.intersectPad or 0, self.config.intersectyPad2 or self.config.intersectPad or 0) then
-					self.hidden = frame
+				if frame:GetAlpha() > 0 and Utils.Intersect(frame, intersectFrame, self.config.intersectxPad1 or self.config.intersectPad or 0, self.config.intersectyPad1 or self.config.intersectPad or 0, self.config.intersectxPad2 or self.config.intersectPad or 0, self.config.intersectyPad2 or self.config.intersectPad or 0) then
 					self.alpha = self.frame:GetAlpha()
-					--self.frame:SetAlpha(0)
-				elseif self.hidden and not Utils.Intersect(self.hidden, intersectFrame, self.config.intersectxPad1 or self.config.intersectPad or 0, self.config.intersectyPad1 or self.config.intersectPad or 0, self.config.intersectxPad2 or self.config.intersectPad or 0, self.config.intersectyPad2 or self.config.intersectPad or 0) then
-					self.hidden = false
+					self.frame:SetAlpha(0)
+				elseif frame:GetAlpha() == frame.alpha and not Utils.Intersect(self.hidden, intersectFrame, self.config.intersectxPad1 or self.config.intersectPad or 0, self.config.intersectyPad1 or self.config.intersectPad or 0, self.config.intersectxPad2 or self.config.intersectPad or 0, self.config.intersectyPad2 or self.config.intersectPad or 0) then
 					self.frame:SetAlpha(self.alpha)
 				end
 			end
