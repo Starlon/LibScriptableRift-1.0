@@ -44,15 +44,15 @@ end
 LibWidget.defaults = {
 	frameName = "GameTooltip",
 	intersectFrameName = "ChatFrame1",
-	scriptShow = "self.frame:SetAlpha(self.alpha or 1)",
-	scriptHide = "self.frame:SetAlpha(0)",
-	scriptShown = "return self.frame:GetAlpha() > 0",
-	scriptHidden = "return self.frame:GetAlpha() == (self.alpha or 1)",
+	scriptShow = "self.frame:Show()",
+	scriptHide = "self.frame:Hide()",
+	scriptShown = "return self.frame:IsShown()",
+	scriptHidden = "return not self.frame:IsShown()",
 	strata = 1,
 	level = 1,
 	alwaysShown = false,
 	intersect = true,
-	minStrata = 5,
+	minStrata = 4,
 	intersectPad = 0,
 	intersectxPad1 = 0,
 	intersectyPad1 = 0,
@@ -199,7 +199,8 @@ end
 function LibWidget:IntersectUpdate(frame, intersectFrame)
 	local frame = frame or self.frame
 	local intersectFrame = intersectFrame or self.intersectFrame
-	if frame then
+	self.environment.self = self
+	if frame and intersectFrame then
 			if self.intersect then
 				if runScript(self, SCRIPT_SHOWN) and Utils.Intersect(frame, intersectFrame, self.intersectxPad1 or self.intersectPad or 0, self.intersectyPad1 or self.intersectPad or 0, self.intersectxPad2 or self.intersectPad or 0, self.intersectyPad2 or self.intersectPad or 0) then
 					runScript(self, SCRIPT_HIDE)
@@ -253,6 +254,7 @@ LibWidget.strataLocaleList = strataLocaleList
 -- @param data Some data to pass when executing the callback
 -- @return An Ace3 options table: `name.args = options`.	
 function LibWidget:GetOptions(db, callback, data)
+	if type(db) ~= "table" then return end
 	local options = {
 		name = "Frame Details",
 		type = "group",
@@ -273,7 +275,7 @@ function LibWidget:GetOptions(db, callback, data)
 				name = L["Frame Name"],
 				desc = L["This is the frame's global name. Follow all rules for naming in Lua."],
 				type = "input",
-				get = function() return db.name end,
+				get = function() return db.frameName or defaults.frameName end,
 				set = function(info, val) 
 					db.frameName = val
 					db.frameNameDirty = true
@@ -283,13 +285,13 @@ function LibWidget:GetOptions(db, callback, data)
 				end,
 				order = 2
 			},
-			parent = {
-				name = L["Frame Parent"],
+			intersectFrameName = {
+				name = L["Intersect Frame"],
 				type = "input",
-				get = function() return db.parent or "GameTooltip" end,
+				get = function() return db.intersectFrameName or defaults.intersectFrameName end,
 				set = function(info, val) 
-					db.parent = val; 
-					db["parentDirty"] = true 
+					db.intersectFrameName = val; 
+					db.intersectFrameNameDirty = true 
 					if type(callback) == "function" then
 						callback(data)
 					end
@@ -420,10 +422,15 @@ function LibWidget:GetOptions(db, callback, data)
 				get = function() return tostring(db.intersectPad or 0) end,
 				set = function(info, v)
 					db.intersectPad = tonumber(v)
+					db.intersectPadDirty = true
 					db.intersectxPad1 = nil
 					db.intersectyPad1 = nil
 					db.intersectxPad2 = nil
 					db.intersectyPad2 = nil
+					if type(callback) == "function" then
+						callback(data)
+					end
+
 				end,
 				order = 12
 			},
@@ -431,9 +438,78 @@ function LibWidget:GetOptions(db, callback, data)
 				name = "Minimum Intersect Strata",
 				type = "select",
 				values = LibWidget.strata,
-				get = function() return db.minStrata or LibWidget.defaults.minStrata end,
-				set = function(info, v) db.minStrata = v end,
+				get = function() return db.minStrata or defaults.minStrata end,
+				set = function(info, v) 
+					db.minStrata = v 
+					db.minStrataDirty = true
+					if type(callback) == "function" then
+						callback(data)
+					end
+				end,
 				order = 13
+			},
+			showScript = {
+				name = "SCRIPT_SHOW",
+				type = "input",
+				multiline = true,
+				width = "full",
+				get = function() return db.showScript or defaults.showScript end,
+				set = function(info, v) 
+					db.showScript = v
+					db.shownScriptDirty = true
+					if type(callback) == "function" then
+						callback(data)
+					end
+				end,
+				order = 14
+
+			},
+			hideScript = {
+				name = "SCRIPT_HIDE",
+				type = "input",
+				multiline = true,
+				width = "full",
+				get = function() return db.showScript or defaults.showScript end,
+				set = function(info, v) 
+					db.hideScript = v
+					db.hideScriptDirty = true
+					if type(callback) == "function" then
+						callback(data)
+					end
+				end,
+				order = 15
+
+			},
+			shownScript = {
+				name = "SCRIPT_SHOWN",
+				type = "input",
+				multiline = true,
+				width = "full",
+				get = function() return db.shownScript or defaults.shownScript end,
+				set = function(info, v) 
+					db.shownScript = v
+					db.shownScriptDirty = true
+					if type(callback) == "function" then
+						callback(data)
+					end
+				end,
+				order = 16
+
+			},
+			hiddenScript = {
+				name = "SCRIPT_HIDDEN",
+				type = "input",
+				multiline = true,
+				width = "full",
+				get = function() return db.hiddenScript or defaults.hiddenScript end,
+				set = function(info, v) 
+					db.hiddenScript = v
+					db.hiddenScriptDirty = true
+					if type(callback) == "function" then
+						callback(data)
+					end
+				end,
+				order = 17
 			}
 		}
 	}
