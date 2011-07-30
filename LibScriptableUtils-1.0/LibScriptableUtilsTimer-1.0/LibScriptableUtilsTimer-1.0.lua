@@ -216,5 +216,5 @@ function OnFinished(self, elapsed)
 	else
 		self.obj.callback(self.obj.data)
 	end
-	self.obj.error:Print(("Refresh %s"):format(date("%H:%M:%S")), 3)
+	self.obj.error:Print(("Refresh - %s"):format(date("%H:%M:%S")), 3)
 end
