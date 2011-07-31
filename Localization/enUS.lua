@@ -1,5 +1,18 @@
-local L = LibStub("AceLocale-3.0"):NewLocale("LibScriptable-1.0", "enUS", true, true)
-if not L then return end
+local MAJOR = "LibScriptableLocale-1.0"
+local MINOR = 20
+assert(LibStub, MAJOR.." requires LibStub")
+
+local LibLocale = LibStub:NewLibrary(MAJOR, MINOR)
+if not LibLocale then return end
+
+local L = LibStub("LibScriptableLocale-enUS-1.0")
+
+L.L = setmetatable({}, {__index = function(k, v)
+	if type(v) ~= "string" then return k end
+	return v
+end})
+
+local L = L.L
 
 -- Widgets
 L["Add Point"] = true
@@ -25,6 +38,7 @@ L["High"] = true
 L["Medium"] = true
 L["Low"] = true
 L["Background"] = true
+L["Intersect Frame"] = true
 
 -- WidgetTimer
 L["Enabled"] = true
@@ -371,6 +385,8 @@ L["Feigned Death"] = true
 
 L["Fetching"] = true
 L["No Rank (-1)"] = true
+L["Alliance"] = true
+L["Horde"] = true
 
 -- PluginTalents
 
