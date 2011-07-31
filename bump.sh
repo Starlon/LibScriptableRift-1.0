@@ -1,6 +1,14 @@
 #!/usr/bin/bash
 
-for file in ./*/*/*lua 
+v1=20
+v2=v1+1
+
+for file in ./*/*/*.lua 
 do
-	sed "s/MINOR = 21/MINOR = 22/" -i $file
+	sed "s/MINOR = $v1/MINOR = $v2/" -i $file
+done
+
+for file in ./Localization/*.lua
+do
+	sed "s/MINOR = $v1/MINOR = $v2/" -i $file
 done

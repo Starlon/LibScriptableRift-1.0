@@ -1,6 +1,6 @@
 do return end
 local MAJOR = "LibScriptableLocale-deDE-1.0"
-local MINOR = 20
+local MINOR = v1+1
 assert(LibStub, MAJOR.." requires LibStub")
 
 local L = LibStub:NewLibrary(MAJOR, MINOR)
