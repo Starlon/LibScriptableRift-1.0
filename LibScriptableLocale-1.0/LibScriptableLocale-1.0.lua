@@ -34,13 +34,3 @@ else
 	LibLocale.L = LibStub("LibScriptableLocale-enUS-1.0").L
 end
 
-local mt = {__index=function(table, key)
-	local val = rawget(table, key)
-	if type(val) ~= "string" then val = key end
-	return val
-end, __newindex=function(table, key, val)
-	if type(val) ~= "string" then val = key end
-	rawset(table, key, val)
-end}
-setmetatable(LibLocale.L, mt)
-
