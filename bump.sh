@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 v1=20
-v2=v1+1
+v2=$v1+1
 
 for file in ./*/*/*.lua 
 do

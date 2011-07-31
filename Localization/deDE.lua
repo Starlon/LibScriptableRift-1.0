@@ -1,15 +1,13 @@
 do return end
 local MAJOR = "LibScriptableLocale-deDE-1.0"
-local MINOR = v1+1
+local MINOR = 21
 assert(LibStub, MAJOR.." requires LibStub")
 
 local L = LibStub:NewLibrary(MAJOR, MINOR)
 if not L then return end
 
-L.L = setmetatable({}, {__index = function(k, v)
-	if type(v) ~= "string" then return k end
-	return v
-end})
+L.L = {}
+local L = L.L
 
 L["%s's pet"] = "%s's Begleiter" -- Needs review
 L["%s's target"] = "%s's Ziel" -- Needs review
