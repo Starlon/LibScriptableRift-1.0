@@ -23,9 +23,9 @@ local LibEvaluator = LibStub("LibScriptableUtilsEvaluator-1.0")
 assert(LibEvaluator, MAJOR .. " requires LibScriptableUtilsEvaluator-1.0")
 local LibDogTag = LibStub("LibDogTag-3.0", true)
 assert(LibDogTag, MAJOR .. " requires LibDogTag-3.0", true)
-local Locale = LibStub("AceLocale-3.0", true)
-assert(Locale, MAJOR .. " requires AceLocale-3.0")
-local L = Locale:GetLocale("LibScriptable-1.0")
+local Locale = LibStub("LibScriptableLocale-1.0", true)
+assert(Locale, MAJOR .. " requires LibScriptableLocale-1.0")
+local L = Locale.L
 
 local PINGPONGWAIT = 2
 

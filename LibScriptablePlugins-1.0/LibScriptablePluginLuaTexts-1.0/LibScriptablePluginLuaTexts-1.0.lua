@@ -16,9 +16,9 @@ local PluginTalents = LibStub("LibScriptablePluginTalents-1.0")
 assert(PluginTalents, MAJOR .. " requires LibScriptablePluginTalents-1.0")
 local PluginColor = LibStub("LibScriptablePluginColor-1.0")
 assert(PluginColor, MAJOR .. " requires LibScriptablePluginColor-1.0")
-local Locale = LibStub("AceLocale-3.0", true)
-assert(Locale, MAJOR .. " requires AceLocale-3.0")
-local L = Locale:GetLocale("LibScriptable-1.0")
+local Locale = LibStub("LibScriptableLocale-1.0", true)
+assert(Locale, MAJOR .. " requires LibScriptableLocale-1.0")
+local L = Locale.L
 
 local _G = _G
 local ScriptEnv = {}

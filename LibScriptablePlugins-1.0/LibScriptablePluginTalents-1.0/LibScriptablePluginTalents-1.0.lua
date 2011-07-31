@@ -8,9 +8,9 @@ local TalentQuery = LibStub("LibTalentQuery-1.0", true)
 assert(TalentQuery, MAJOR .. " requires LibTalentQuery-1.0")
 local LibTimer = LibStub("LibScriptableUtilsTimer-1.0", true)
 assert(LibTimer, MAJOR .. " requires LibScriptableUtilsTimer-1.0")
-local Locale = LibStub("AceLocale-3.0", true)
-assert(Locale, MAJOR .. " requires AceLocale-3.0")
-local L = Locale:GetLocale("LibScriptable-1.0")
+local Locale = LibStub("LibScriptableLocale-1.0", true)
+assert(Locale, MAJOR .. " requires LibScriptableLocale-1.0")
+local L = Locale.L
 
 local _G = _G
 local GameTooltip = _G.GameTooltip

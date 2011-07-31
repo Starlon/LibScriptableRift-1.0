@@ -7,29 +7,40 @@ if not LibLocale then return end
 
 
 if GetLocale() == "deDE" then
-	LibLocale.L = assert(LibStub("LibScriptableLocale-deDE-1.0")).L
+	LibLocale.L = LibStub("LibScriptableLocale-deDE-1.0").L
 
 elseif GetLocale() == "esES" then
-	LibLocale.L = LibStub("LibScriptableLocale-esES-1.0")
+	LibLocale.L = LibStub("LibScriptableLocale-esES-1.0").L
 
 elseif GetLocale() == "esMX" then
-	LibLocale.L = LibStub("LibScriptableLocale-enUS-1.0")
+	LibLocale.L = LibStub("LibScriptableLocale-esMX-1.0").L
 
 elseif GetLocale() == "frFR" then
-	LibLocale.L = LibStub("LibScriptableLocale-enUS-1.0")
+	LibLocale.L = LibStub("LibScriptableLocale-frFR-1.0").L
 
 elseif GetLocale() == "koKR" then
-	LibLocale.L = LibStub("LibScriptableLocale-enUS-1.0")
+	LibLocale.L = LibStub("LibScriptableLocale-koKR-1.0").L
 
 elseif GetLocale() == "ruRU" then
-	LibLocale.L = LibStub("LibScriptableLocale-enUS-1.0")
+	LibLocale.L = LibStub("LibScriptableLocale-ruRU-1.0").L
 
 elseif GetLocale() == "zhCN" then
-	LibLocale.L = LibStub("LibScriptableLocale-enUS-1.0")
+	LibLocale.L = LibStub("LibScriptableLocale-zhCN-1.0").L
 
 elseif GetLocale() == "zhTW" then
-	LibLocale.L = LibStub("LibScriptableLocale-enUS-1.0")
+	LibLocale.L = LibStub("LibScriptableLocale-zhTW-1.0").L
 
 else
-	LibLocale.L = LibStub("LibScriptableLocale-enUS-1.0")
+	LibLocale.L = LibStub("LibScriptableLocale-enUS-1.0").L
 end
+
+local mt = {__index=function(table, key)
+	local val = rawget(table, key)
+	if type(val) ~= "string" then val = key end
+	return val
+end, __newindex=function(table, key, val)
+	if type(val) ~= "string" then val = key end
+	rawset(table, key, val)
+end}
+setmetatable(LibLocale.L, mt)
+

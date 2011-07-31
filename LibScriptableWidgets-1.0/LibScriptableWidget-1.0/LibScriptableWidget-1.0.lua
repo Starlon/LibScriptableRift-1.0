@@ -14,9 +14,9 @@ local Utils = LibStub("LibScriptablePluginUtils-1.0")
 assert(Utils, MAJOR .. " requires LibScriptablePluginUtils-1.0")
 local LibEvaluator = LibStub("LibScriptableUtilsEvaluator-1.0")
 assert(LibEvaluator, MAJOR .. " requires LibScriptableUtilsEvaluator-1.0")
-local Locale = LibStub("AceLocale-3.0", true)
-assert(Locale, MAJOR .. " requires AceLocale-3.0")
-local L = Locale:GetLocale("LibScriptable-1.0")
+local Locale = LibStub("LibScriptableLocale-1.0", true)
+assert(Locale, MAJOR .. " requires LibScriptableLocale-1.0")
+local L = Locale.L
 
 local pool = setmetatable({}, {__mode = "k"})
 local objects = {}
@@ -341,7 +341,7 @@ function LibWidget:GetOptions(db, callback, data)
 				order = 8
 			},
 			intersect = {
-				name = "Intersect Frames",
+				name = L["Intersect Frames"],
 				desc = "Whether to check for intersecting frames or not",
 				type = "toggle",
 				get = function() return db.intersect end,
@@ -355,7 +355,7 @@ function LibWidget:GetOptions(db, callback, data)
 				order = 9
 			},
 			intersectxPad1 = {
-				name = "Intersect X Pad #1",
+				name = L["Intersect X Pad #1"],
 				type = "input",
 				pattern = "%d",
 				get = function() return tostring(db.intersectxPad1 or 0) end,
@@ -370,7 +370,7 @@ function LibWidget:GetOptions(db, callback, data)
 				order = 10
 			},
 			intersectyPad1 = {
-				name = "Intersect Y Pad #1",
+				name = L["Intersect Y Pad #1"],
 				type = "input",
 				pattern = "%d",
 				get = function() return tostring(db.intersectyPad1 or 0) end,
@@ -385,7 +385,7 @@ function LibWidget:GetOptions(db, callback, data)
 				order = 11
 			},
 			intersectxPad2 = {
-				name = "Intersect X Pad #2",
+				name = L["Intersect X Pad #2"],
 				type = "input",
 				pattern = "%d",
 				get = function() return tostring(db.intersectxPad2 or 0) end,
@@ -400,7 +400,7 @@ function LibWidget:GetOptions(db, callback, data)
 				order = 12
 			},
 			intersectyPad2 = {
-				name = "Intersect Y Pad #2",
+				name = L["Intersect Y Pad #2"],
 				type = "input",
 				pattern = "%d",
 				get = function() return tostring(db.intersectyPad2 or 0) end,
@@ -415,7 +415,7 @@ function LibWidget:GetOptions(db, callback, data)
 				order = 11
 			},
 			intersectPad = {
-				name = "Intersect Padding",
+				name = L["Intersect Padding"],
 				desc = "Use this to specify a universal padding",
 				type = "input",
 				pattern = "%d",
@@ -435,7 +435,7 @@ function LibWidget:GetOptions(db, callback, data)
 				order = 12
 			},
 			minStrata = {
-				name = "Minimum Intersect Strata",
+				name = L["Minimum Intersect Strata"],
 				type = "select",
 				values = LibWidget.strata,
 				get = function() return db.minStrata or defaults.minStrata end,
@@ -449,7 +449,7 @@ function LibWidget:GetOptions(db, callback, data)
 				order = 13
 			},
 			showScript = {
-				name = "SCRIPT_SHOW",
+				name = L["SCRIPT_SHOW"],
 				type = "input",
 				multiline = true,
 				width = "full",
@@ -465,7 +465,7 @@ function LibWidget:GetOptions(db, callback, data)
 
 			},
 			hideScript = {
-				name = "SCRIPT_HIDE",
+				name = L["SCRIPT_HIDE"],
 				type = "input",
 				multiline = true,
 				width = "full",
@@ -481,7 +481,7 @@ function LibWidget:GetOptions(db, callback, data)
 
 			},
 			shownScript = {
-				name = "SCRIPT_SHOWN",
+				name = L["SCRIPT_SHOWN"],
 				type = "input",
 				multiline = true,
 				width = "full",
@@ -497,7 +497,7 @@ function LibWidget:GetOptions(db, callback, data)
 
 			},
 			hiddenScript = {
-				name = "SCRIPT_HIDDEN",
+				name = L["SCRIPT_HIDDEN"],
 				type = "input",
 				multiline = true,
 				width = "full",
@@ -515,7 +515,7 @@ function LibWidget:GetOptions(db, callback, data)
 	}
 	for i, point in ipairs(db.points or {}) do
 			options.args["point" .. i] = {
-				name = "Point #" .. i,
+				name = L["Point #"] .. i,
 				type = "group",
 				args = {
 					point = {

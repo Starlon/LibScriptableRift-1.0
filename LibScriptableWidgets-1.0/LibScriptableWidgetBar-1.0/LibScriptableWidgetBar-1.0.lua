@@ -13,8 +13,9 @@ local LibError = LibStub("LibScriptableUtilsError-1.0", true)
 assert(LibError, MAJOR .. " requires LibScriptableUtilsError-1.0")
 local LibWidget = LibStub("LibScriptableWidget-1.0", true)
 assert(LibWidget, MAJOR .. " requires LibScriptableWidget-1.0")
-
-local L = LibStub("AceLocale-3.0"):GetLocale("LibScriptable-1.0")
+local Locale = LibStub("LibScriptableLocale-1.0", true)
+assert(Locale, MAJOR .. " requires LibScriptableLocale-1.0")
+local L = Locale.L
 
 local pool = setmetatable({}, {__mode = "k"})
 

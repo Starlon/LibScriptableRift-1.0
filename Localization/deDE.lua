@@ -1,10 +1,10 @@
-local MAJOR = "LibScriptableLocale-1.0"
+do return end
+local MAJOR = "LibScriptableLocale-deDE-1.0"
 local MINOR = 20
 assert(LibStub, MAJOR.." requires LibStub")
 
-local LibLocale = LibStub:NewLibrary(MAJOR, MINOR)
-if not LibLocale then return end
-local L = LibStub("LibScriptableLocale-deDE-1.0")
+local L = LibStub:NewLibrary(MAJOR, MINOR)
+if not L then return end
 
 L.L = setmetatable({}, {__index = function(k, v)
 	if type(v) ~= "string" then return k end

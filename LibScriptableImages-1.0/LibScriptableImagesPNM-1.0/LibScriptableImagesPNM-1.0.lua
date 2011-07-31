@@ -10,6 +10,10 @@ assert(PluginColor, MAJOR .. " requires LibScriptablePluginColor-1.0")
 PluginColor = PluginColor:New({})
 LibWidget = LibStub("LibScriptableWidget-1.0")
 assert(LibWidget, MAJOR .. " requires LibScriptableWidget-1.0")
+local Locale = LibStub("LibScriptableLocale-1.0", true)
+assert(Locale, MAJOR .. " requires LibScriptableLocale-1.0")
+local L = Locale.L
+
 
 local defaults = {pixel = 1}
 PNM.defaults = defaults

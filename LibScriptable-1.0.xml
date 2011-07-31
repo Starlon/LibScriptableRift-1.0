@@ -10,6 +10,7 @@
 <Script file = "Localization\koKR.lua"/>
 <Script file = "Localization\ruRU.lua"/>
 <Script file = "Localization\zhCN.lua"/>
+<Script file = "Localization\LibScriptableLocale-1.0.lua"/>
 
 <Include file = "LibScriptableUtils-1.0\LibScriptableUtils-1.0.xml"/>
 <Include file = "LibScriptablePlugins-1.0\LibScriptablePlugins-1.0.xml"/>
