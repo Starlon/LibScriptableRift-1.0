@@ -27,7 +27,6 @@
 <Script file = "LibScriptablePluginFail-1.0\LibScriptablePluginFail-1.0.lua"/>
 <Script file = "LibScriptablePluginBlend-1.0\LibScriptablePluginBlend-1.0.lua"/>
 <Script file = "LibScriptablePluginNameplate-1.0\LibScriptablePluginNameplate-1.0.lua"/>
-<Script file = "LibScriptablePluginTransition-1.0\LibScriptablePluginTransition-1.0.lua"/>
 <script file = "LibScriptablePluginDPS-1.0\LibScriptablePluginDPS-1.0.lua"/>
 <Script file = "LibScriptablePluginNoise-1.0\LibScriptablePluginNoise-1.0.lua"/>
 <Script file = "LibScriptablePluginSkada-1.0\LibScriptablePluginSkada-1.0.lua"/>
