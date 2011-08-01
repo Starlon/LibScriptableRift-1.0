@@ -6,8 +6,6 @@ local WidgetGestures = LibStub:NewLibrary(MAJOR, MINOR)
 if not WidgetGestures then return end
 local LibWidget = LibStub("LibScriptableWidget-1.0", true)
 assert(LibWidget, MAJOR .. " requires LibScriptableWidget-1.0")
-local LibTimer = LibStub("LibScriptableUtilsTimer-1.0", true)
-assert(LibTimer, MAJOR .. " requires LibScriptableUtilsTimer-1.0")
 local Evaluator = LibStub("LibScriptableUtilsEvaluator-1.0", true)
 assert(Evaluator, MAJOR .. " requires LibScriptableUtilsEvaluator-1.0")
 local PluginUtils = LibStub("LibScriptablePluginUtils-1.0", true)
@@ -48,7 +46,7 @@ local defaults = {
 	errorsAllowed = 1,
 	type = "line",
 	pattern = "right",
-	minLength = 800
+	minLength = 600
 }
 WidgetGestures.defaults = defaults
 
@@ -129,8 +127,6 @@ function WidgetGestures:New(visitor, name, config, errorLevel, callback, timer)
 	obj.callback = callback
 	obj.error = LibError:New(MAJOR .. ": " .. name, errorLevel)
 		
-	obj.timer = timer or LibTimer:New("WidgetGestures.timer " .. obj.name, obj.update, obj.repeating, self.Update, obj, obj.errorLevel)
-
 	obj.startFunc = Evaluator.ExecuteCode(obj.environment, MAJOR .. " startFunc", config.startFunc, false, nil, true)
 	obj.updateFunc = Evaluator.ExecuteCode(obj.environment, MAJOR .. " updateFunc", config.updateFunc, false, nil, true)
 	obj.nextFunc = Evaluator.ExecuteCode(obj.environment, MAJOR .. " nextFunc", config.nextFunc, false, nil, true)
@@ -172,8 +168,12 @@ end
 function WidgetGestures:Start()
 	self.gestures = self.gestures or {}
 	if self.update > 0 and #self.gestures > 0 then
-		self.timer:Start()
-		self.active = true
+		if self.rec then delRec(self.rec) end
+		local rec = newRec(self.drawLayer)
+		rec.widgetdata = self
+		self.rec = rec
+	
+		rec:StartCapture(self.capture)
 	end
 end
 
@@ -181,8 +181,7 @@ end
 -- @usage object:Stop()
 -- @return Nothing
 function WidgetGestures:Stop()
-	self.timer:Stop()
-	self.active = false
+	self.rec.isRecording = false
 end
 
 function stopFunc(rec)
@@ -255,7 +254,7 @@ function WidgetGestures:GetOptions(db, callback, data)
 	local options = {
 		enabled = {
 			name = "Enabled",
-			desc = "Whether this timer is enabled or not",
+			desc = "Whether this gesture is enabled or not.",
 			type = "toggle",
 			get = function() return db.enabled end,
 			set = function(info, v) 
@@ -264,21 +263,6 @@ function WidgetGestures:GetOptions(db, callback, data)
 				if type(callback) == "function" then callback(data) end
 			end,
 			order = 5
-		},
-		update = {
-			name = "Update Rate",
-			desc = "Enter the timer's refresh rate",
-			type = "input",
-			pattern = "%d",
-			get = function()
-				return tostring(db.update or defaults.update)
-				end,
-			set = function(info, v)
-				db.update = tonumber(v)
-				db.updateDirty = true
-				if type(callback) == "function" then callback(data) end
-			end,
-			order = 6
 		},
 		drawLayer = {
 			name = L["Draw Layer"],
@@ -369,7 +353,7 @@ function WidgetGestures:GetOptions(db, callback, data)
 			type = "input",
 			pattern = "%d",
 			get = function()
-				return db.maxGestures or defaults.maxGestures
+				return tostring(db.maxGestures or defaults.maxGestures)
 			end,
 			set = function(info, v)
 				db.maxGestures = tonumber(v)
@@ -402,10 +386,10 @@ function WidgetGestures:GetOptions(db, callback, data)
 			type = "input",
 			pattern = "%d",
 			get = function()
-				return minLength or defaults.minLength
+				return tostring(minLength or defaults.minLength)
 			end,
 			set = function(info, v)
-				db.minLength = v
+				db.minLength = tonumber(v)
 				db.minLengthDirty = true
 				if type(callback) == "function" then
 					callback(data)
@@ -419,10 +403,10 @@ function WidgetGestures:GetOptions(db, callback, data)
 			type = "input",
 			pattern = "%d",
 			get = function()
-				return db.errorsAllowed or defaults.errorsAllowed
+				return tostring(db.errorsAllowed or defaults.errorsAllowed)
 			end,
 			set = function(info, v)
-				db.errorsAllowed = v
+				db.errorsAllowed = tonumber(v)
 				db.errorsAllowedDirty = true
 				if type(callback) == "function" then
 					callback(data)
