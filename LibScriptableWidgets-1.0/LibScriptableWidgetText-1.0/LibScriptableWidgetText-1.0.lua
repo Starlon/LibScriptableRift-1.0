@@ -140,10 +140,8 @@ WidgetText.defaults = {
 -- @param layer This widget's layer
 -- @param errorLevel The self.errorLevel for this object
 -- @param callback Your draw function. The widget is passed as first parameter and data is passed as 2nd.
--- @param timer An optional timer object. This should have a :Start() and :Stop()
--- @param timer An optional timer object for text scrolling. This should have a :Start() and :Stop()
 -- @return A new LibScriptableWidgetText object
-function WidgetText:New(visitor, name, config, row, col, layer, errorLevel, callback, timer, textTimer)
+function WidgetText:New(visitor, name, config, row, col, layer, errorLevel, callback)
 	assert(name, "WidgetText requires a name.")
 	assert(config, "Please provide the marquee with a config")
 	assert(config.value, name .. ": Please provide the marquee with a script value")
@@ -249,6 +247,7 @@ function WidgetText:Init(config)
 
 	obj.timer = obj.timer or LibTimer:New("WidgetText.timer " .. obj.widget.name, obj.update or WidgetText.defaults.update, obj.repeating or WidgetText.defaults.repeating, textUpdate, obj, obj.errorLevel)
 	obj.textTimer = obj.textTimer or LibTimer:New("WidgetText.textTimer " .. obj.widget.name, obj.speed or WidgetText.defaults.speed, true, textScroll, obj, obj.errorLevel)
+	print(obj.timer.callback, "------------------")
 	
 end
 

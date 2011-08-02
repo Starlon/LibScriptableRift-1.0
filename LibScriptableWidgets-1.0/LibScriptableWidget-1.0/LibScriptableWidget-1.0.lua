@@ -51,7 +51,7 @@ LibWidget.defaults = {
 	strata = 1,
 	level = 1,
 	alwaysShown = false,
-	intersect = true,
+	intersect = false,
 	minStrata = 4,
 	intersectPad = 0,
 	intersectxPad1 = 0,
@@ -162,10 +162,10 @@ function LibWidget:New(child, visitor, name, config, row, col, layer, typeOf, er
 	for k, v in pairs(obj) do
 		child[k] = v
 	end
-	
-	obj.timer = LibTimer:New(obj.name) -- Just in case someone needs it.
 
 	setmetatable(obj, self)
+
+	obj.dummyTimer = LibTimer:New(obj.name) -- Just in case someone needs it.
 
 	objects[obj] = true
 
@@ -182,7 +182,7 @@ function LibWidget:Del()
 	pool[self] = true
 	objects[self] = nil
 	self.deleted = true
-	self.timer:Del()
+	self.dummyTimer:Del()
 end
     
 function LibWidget:OnShow()
