@@ -30,7 +30,8 @@ frame:SetScript("OnEvent", OnKey)
 
 
 WidgetKey.defaults = {
-	expression = 'return',
+	expression = 'print("Execute Key:" .. (self.name or ' .. MAJOR ..'))',
+	test = "return true",
 	up = false,
 	modifier = 1
 }
@@ -38,7 +39,8 @@ local defaults = WidgetKey.defaults
 
 local widgetType = {key=true}
 
-WidgetKey.modifiers = {"Alt", "Ctrl"}
+WidgetKey.modifiers = {"Ctrl", "Alt"}
+WidgetKey.modifierTags = {"LCTRL", "RCTRL", "LALT", "RALT", "LSHIFT", "RSHIFT"}
 
 --- Create a new LibScriptableWidgetKey object
 -- @usage WidgetKey:New(visitor, name, config, errorLevel)
@@ -70,9 +72,11 @@ function WidgetKey:New(visitor, name, config, errorLevel)
 	
 	obj.config = config
 	obj.expression = config.expression or defaults.expression
-	obj.up = config.up or defaults.up
+	obj.test = config.test or defaults.test
+	obj.up = (config.up or defaults.up) and 1 or 0
 	obj.modifier = config.modifier or defaults.modifier
-	obj.simple = config.simple or defaults.simple
+	obj.key = {}
+	obj.key[WidgetKey.modifierTags[obj.modifier] .. obj.up] = true
 	
 	obj.error = LibError:New(MAJOR .. ": " .. name, errorLevel)
 	
@@ -113,24 +117,10 @@ end
 -- @return Nothing
 function WidgetKey:KeyEvent(modifier, up)
 	if not self.enabled then return end
-	up = (up == 1) and true
-	local mod = modifier
-	if self.modifier == 1 and self.simple then
-		mod = (modifier == "LCTRL" or modifier == "RCTRL") and "LCTRL"
-		modifier = "LCTRL"
-	elseif self.modifier == 2 and self.simple then
-		mod = (modifier == "LALT" or modifier == "RALT") and "LALT"
-		modifier = "LALT"
-	elseif self.modifier == 3 and self.simple then
-		mod = (modifier == "LSHIFT" or modifier == "RSHIFT") and "LSHIFT"
-		modifier = "LSHIFT"
-	end
-		
-print(modifier, mod, up, self.up)
-
-	if mod == modifier and self.up == up then
-		self.visitor.environment.self = self
-		Evaluator.ExecuteCode(self.visitor.environment, self.name, self.expression)
+	if self.key[modifier .. up] then
+		if Evaluator.ExecuteCode(self.visitor.environment, self.name, self.test) then
+			Evaluator.ExecuteCode(self.visitor.environment, self.name, self.expression)
+		end
 	end
 end
 
@@ -141,22 +131,34 @@ end
 -- @param data Some data to pass when executing the callback
 -- @return An Ace3 options table -- `name.args = options`.
 function WidgetKey:GetOptions(db, callback, data)
-		local defaults = WidgetKey.defaults
 		local options = {
 			enabled = {
 				name = L["Enabled"],
 				desc = L["Whether this timer is enabled or not"],
 				type = "toggle",
 				get = function() return db.enabled end,
-				set = function(info, v) db.enabled = v; db["enabledDirty"] = true end,
+				set = function(info, v) 
+					db.enabled = v; 
+					db.enabledDirty = true 
+					if type(callback) == "function" then
+						callback(data)
+					end
+				end,
 				order = 1
 			},
 			modifier = {
 				name = L["Modifier"],
-				desc = L["Which modifier, ALT or CTRL?"],
+				desc = L["Which modifier"],
 				type = "select",
-				values = WidgetKey.modifiers,
+				values = WidgetKey.modifierTags,
 				get = function() return db.modifier or defaults.modifier end,
+				set = function(info, v)
+					db.modifier = v
+					db.modifierDirty = true
+					if type(callback) == "function" then
+						callback(data)
+					end
+				end,
 				order = 2
 			},
 			up = {
@@ -164,8 +166,32 @@ function WidgetKey:GetOptions(db, callback, data)
 				desc = L["Execute this widget on the up stroke?"],
 				type = "toggle",
 				get = function() return db.up or defaults.up end,
-				set = function(info, v) db.up = v; db.upDirty = true end,
+				set = function(info, v) 
+					db.up = v; 
+					db.upDirty = true 
+					if type(callback) == "function" then
+						callback(data)
+					end
+				end,
 				order = 3
+			},
+			test = {
+				name = L["Test Case"],
+				desc = L["This will be the test case deciding if the expression should execute or not."],
+				type = "input",
+				width = "full",
+				multiline = true,
+				get = function()
+					return db.test or defaults.test
+				end,
+				set = function(info, v)
+					db.test = v
+					db.testDirty = true
+					if type(callback) == "function" then
+						callback(data)
+					end
+				end,
+				order = 4
 			},
 			expression = {
 				name = L["Expression"],
@@ -178,9 +204,12 @@ function WidgetKey:GetOptions(db, callback, data)
 				end,
 				set = function(info, v)
 					db.expression = v
-					db["expressionDirty"] = true
+					db.expressionDirty = true
+					if type(callback) == "function" then
+						callback(data)
+					end
 				end,
-				order = 3
+				order = 5
 			},
 			
 		}
