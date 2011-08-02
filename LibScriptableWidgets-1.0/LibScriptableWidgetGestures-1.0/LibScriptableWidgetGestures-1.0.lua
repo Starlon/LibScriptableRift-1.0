@@ -181,7 +181,9 @@ end
 -- @usage object:Stop()
 -- @return Nothing
 function WidgetGestures:Stop()
-	self.rec.isRecording = false
+	if type(self.rec) == "table" then
+		self.rec.isRecording = false
+	end
 end
 
 function stopFunc(rec)

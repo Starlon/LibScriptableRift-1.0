@@ -12,16 +12,33 @@ local Locale = LibStub("LibScriptableLocale-1.0", true)
 assert(Locale, MAJOR .. " requires LibScriptableLocale-1.0")
 local L = Locale.L
 
+local frame = CreateFrame("Frame")
+frame:RegisterEvent("MODIFIER_STATE_CHANGED")
 local pool = setmetatable({}, {__mode = "k"})
+local objects = {}
+
+if not WidgetKey.__index then
+	WidgetKey.__index = WidgetKey
+end
+
+function OnKey(frame, event, ...)
+	for widget in pairs(objects) do
+		widget:KeyEvent(...)
+	end
+end
+frame:SetScript("OnEvent", OnKey)
+
 
 WidgetKey.defaults = {
 	expression = 'return',
 	up = false,
-	modifier = 1,
-	simple = true
+	modifier = 1
 }
+local defaults = WidgetKey.defaults
 
 local widgetType = {key=true}
+
+WidgetKey.modifiers = {"Alt", "Ctrl"}
 
 --- Create a new LibScriptableWidgetKey object
 -- @usage WidgetKey:New(visitor, name, config, errorLevel)
@@ -45,6 +62,8 @@ function WidgetKey:New(visitor, name, config, errorLevel)
 		obj.options = {}
 	end
 		
+	objects[obj] = true
+
 	setmetatable(obj, self)
 
 	obj.widget = LibWidget:New(obj, visitor, name, config, 0, 0, 0, widgetType, errorLevel)
@@ -70,13 +89,13 @@ function WidgetKey:Del()
 	key.widget = nil
 	key:Stop()
 	pool[key] = true
+	objects[self] = nil
 end
 
 --- Start a LibScriptableWidgetKey
 -- @usage :Start()
 -- @return Nothing
 function WidgetKey:Start()
-	self.error:Print("WidgetKey:Start")
 	self.enabled = true
 end
 
@@ -84,7 +103,6 @@ end
 -- @usage :Stop()
 -- @return Nothing
 function WidgetKey:Stop()
-	self.error:Print("WidgetKey:Stop")
 	self.enabled = false
 end
 
@@ -95,6 +113,7 @@ end
 -- @return Nothing
 function WidgetKey:KeyEvent(modifier, up)
 	if not self.enabled then return end
+	up = (up == 1) and true
 	local mod = modifier
 	if self.modifier == 1 and self.simple then
 		mod = (modifier == "LCTRL" or modifier == "RCTRL") and "LCTRL"
@@ -107,6 +126,8 @@ function WidgetKey:KeyEvent(modifier, up)
 		modifier = "LSHIFT"
 	end
 		
+print(modifier, mod, up, self.up)
+
 	if mod == modifier and self.up == up then
 		self.visitor.environment.self = self
 		Evaluator.ExecuteCode(self.visitor.environment, self.name, self.expression)
@@ -129,6 +150,22 @@ function WidgetKey:GetOptions(db, callback, data)
 				get = function() return db.enabled end,
 				set = function(info, v) db.enabled = v; db["enabledDirty"] = true end,
 				order = 1
+			},
+			modifier = {
+				name = L["Modifier"],
+				desc = L["Which modifier, ALT or CTRL?"],
+				type = "select",
+				values = WidgetKey.modifiers,
+				get = function() return db.modifier or defaults.modifier end,
+				order = 2
+			},
+			up = {
+				name = L["UP?"],
+				desc = L["Execute this widget on the up stroke?"],
+				type = "toggle",
+				get = function() return db.up or defaults.up end,
+				set = function(info, v) db.up = v; db.upDirty = true end,
+				order = 3
 			},
 			expression = {
 				name = L["Expression"],
