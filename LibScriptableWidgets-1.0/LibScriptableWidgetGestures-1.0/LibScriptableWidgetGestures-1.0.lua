@@ -34,23 +34,25 @@ local types = {"line", "circle"}
 WidgetGestures.types = types
 
 local defaults = {
-	type = 1,
-	direction = 1,
-	update = 500,
-	repeating = true,
 	drawLayer = "UIParent",
-	startButton		= "Freehand",
-	stopButton		= "LeftButtonUp",
-	cancelButton    = nil,
-	showTrail 		= false,
-	errorsAllowed = 1,
-	type = "line",
-	pattern = "right",
+	startButton = "Freehand",
+	stopButton = "LeftButtonUp",
+	nextButton = "",
+	cancelButton = "",
+	startFunc = "",
+	stopFunc = "",
+	cancelFunc = "",
+	tooltip = "",
+	maxGestures = 4,
+	minGestures = 1,
+	showTrail = true,
 	minLength = 600
 }
+
 WidgetGestures.defaults = defaults
 
 
+local newCapture
 local widgetType = {gesture=true}
 
 local pool = setmetatable({}, {__mode = "v"})
@@ -72,6 +74,18 @@ local function newDict(...)
 	return obj
 end
 
+local captureCache = setmetatable({}, {__mode="k"})
+local function newCap()
+	local cap = table.remove(captureCache)
+	if not cap then cap = {} end
+	return cap
+end
+
+local function delCap(cap)
+	if not cap then return end
+	captureCache[cap] = true
+end
+
 local function del(obj)
 	wipe(obj)
 	tinsert(pool, obj)
@@ -84,6 +98,7 @@ local function newRec(drawLayer)
 end
 
 local function delRec(rec)
+	if not rec then return end
 	tinsert(cache, rec)
 end
 
@@ -94,13 +109,11 @@ local stopFunc, cancelFunc
 --- Create a new LibScriptableWidgetGestures object
 -- @usage WidgetGestures:New(visitor, name, config, errorLevel)
 -- @param visitor An LibScriptableCore-1.0 object, or provide your own
--- @param name A name for the timer widget
+-- @param name A name for the gesture widget
 -- @param config This timeer's parameters
 -- @param errorLevel The errorLevel for this object
--- @param callback An optional callback function to be executed when the gesture is performed.
--- @param timer An optional timer. This should have a :Start() and :Stop().
 -- @return A new LibScriptableWidgetGestures widget
-function WidgetGestures:New(visitor, name, config, errorLevel, callback, timer) 
+function WidgetGestures:New(visitor, name, config, errorLevel) 
 	assert(name, "WidgetGestures requires a name.")
 	assert(config, "Please provide the timer with a config")
 	assert(config.expression, name .. ": Please provide the timer with an expression")
@@ -127,30 +140,48 @@ function WidgetGestures:New(visitor, name, config, errorLevel, callback, timer)
 	obj.callback = callback
 	obj.error = LibError:New(MAJOR .. ": " .. name, errorLevel)
 		
+	obj.startButton = config.startButton or defaults.startButton
+	obj.stopButton = config.stopButton or defaults.stopButton
+	obj.nextButton = config.nextButton or defaults.nextButton
+	obj.cancelButton = config.cancelButton or defaults.cancelButton
+	-- We're just grabbing the runnable object without any actual execution.
 	obj.startFunc = Evaluator.ExecuteCode(obj.environment, MAJOR .. " startFunc", config.startFunc, false, nil, true)
 	obj.updateFunc = Evaluator.ExecuteCode(obj.environment, MAJOR .. " updateFunc", config.updateFunc, false, nil, true)
 	obj.nextFunc = Evaluator.ExecuteCode(obj.environment, MAJOR .. " nextFunc", config.nextFunc, false, nil, true)
 	obj.stopFunc = Evaluator.ExecuteCode(obj.environment, MAJOR .. " stopFunc", config.stopFunc, false, nil, true, true) or stopFunc -- Note that the stopFunc is tested once before returning the function object
 	obj.cancelFunc = Evaluator.ExecuteCode(obj.environment, MAJOR .. " cancelFunc", config.cancelFunc, false, nil, true) or cancelFunc
-	local capture = newDict(
-		"startButton", config.startButton or defaults.startButton, 
-		"stopButton", config.stopButton or defaults.stopButton,
-		"cancelButton", config.cancelButton or defaults.cancelButton,
-		"showTrail", config.showTrail or defaults.showTrail,
-		"maxGestures", config.maxGestures or defaults.maxGestures,
-		"startFunc", obj.startFunc,
-		"updateFunc", obj.updateFunc,
-		"nextFunc", obj.nextFunc,
-		"stopFunc", obj.stopFunc,
-		"cancelFunc", obj.cancelFunc
-	)
-	obj.capture = capture
+	obj.tooltip = config.tooltip
+	obj.maxGestures = config.maxGestures or defaults.maxGestures
+	obj.minGestures = config.minGestures or defaults.minGestures
+	obj.showTrail = config.showTrail
+
 	obj.drawLayer = _G[config.drawLayer or defaults.drawLayer]
 	obj.gist = {}
+
+	obj:NewCapture()
 	
 	return obj	
 end
 
+function WidgetGestures:NewCapture()
+	local obj = self
+	delCap(obj.capture)
+	local cap = newCap()
+	cap["startButton"] = obj.startButton
+	cap["stopButton"] = obj.stopButton
+	cap["nextButton"] = obj.nextButton
+	cap["cancelButton"] = obj.cancelButton
+	cap["startFunc"] = obj.startFunc
+	cap["updateFunc"] = obj.updateFunc
+	cap["nextFunc"] = obj.nextFunc
+	cap["stopFunc"] = obj.stopFunc
+	cap["cancelFunc"] = obj.cancelFunc
+	cap["tooltip"] = obj.tooltip
+	cap["maxGestures"] = obj.maxGestures
+	cap["showTrail"] = obj.showTrail
+	obj.capture = cap
+	return cap
+end
 
 --- Delete a LibScriptableWidgetGestures object
 -- @usage :Del()
@@ -167,14 +198,11 @@ end
 -- @return Nothing
 function WidgetGestures:Start()
 	self.gestures = self.gestures or {}
-	if self.update > 0 and #self.gestures > 0 then
-		if self.rec then delRec(self.rec) end
-		local rec = newRec(self.drawLayer)
-		rec.widgetdata = self
-		self.rec = rec
-	
-		rec:StartCapture(self.capture)
-	end
+	if self.rec then delRec(self.rec) end
+	local rec = newRec(self.drawLayer)
+	rec.widgetdata = self
+	self.rec = rec
+	rec:StartCapture(self:NewCapture())
 end
 
 --- Stop a LibScriptableWidgetGestures
@@ -191,6 +219,8 @@ function stopFunc(rec)
 	local self = rec.widgetdata
 	local g = rec:GetGist(self.gist);
 			
+	if #g < self.minGestures or #self.gestures < self.minGestures then self:Start() return end
+
 	local current = 1
 	local errors = 0
 	if ( g ) then
@@ -200,12 +230,10 @@ function stopFunc(rec)
 			local pattern = g[n][2]
 			if type == self.gestures[current].type and pattern == self.gestures[current].pattern then
 				current = current + 1
-			else
-				errors = errors + 1
 			end
 		end
 	end
-	if current - 1 == #self.gestures and errors < (self.config.errorsAllowed or defaults.errorsAllowed) then
+	if current - 1 == #self.gestures then
 		local mx1, my1, mx2, my2 = rec:GetMovementBounds() 
 		local length = math.sqrt( math.pow(mx2-mx1, 2) + math.pow(my2-my1, 2) )
 		if length > self.minLength then
@@ -338,7 +366,7 @@ function WidgetGestures:GetOptions(db, callback, data)
 			type = "toggle",
 			desc = L["If set to true, a cursor trail will be shown while the gesture takes place. (can be used for debugging and whatnot)"],
 			get = function()
-				return db.showTrail or defaults.showTrail
+				return db.showTrail
 			end,
 			set = function(info, v)
 				db.showTrail = v
@@ -366,6 +394,7 @@ function WidgetGestures:GetOptions(db, callback, data)
 			end,
 			order = 14
 		},
+--[[
 		repeating = {
 			name = L["Repeating"],
 			desc = L["Whether to keep repeating the recording or not"],
@@ -382,6 +411,7 @@ function WidgetGestures:GetOptions(db, callback, data)
 			end,
 			order = 15
 		},
+]]
 		minLength = {
 			name = L["Minimum Length"],
 			desc = L["Minimum Length"],
@@ -399,6 +429,7 @@ function WidgetGestures:GetOptions(db, callback, data)
 			end,
 			order = 16
 		},
+--[[
 		errorsAllowed = {
 			name = L["Error Threshhold"],
 			desc = L["The gesture will automatically fail if you make more than this many errors"],
@@ -416,6 +447,7 @@ function WidgetGestures:GetOptions(db, callback, data)
 			end,
 			order = 17
 		},
+]]
 		expression = {
 			name = L["Expression"],
 			desc = L["Enter this widget's expression"],
