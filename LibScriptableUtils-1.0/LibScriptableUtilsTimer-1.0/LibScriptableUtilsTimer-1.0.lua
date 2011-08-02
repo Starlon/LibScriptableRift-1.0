@@ -98,7 +98,7 @@ end
 -- @param errorLevel Error verbosity level
 -- @return A new LibScriptableTimer object
 function LibTimer:New(name, duration, repeating, callback, data, errorLevel)
-	assert(type(duration) == "number", ("%s: Duration sent to LibTimer.New is invalid"):format(name))
+	duration = duration or 0
 	
 	local obj = next(pool)
 

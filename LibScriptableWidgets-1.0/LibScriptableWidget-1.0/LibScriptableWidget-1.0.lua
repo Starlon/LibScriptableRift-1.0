@@ -163,6 +163,8 @@ function LibWidget:New(child, visitor, name, config, row, col, layer, typeOf, er
 		child[k] = v
 	end
 	
+	obj.timer = LibTimer:New(obj.name) -- Just in case someone needs it.
+
 	setmetatable(obj, self)
 
 	objects[obj] = true
@@ -180,6 +182,7 @@ function LibWidget:Del()
 	pool[self] = true
 	objects[self] = nil
 	self.deleted = true
+	self.timer:Del()
 end
     
 function LibWidget:OnShow()
