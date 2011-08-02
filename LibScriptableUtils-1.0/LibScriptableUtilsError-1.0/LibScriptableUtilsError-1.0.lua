@@ -1,5 +1,5 @@
 local MAJOR = "LibScriptableUtilsError-1.0"
-local MINOR = 22
+local MINOR = 22+1
 assert(LibStub, MAJOR.." requires LibStub")
 local LibScriptableError = LibStub:NewLibrary(MAJOR, MINOR)
 if not LibScriptableError then return end

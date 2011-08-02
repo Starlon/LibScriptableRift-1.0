@@ -1,6 +1,6 @@
 
 local MAJOR = "LibScriptableUtilsEvaluator-1.0" 
-local MINOR = 22
+local MINOR = 22+1
 assert(LibStub, MAJOR.." requires LibStub") 
 local LibEvaluator = LibStub:NewLibrary(MAJOR, MINOR)
 if not LibEvaluator then return end

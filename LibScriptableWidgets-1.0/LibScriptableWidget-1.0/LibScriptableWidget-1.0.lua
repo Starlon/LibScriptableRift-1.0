@@ -1,5 +1,5 @@
 local MAJOR = "LibScriptableWidget-1.0" 
-local MINOR = 22
+local MINOR = 22+1
 
 assert(LibStub, MAJOR.." requires LibStub") 
 local LibWidget = LibStub:NewLibrary(MAJOR, MINOR)

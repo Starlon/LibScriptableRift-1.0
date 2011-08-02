@@ -1,5 +1,5 @@
 local MAJOR = "LibScriptableLCDDriverQTip-1.0"
-local MINOR = 22
+local MINOR = 22+1
 assert(LibStub, MAJOR.." requires LibStub") 
 local LibDriverQTip = LibStub:NewLibrary(MAJOR, MINOR)
 if not LibDriverQTip then return end

@@ -1,5 +1,5 @@
 local MAJOR = "LibScriptablePluginComm-1.0"
-local MINOR = 22
+local MINOR = 22+1
 
 local PluginComm = LibStub:NewLibrary(MAJOR, MINOR)
 if not PluginComm then return end

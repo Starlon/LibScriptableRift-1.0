@@ -1,6 +1,6 @@
 if GetLocale() ~= "zhCN" then return end
 local MAJOR = "LibScriptableLocale-zhCN-1.0"
-local MINOR = 21
+local MINOR = 21+1
 assert(LibStub, MAJOR.." requires LibStub")
 
 local L = LibStub:NewLibrary(MAJOR, MINOR)
