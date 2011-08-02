@@ -247,7 +247,6 @@ function WidgetText:Init(config)
 
 	obj.timer = obj.timer or LibTimer:New("WidgetText.timer " .. obj.widget.name, obj.update or WidgetText.defaults.update, obj.repeating or WidgetText.defaults.repeating, textUpdate, obj, obj.errorLevel)
 	obj.textTimer = obj.textTimer or LibTimer:New("WidgetText.textTimer " .. obj.widget.name, obj.speed or WidgetText.defaults.speed, true, textScroll, obj, obj.errorLevel)
-	print(obj.timer.callback, "------------------")
 	
 end
 
