@@ -98,7 +98,9 @@ end
 -- @param errorLevel Error verbosity level
 -- @return A new LibScriptableTimer object
 function LibTimer:New(name, duration, repeating, callback, data, errorLevel)
-	duration = duration or 0
+	assert(type(name) == "string", "Timer objects require a name.")
+
+	duration = type(duration) == "number" and duration or 0
 	
 	local obj = next(pool)
 
@@ -116,7 +118,7 @@ function LibTimer:New(name, duration, repeating, callback, data, errorLevel)
 	obj.duration = duration / 1000
 	
 	obj.repeating = repeating
-	obj.callback = callback
+	obj.callback = callback or function() obj.error:Print("No callback", 2) end
 	obj.data = data
 	obj.errorLevel = errorLevel
 	

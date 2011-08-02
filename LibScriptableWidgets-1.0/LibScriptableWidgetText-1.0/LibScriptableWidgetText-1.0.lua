@@ -311,13 +311,12 @@ WidgetText.IntersectUpdate = LibWidget.IntersectUpdate
 -- @return Nothing
 function WidgetText:Start()
 	if self.active then return end
-	self.oldBuffer = nil
 	self:Update()
 	if self.update > 0 then
-		self.timer:Start()
+		self.timer:Start(self.update)
 	end
 	if self.speed > 0 then
-		self.textTimer:Start()
+		self.textTimer:Start(self.speed)
 	end
 	self.active = true
 end
@@ -543,10 +542,7 @@ function textScroll(self)
 
 	if self.clearOverride then self.unitOverride = false; self.clearOverride = false end
 
-	if self.buffer ~= self.oldBuffer or self.config.updateAnyways then
-		self:Draw()
-	end
-	self.oldBuffer = self.buffer
+	self:Draw()
 
 	dst:Del()
 	src:Del()
