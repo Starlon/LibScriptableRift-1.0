@@ -31,5 +31,6 @@
 <Script file = "LibScriptablePluginNoise-1.0\LibScriptablePluginNoise-1.0.lua"/>
 <Script file = "LibScriptablePluginSkada-1.0\LibScriptablePluginSkada-1.0.lua"/>
 <Script file = "LibScriptablePluginRecount-1.0\LibScriptablePluginRecount-1.0.lua"/>
+<Script file = "LIbScriptablePluginDoodlepad-1.0\LibScriptablePluginDoodlepad-1.0.lua"/>
 
 </Ui>

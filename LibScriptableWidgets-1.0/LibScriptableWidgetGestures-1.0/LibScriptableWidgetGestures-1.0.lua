@@ -148,8 +148,14 @@ function WidgetGestures:New(visitor, name, config, errorLevel)
 	obj.startFunc = Evaluator.ExecuteCode(obj.environment, MAJOR .. " startFunc", config.startFunc, false, nil, true)
 	obj.updateFunc = Evaluator.ExecuteCode(obj.environment, MAJOR .. " updateFunc", config.updateFunc, false, nil, true)
 	obj.nextFunc = Evaluator.ExecuteCode(obj.environment, MAJOR .. " nextFunc", config.nextFunc, false, nil, true)
-	obj.stopFunc = Evaluator.ExecuteCode(obj.environment, MAJOR .. " stopFunc", config.stopFunc, false, nil, true, true) or stopFunc -- Note that the stopFunc is tested once before returning the function object
-	obj.cancelFunc = Evaluator.ExecuteCode(obj.environment, MAJOR .. " cancelFunc", config.cancelFunc, false, nil, true) or cancelFunc
+	obj.stopFunc = Evaluator.ExecuteCode(obj.environment, MAJOR .. " stopFunc", config.stopFunc, false, nil, true, true)
+	obj.cancelFunc = Evaluator.ExecuteCode(obj.environment, MAJOR .. " cancelFunc", config.cancelFunc, false, nil, true)
+	if obj.startFunc then obj.startFunc = obj.startFunc() end
+	if obj.updateFunc then obj.updateFunc = obj.updateFunc() end
+	if obj.nextFunc then obj.nextFunc = obj.nextFunc() end
+	if obj.stopFunc then obj.stopFunc = obj.stopFunc() else obj.stopFunc = stopFunc end
+	if obj.cancelFunc then obj.cancelFunc = obj.cancelFunc() else obj.cancelFunc = cancelFunc end
+
 	obj.tooltip = config.tooltip
 	obj.maxGestures = config.maxGestures or defaults.maxGestures
 	obj.minGestures = config.minGestures or defaults.minGestures
@@ -171,11 +177,11 @@ function WidgetGestures:NewCapture()
 	cap["stopButton"] = obj.stopButton
 	cap["nextButton"] = obj.nextButton
 	cap["cancelButton"] = obj.cancelButton
-	cap["startFunc"] = obj.startFunc
-	cap["updateFunc"] = obj.updateFunc
-	cap["nextFunc"] = obj.nextFunc
-	cap["stopFunc"] = obj.stopFunc
-	cap["cancelFunc"] = obj.cancelFunc
+	cap["startFunc"] = WidgetGestures.StartFunc
+	cap["updateFunc"] = WidgetGestures.UpdateFunc
+	cap["nextFunc"] = WidgetGestures.NextFunc
+	cap["stopFunc"] = WidgetGestures.StopFunc
+	cap["cancelFunc"] = WidgetGestures.CancelFunc
 	cap["tooltip"] = obj.tooltip
 	cap["maxGestures"] = obj.maxGestures
 	cap["showTrail"] = obj.showTrail
@@ -257,10 +263,43 @@ function cancelFunc(rec)
 	self:Start()
 end
 
+function WidgetGestures.StartFunc(rec, ...)
+	local self = rec.widgetdata
+	if self and type(self.startFunc) == "function" then
+		self.startFunc(rec, ...)
+	end
+end
 
+function WidgetGestures.UpdateFunc(rec, ...)
+	local self = rec.widgetdata
+	if self and type(self.updateFunc) == "function" then
+		self.updateFunc(rec, ...)
+	end
+end
+
+function WidgetGestures.StopFunc(rec, ...)
+	local self = rec.widgetdata
+	if self and type(self.stopFunc) == "function" then
+		self.stopFunc(rec, ...)
+	end
+end
+
+function WidgetGestures.NextFunc(rec, ...)
+	local self = rec.widgetdata
+	if self and type(self.nextFunc) == "function" then
+		self.nextFunc(rec, ...)
+	end
+end
+
+function WidgetGestures.CancelFunc(rec, ...)
+	if type(self.cancelFunc) == "function" then
+		self.cancelFunc(rec, ...)
+	end
+end
 --- Update widget
 -- @usage :Update()
 -- @return Nothing
+--[[
 function WidgetGestures:Update()
 	if #self.gestures == 0 or not self.active then return end
 
@@ -273,6 +312,7 @@ function WidgetGestures:Update()
 	
 	self:Stop()
 end
+]]
 
 --- Get an Ace3 option table. Plug this into a group type's args.
 -- @param db The database table
@@ -471,9 +511,10 @@ function WidgetGestures:GetOptions(db, callback, data)
 			width = "full",
 			multiline = true,
 			get = function()
-			
+				return db.startFunc			
 			end,
 			set = function(info, v)
+				if v == "" then v = nil end
 				db.startFunc = v
 				db.startFuncDirty = true
 				if type(callback) == "function" then
@@ -492,6 +533,7 @@ function WidgetGestures:GetOptions(db, callback, data)
 				return db.updateFunc or defaults.updateFunc
 			end,
 			set = function(info, v)
+				if v == "" then v = nil end
 				db.updateFunc = v
 				db.updateFuncDirty = true
 				if type(callback) == "function" then
@@ -510,6 +552,7 @@ function WidgetGestures:GetOptions(db, callback, data)
 				return db.stopFunc or defaults.stopFunc
 			end,
 			set = function(info, v)
+				if v == "" then v = nil end
 				db.stopFunc = v
 				db.stopFuncDirty = true
 				if type(callback) == "function" then
@@ -529,6 +572,7 @@ function WidgetGestures:GetOptions(db, callback, data)
 				return db.nextFunc
 			end,
 			set = function(info, v)
+				if v == "" then v = nil end
 				db.nextFunc = v
 				db.nextFuncDirty = true
 				if type(callback) == "function" then
@@ -547,6 +591,7 @@ function WidgetGestures:GetOptions(db, callback, data)
 				return db.cancelFunc or defaults.cancelFunc
 			end,
 			set = function(info, v)
+				if v == "" then v = nil end
 				db.cancelFunc = v
 				db.cancelFuncDirty = true
 				if type(callback) == "function" then
