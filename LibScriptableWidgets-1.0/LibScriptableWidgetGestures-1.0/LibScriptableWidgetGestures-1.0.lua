@@ -45,7 +45,6 @@ local defaults = {
 	tooltip = "",
 	maxGestures = 4,
 	minGestures = 1,
-	showTrail = true,
 	minLength = 600
 }
 
@@ -159,13 +158,31 @@ function WidgetGestures:New(visitor, name, config, errorLevel)
 	obj.tooltip = config.tooltip
 	obj.maxGestures = config.maxGestures or defaults.maxGestures
 	obj.minGestures = config.minGestures or defaults.minGestures
-	obj.showTrail = config.showTrail
+	obj.showTrail = config.showTrail or true
 
 	obj.drawLayer = _G[config.drawLayer or defaults.drawLayer]
 	obj.gist = {}
 
 	obj:NewCapture()
 	
+	local capture = obj.drawLayer:GetScript("OnEnter") or function() return noop end
+	local release = obj.drawLayer:GetScript("OnLeave") or function() return noop end
+
+	local function CaptureFrame() 
+		capture()
+		obj:Start()
+	end
+
+	local function ReleaseFrame()
+		release()
+		obj:Stop()
+	end
+
+	if obj.startButton ~= "FreeHand" then
+		obj.drawLayer:SetScript("OnEnter", CaptureFrame)
+		obj.drawLayer:SetScript("OnLeave", ReleaseFrame)
+	end
+
 	return obj	
 end
 
