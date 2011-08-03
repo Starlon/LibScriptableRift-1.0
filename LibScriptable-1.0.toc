@@ -17,7 +17,6 @@ Libs\AceSerializer-3.0\AceSerializer-3.0.lua
 Libs\LibMouseGestures-1.0\LibMouseGestures-1.0.lua
 Libs\LibUnitControl-1.0\LibUnitControl-1.0.lua
 Libs\LibNameplate-1.0\LibNameplate-1.0.lua
-Libs\LibTransition-1.0\LibTransition-1.0.lua
 Libs\LibAlts-1.0\LibAlts-1.0.lua
 Libs\AceComm-3.0\AceComm-3.0.xml
 Libs\LibLinq-1.0\lib.xml

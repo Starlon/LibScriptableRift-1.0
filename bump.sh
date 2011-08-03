@@ -2,13 +2,15 @@
 
 v1=22
 v2=$v1+1
+echo $v2
+
 
 for file in ./*/*/*.lua 
 do
-	sed "s/MINOR = $v1/MINOR = $v2/" -i $file
+	#sed "s/MINOR = $v1/MINOR = $v2/" -i $file
 done
 
 for file in ./LibScriptableLocale-1.0/*.lua
 do
-	sed "s/MINOR = $v1/MINOR = $v2/" -i $file
+	#sed "s/MINOR = $v1/MINOR = $v2/" -i $file
 done

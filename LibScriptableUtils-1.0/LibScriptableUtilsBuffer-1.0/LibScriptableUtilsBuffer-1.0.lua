@@ -430,6 +430,7 @@ end
 -- @param y1 Second Y position
 -- @param color The line will be filled with this value
 -- @param pitch The buffer's width.
+--[[
 function LibBuffer:Line(x0, y0, x1, y1, color, pitch)
 	local dx = x1 - x0;
 	local dy = y1 - y0;
@@ -526,6 +527,7 @@ function LibBuffer:Line3(x0, y0, x1, y1, color, pitch)
 		end
 	end
 end
+]]
 
 function LibBuffer:Line4(x0, y0, x1, y1, color, pitch)
 	local dx = x1 - x0;
@@ -579,33 +581,34 @@ function LibBuffer:Line5(x0, y0, x1, y1, color, pitch)
 
         if (dy < 0) then dy = -dy;  stepy = -pitch; else stepy = pitch; end
         if (dx < 0) then dx = -dx;  stepx = -1; else stepx = 1; end
-		lshift(dy, 1)
-		lshift(dx, 1)
 
-		y0 = y0 * pitch
-		y1 = y1 * pitch
-		self.buffer[x0+y0] = color
+	lshift(dy, 1)
+	lshift(dx, 1)
+
+	y0 = y0 * pitch
+	y1 = y1 * pitch
+	self.buffer[x0+y0] = color
         if (dx > dy) then
-			local fraction = dy - rshift(dx, 1)
-            while (x0 ~= x1) do
-                if (fraction >= 0) then
-					y0 = y0 + stepy
-					fraction = fraction - dx
-                end
+		local fraction = dy - rshift(dx, 1)
+		while (x0 ~= x1) do
+			if (fraction >= 0) then
+				y0 = y0 + stepy
+				fraction = fraction - dx
+	                end
 				x0 = x0 + stepx
 				fraction = fraction + dy
 				self.buffer[x0+y0] = color
-            end
-        else
-			local fraction = dx - rshift(dy, 1)
-			while (y0 ~= y1) do
-				if (fraction >= 0) then
-					x0 = x0 + stepx
-					fraction = fraction - dy
-				end
-				y0 = y0 + stepy
-				fraction = fraction + dx
-				self.buffer[x0+y0] = color
-			end
 		end
+	else
+		local fraction = dx - rshift(dy, 1)
+		while (y0 ~= y1) do
+			if (fraction >= 0) then
+				x0 = x0 + stepx
+				fraction = fraction - dy
+			end
+			y0 = y0 + stepy
+			fraction = fraction + dx
+			self.buffer[x0+y0] = color
+		end
+	end
 end
