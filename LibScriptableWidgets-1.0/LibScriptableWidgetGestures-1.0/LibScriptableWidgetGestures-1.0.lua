@@ -170,7 +170,7 @@ function WidgetGestures:New(visitor, name, config, errorLevel)
 	obj.rec.widgetData = obj
 	obj.rec.creator = obj.name
 	obj.rec.cdoodle = {creator=obj.name}
-	obj.rec.color = 0xff00ffff
+	obj.rec.color = 0xffff0fff
 	
 	local capture = obj.drawLayer:GetScript("OnEnter") or function() return noop end
 	local release = obj.drawLayer:GetScript("OnLeave") or function() return noop end
@@ -230,11 +230,9 @@ local function DrawPoint(rec, pointa, pointb, col)
 end
 
 function WidgetGestures:Draw()
-	local col = 0xff00ffff
 	local rec = self.rec
 	for n = 1, #rec.cdoodle do
-		DrawPoint(rec, rec.cdoodle[n], rec.cdoodle[n-1], col)
-	print("draaaaaaaaaaaaawn", #rec.cdoodle)
+		DrawPoint(rec, rec.cdoodle[n], rec.cdoodle[n-1], rec.color)
 	end
 end
 
