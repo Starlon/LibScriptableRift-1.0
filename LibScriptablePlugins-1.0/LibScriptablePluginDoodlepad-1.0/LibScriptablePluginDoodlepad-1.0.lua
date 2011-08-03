@@ -20,6 +20,8 @@ local Locale = LibStub("LibScriptableLocale-1.0", true)
 assert(Locale, MAJOR .. " requires LibScriptableLocale-1.0")
 local L = Locale.L
 
+PluginColor:New(PluginColor)
+
 local _G = _G
 local ScriptEnv = {}
 
@@ -31,23 +33,20 @@ end
 -- @usage :New(environment) 
 -- @parma environment This will be the environment when setfenv is called.
 -- @return A new plugin object, aka the environment, and the plugin object as second return value
-function PluginDoodlepad:New(environment, config)
-	if not Doodlepad then return end
-
+function PluginDoodlepad:New(environment)
 	
+	environment = environment or {}
+
 	for k, v in pairs(ScriptEnv) do
 		environment[k] = v
 	end
 
-	local obj = setmetatable({}, {__index=PluginDoodlepad})
-
-
-
 	
-	return environment, obj
+	return environment
 end
 
 
+local dw, dh = 1000, 1000
 --- Borrowed from Doodlepad, with permission from Humbedooh. All rights reserved.
 -- Draw a line on a surface. Provide frame, a line texture, coordinates, width/height, and color.
 local function Doodle_DrawLine(drawLayer, T, sx, sy, ex, ey, width, height, color)
@@ -69,22 +68,23 @@ local function Doodle_DrawLine(drawLayer, T, sx, sy, ex, ey, width, height, colo
     local sc = s * c;
     local Bwid, Bhgt, BLx, BLy, TLx, TLy, TRx, TRy, BRx, BRy;
     if (dy >= 0) then
-        Bwid = ((l * c) - (w * s)) * Z;
-        Bhgt = ((w * c) - (l * s)) * Z;
-        BLx, BLy, BRy = (w / l) * sc, s * s, (l / w) * sc;
+        Bwid = ((l * c) - (width * s)) * Z;
+        Bhgt = ((width * c) - (l * s)) * Z;
+        BLx, BLy, BRy = (width / l) * sc, s * s, (l / width) * sc;
         BRx, TLx, TLy, TRx = 1 - BLy, BLy, 1 - BRy, 1 - BLx;
         TRy = BRx;
     else
-        Bwid = ((l * c) + (w * s)) * Z;
-        Bhgt = ((w * c) + (l * s)) * Z;
-        BLx, BLy, BRx = s * s, -(l / w) * sc, 1 + (w / l) * sc;
+        Bwid = ((l * c) + (width * s)) * Z;
+        Bhgt = ((width * c) + (l * s)) * Z;
+        BLx, BLy, BRx = s * s, -(l / width) * sc, 1 + (width / l) * sc;
         BRy, TLx, TLy, TRy = BLx, 1 - BRx, 1 - BLx, 1 - BLy;
         TRx = TLy;
     end
     T:SetDrawLayer("BORDER", 0)
 	T:ClearAllPoints();
 	if not (Bwid-1<Bwid) or not (Bhgt-1<Bhgt) then return; end -- discard bad data (IND or INF)
-    T:SetVertexColor(color[1],color[2],color[3],color[4]);
+    local r, g, b, a = PluginColor.Color2RGBA(color, true)
+    T:SetVertexColor(r, g, b, a);
     T:SetTexCoord(TLx, TLy, BLx, BLy, TRx, TRy, BRx, BRy);
     T:SetPoint("TOPLEFT",   C, "TOPLEFT", cx - Bwid, cy + Bhgt);
     T:SetSize(Bwid*2,Bhgt*2);

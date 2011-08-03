@@ -18,7 +18,7 @@ local WidgetIcon = LibStub("LibScriptableWidgetIcon-1.0", true)
 assert(WidgetIcon, MAJOR .. " requires LibScriptableWidgetIcon-1.0")
 local WidgetHistogram = LibStub("LibScriptableWidgetHistogram-1.0", true)
 assert(WidgetHistogram, MAJOR .. " requires LibScriptableWidgetHistogram-1.0")
-local WidgetBignums = LibStub("LibScriptableWidgetBignums-1.0", true)
+--local WidgetBignums = LibStub("LibScriptableWidgetBignums-1.0", true)
 --assert(WidgetBignums, MAJOR .. " requires LibScriptableWidgetBignums-1.0")
 local WidgetKey = LibStub("LibScriptableWidgetKey-1.0", true)
 assert(WidgetKey, MAJOR .. " requires LibScriptableWidgetKey-1.0")
@@ -87,6 +87,8 @@ local PluginSkada = LibStub("LibScriptablePluginSkada-1.0", true)
 assert(PluginSkada, MAJOR .. " requires LibScriptablePluginSkada-1.0")
 local PluginRecount = LibStub("LibScriptablePluginRecount-1.0", true)
 assert(PluginRecount, MAJOR .. " requires LibScriptablePluginRecount-1.0")
+local PluginDoodlepad = LibStub("LibScriptablePluginDoodlepad-1.0")
+assert(PluginDoodlepad, MAJOR .. " requires LibScriptablePluginDoodlepad-1.0")
 
 local pool = setmetatable({}, {__mode = "k"})
 local objects = {}
@@ -170,6 +172,7 @@ function LibCore:New(environment, name, errorLevel)
 	PluginNoise:New(environment)
 	PluginSkada:New(environment)	
 	PluginRecount:New(environment)
+	PluginDoodlepad:New(environment)
 	
 	environment._G = _G
 	environment.environment = environment
@@ -185,6 +188,8 @@ function LibCore:New(environment, name, errorLevel)
 	environment.WidgetScript = WidgetScript
 	environment.WidgetGestures = WidgetGestures
 	environment.WidgetImage = WidgetImage
+
+	environment.LibTimer = LibTimer
 				
 	return obj	
 	

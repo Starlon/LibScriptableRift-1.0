@@ -38,6 +38,7 @@ function PluginLua:New(environment)
 	environment.random = _G.random
 	environment.coroutine = _G.coroutine
 	environment.GetTime = _G.GetTime
+	environment.print = _G.print
 	
 	return environment
 end

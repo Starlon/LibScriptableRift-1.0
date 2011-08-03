@@ -13,10 +13,12 @@ assert(PluginUtils, MAJOR .. " requires LibScriptablePluginUtils-1.0")
 local LibMouseGestures = LibStub("LibMouseGestures-1.0", true)
 assert(LibMouseGestures, MAJOR .. " requires LibMouseGestures-1.0")
 local PluginDoodle = LibStub("LibScriptablePluginDoodlepad-1.0")
+assert(PluginDoodle, MAJOR .. " requires LibScriptablePluginDoodlepad-1.0")
 local Locale = LibStub("LibScriptableLocale-1.0", true)
 assert(Locale, MAJOR .. " requires LibScriptableLocale-1.0")
 local L = Locale.L
 
+PluginDoodle = PluginDoodle:New()
 
 if not WidgetGestures.__index then WidgetGestures.__index = WidgetGestures end
 
@@ -215,12 +217,15 @@ end
 local function DrawPoint(rec, pointa, pointb, col)
 	if pointb then
 		if not pointa[3] then
-			local T = tremove(rec.free) or rec.drawLayer:CreateTexture()
+			local T = rec.drawLayer:CreateTexture()
 			T:SetTexture([[Interface\AddOns\Doodlepad\line]])
 			pointa[3] = T
+			rec.texs = rec.texs or {}
 			table.insert(rec.texs, T)
 		end
-		PluginDoodle.DrawLine(rec.drawLayer, pointa[3], pointb[1], pointb[2], pointa[1], pointa[2], rec.width, rec.height, col)
+		rec.w = rec.w or rec.widgetData.drawLayer:GetWidth()
+		rec.h = rec.h or rec.widgetData.drawLayer:GetHeight()
+		PluginDoodle.DrawLine(rec.drawLayer, pointa[3], pointb[1], pointb[2], pointa[1], pointa[2], rec.w, rec.h, col)
 	end
 end
 
@@ -229,8 +234,8 @@ function WidgetGestures:Draw()
 	local rec = self.rec
 	for n = 1, #rec.cdoodle do
 		DrawPoint(rec, rec.cdoodle[n], rec.cdoodle[n-1], col)
+	print("draaaaaaaaaaaaawn", #rec.cdoodle)
 	end
-	print("draaaaaaaaaaaaawn")
 end
 
 --- Delete a LibScriptableWidgetGestures object
