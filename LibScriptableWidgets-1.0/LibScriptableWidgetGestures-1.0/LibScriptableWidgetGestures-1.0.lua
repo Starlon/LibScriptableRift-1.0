@@ -162,8 +162,16 @@ function WidgetGestures:New(visitor, name, config, errorLevel)
 
 	obj.drawLayer = _G[config.drawLayer or defaults.drawLayer]
 	obj.gist = {}
+	self.gestures = self.gestures
 
 	obj:NewCapture()
+
+	obj.rec = newRec(obj.drawLayer)
+	obj.rec.widgetData = obj
+	obj.rec.doodle = {}
+	obj.rec.creator = obj.name
+	obj.rec.cdoodle = {creator=obj.name}
+	obj.rec.color = 0xff00ffff
 	
 	local capture = obj.drawLayer:GetScript("OnEnter") or function() return noop end
 	local release = obj.drawLayer:GetScript("OnLeave") or function() return noop end
@@ -182,6 +190,7 @@ function WidgetGestures:New(visitor, name, config, errorLevel)
 		obj.drawLayer:SetScript("OnEnter", CaptureFrame)
 		obj.drawLayer:SetScript("OnLeave", ReleaseFrame)
 	end
+
 
 	return obj	
 end
@@ -206,6 +215,27 @@ function WidgetGestures:NewCapture()
 	return cap
 end
 
+local function DrawPoint(rec, pointa, pointb, col)
+	if pointb then
+		if not pointa[3] then
+			local T = tremove(rec.free) or rec.drawLayer:CreateTexture()
+			T:SetTexture([[Interface\AddOns\Doodlepad\line]])
+			pointa[3] = T
+			tinsert(rec.texs, T)
+		end
+		PluginDoodle.DrawLine(rec.drawLayer, pointa[3], pointb[1], pointb[2], pointa[1], pointa[2], col)
+	end
+end
+
+function WidgetGestures:Draw()
+	local col = 0xff00ffff
+	local rec = self.rec
+	for n = 1, #rec.cdoodle do
+		DrawPoint(rec, rec.cdoodle[n], rec.cdoodle[n-1], col)
+	end
+	print("draaaaaaaaaaaaawn")
+end
+
 --- Delete a LibScriptableWidgetGestures object
 -- @usage :Del()
 -- @return Nothing
@@ -220,12 +250,7 @@ end
 -- @usage object:Start()
 -- @return Nothing
 function WidgetGestures:Start()
-	self.gestures = self.gestures or {}
-	if self.rec then delRec(self.rec) end
-	local rec = newRec(self.drawLayer)
-	rec.widgetdata = self
-	self.rec = rec
-	rec:StartCapture(self:NewCapture())
+	self.rec:StartCapture(self:NewCapture())
 end
 
 --- Stop a LibScriptableWidgetGestures
@@ -450,6 +475,23 @@ function WidgetGestures:GetOptions(db, callback, data)
 				end
 			end,
 			order = 14
+		},
+		minGestures = {
+			name = L["Minimum Gestures"],
+			desc = L["Minimum gestures before processing a full gesture."],
+			type = "input",
+			pattern = "%d",
+			get = function()
+				return db.minGestures or defaults.minGestures
+			end,
+			set = function(info, v)
+				db.minGestures = v
+				db.minGesturesDirty = true
+				if type(callback) == "function" then
+					callback(data)
+				end
+			end,
+			order = 15
 		},
 --[[
 		repeating = {
