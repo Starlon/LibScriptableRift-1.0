@@ -12,6 +12,7 @@ local PluginUtils = LibStub("LibScriptablePluginUtils-1.0", true)
 assert(PluginUtils, MAJOR .. " requires LibScriptablePluginUtils-1.0")
 local LibMouseGestures = LibStub("LibMouseGestures-1.0", true)
 assert(LibMouseGestures, MAJOR .. " requires LibMouseGestures-1.0")
+local PluginDoodle = LibStub("LibScriptablePluginDoodlepad-1.0")
 local Locale = LibStub("LibScriptableLocale-1.0", true)
 assert(Locale, MAJOR .. " requires LibScriptableLocale-1.0")
 local L = Locale.L
@@ -39,9 +40,6 @@ local defaults = {
 	stopButton = "LeftButtonUp",
 	nextButton = "",
 	cancelButton = "",
-	startFunc = "",
-	stopFunc = "",
-	cancelFunc = "",
 	tooltip = "",
 	maxGestures = 4,
 	minGestures = 1,
@@ -87,7 +85,7 @@ end
 
 local function del(obj)
 	wipe(obj)
-	tinsert(pool, obj)
+	table.insert(pool, obj)
 end
 
 local cache = {}
@@ -98,7 +96,7 @@ end
 
 local function delRec(rec)
 	if not rec then return end
-	tinsert(cache, rec)
+	table.insert(cache, rec)
 end
 
 local pool = setmetatable({}, {__mode = "k"})
@@ -158,7 +156,7 @@ function WidgetGestures:New(visitor, name, config, errorLevel)
 	obj.tooltip = config.tooltip
 	obj.maxGestures = config.maxGestures or defaults.maxGestures
 	obj.minGestures = config.minGestures or defaults.minGestures
-	obj.showTrail = config.showTrail or true
+	obj.showTrail = config.showTrail
 
 	obj.drawLayer = _G[config.drawLayer or defaults.drawLayer]
 	obj.gist = {}
@@ -168,7 +166,6 @@ function WidgetGestures:New(visitor, name, config, errorLevel)
 
 	obj.rec = newRec(obj.drawLayer)
 	obj.rec.widgetData = obj
-	obj.rec.doodle = {}
 	obj.rec.creator = obj.name
 	obj.rec.cdoodle = {creator=obj.name}
 	obj.rec.color = 0xff00ffff
@@ -186,7 +183,7 @@ function WidgetGestures:New(visitor, name, config, errorLevel)
 		obj:Stop()
 	end
 
-	if obj.startButton ~= "FreeHand" then
+	if obj.drawLayer ~= UIParent then
 		obj.drawLayer:SetScript("OnEnter", CaptureFrame)
 		obj.drawLayer:SetScript("OnLeave", ReleaseFrame)
 	end
@@ -221,9 +218,9 @@ local function DrawPoint(rec, pointa, pointb, col)
 			local T = tremove(rec.free) or rec.drawLayer:CreateTexture()
 			T:SetTexture([[Interface\AddOns\Doodlepad\line]])
 			pointa[3] = T
-			tinsert(rec.texs, T)
+			table.insert(rec.texs, T)
 		end
-		PluginDoodle.DrawLine(rec.drawLayer, pointa[3], pointb[1], pointb[2], pointa[1], pointa[2], col)
+		PluginDoodle.DrawLine(rec.drawLayer, pointa[3], pointb[1], pointb[2], pointa[1], pointa[2], rec.width, rec.height, col)
 	end
 end
 
@@ -264,7 +261,7 @@ end
 
 function stopFunc(rec)
 
-	local self = rec.widgetdata
+	local self = rec.widgetData
 	local g = rec:GetGist(self.gist);
 			
 	if #g < self.minGestures or #self.gestures < self.minGestures then self:Start() return end
@@ -301,39 +298,40 @@ function stopFunc(rec)
 end
 
 function cancelFunc(rec)
-	local self = rec.widgetdata
+	local self = rec.widgetData
 	self:Start()
 end
 
 function WidgetGestures.StartFunc(rec, ...)
-	local self = rec.widgetdata
+	local self = rec.widgetData
 	if self and type(self.startFunc) == "function" then
 		self.startFunc(rec, ...)
 	end
 end
 
 function WidgetGestures.UpdateFunc(rec, ...)
-	local self = rec.widgetdata
+	local self = rec.widgetData
 	if self and type(self.updateFunc) == "function" then
 		self.updateFunc(rec, ...)
 	end
 end
 
 function WidgetGestures.StopFunc(rec, ...)
-	local self = rec.widgetdata
+	local self = rec.widgetData
 	if self and type(self.stopFunc) == "function" then
 		self.stopFunc(rec, ...)
 	end
 end
 
 function WidgetGestures.NextFunc(rec, ...)
-	local self = rec.widgetdata
+	local self = rec.widgetData
 	if self and type(self.nextFunc) == "function" then
 		self.nextFunc(rec, ...)
 	end
 end
 
 function WidgetGestures.CancelFunc(rec, ...)
+	local self = rec.widgetData
 	if type(self.cancelFunc) == "function" then
 		self.cancelFunc(rec, ...)
 	end
@@ -347,7 +345,7 @@ function WidgetGestures:Update()
 
 	if self.rec then delRec(self.rec) end
 	local rec = newRec(self.drawLayer)
-	rec.widgetdata = self
+	rec.widgetData = self
 	self.rec = rec
 	
 	rec:StartCapture(self.capture)
@@ -691,7 +689,7 @@ function WidgetGestures:GetOptions(db, callback, data)
 						pattern = defaults.pattern
 					}
 					db.gestures = db.gestures or {}
-					tinsert(db.gestures, gesture)
+					table.insert(db.gestures, gesture)
 					if type(callback) == "function" then
 						callback(data)
 					end
