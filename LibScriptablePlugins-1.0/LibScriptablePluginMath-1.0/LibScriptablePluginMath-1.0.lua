@@ -1,5 +1,5 @@
 local MAJOR = "LibScriptablePluginMath-1.0" 
-local MINOR = 22+1
+local MINOR = 19
 
 local PluginMath = LibStub:NewLibrary(MAJOR, MINOR)
 if not PluginMath then return end
@@ -46,7 +46,10 @@ function PluginMath:New(environment)
 	environment.tan = _G.tan
 	environment.pow = _G.math.pow
 	environment.rand = _G.random
-	
+	environment.PI = 3.14159265358979323846
+	environment.E = 2.71828
+	environment.PHI = 1.61033
+
 	return environment
 end
 

@@ -51,6 +51,16 @@ local defaults = {
 WidgetGestures.defaults = defaults
 
 
+function LibMouseGestures:Stop()
+	self.drawLayer:SetScript("OnMouseDown", nil)
+	self.drawLayer:SetScript("OnMouseUp", nil)
+	self.drawLayer:SetScript("OnUpdate", nil)
+	self.drawLayer:EnableMouse()
+	self.drawLayer:ClearAllPoints()
+	self.drawLayer:SetParent(nil)
+	self.drawLayer:Hide()
+end
+
 local newCapture
 local widgetType = {gesture=true}
 
@@ -172,6 +182,7 @@ function WidgetGestures:New(visitor, name, config, errorLevel)
 	obj.rec.cdoodle = {creator=obj.name}
 	obj.rec.color = 0xffff0fff
 	
+--[[
 	local capture = obj.drawLayer:GetScript("OnEnter") or function() return noop end
 	local release = obj.drawLayer:GetScript("OnLeave") or function() return noop end
 
@@ -188,9 +199,11 @@ function WidgetGestures:New(visitor, name, config, errorLevel)
 	if obj.drawLayer ~= UIParent then
 		obj.drawLayer:SetScript("OnEnter", CaptureFrame)
 		obj.drawLayer:SetScript("OnLeave", ReleaseFrame)
+	else
+		obj:Start()
 	end
 
-
+]]
 	return obj	
 end
 
@@ -243,6 +256,7 @@ function WidgetGestures:Del()
 	self:Stop()
 	self.widget:Del()
 	self.error:Del()
+	delRec(self.rec)
 	pool[self] = true
 end
 
@@ -250,6 +264,7 @@ end
 -- @usage object:Start()
 -- @return Nothing
 function WidgetGestures:Start()
+	self.rec = LibMouseGestures:New(self.drawLayer, self.rec)
 	self.rec:StartCapture(self:NewCapture())
 end
 
@@ -258,7 +273,7 @@ end
 -- @return Nothing
 function WidgetGestures:Stop()
 	if type(self.rec) == "table" then
-		self.rec.isRecording = false
+		self.rec:Stop()
 	end
 end
 
@@ -331,6 +346,7 @@ function WidgetGestures.NextFunc(rec, ...)
 	if self and type(self.nextFunc) == "function" then
 		self.nextFunc(rec, ...)
 	end
+print("next")
 end
 
 function WidgetGestures.CancelFunc(rec, ...)
