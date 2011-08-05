@@ -159,6 +159,7 @@ function WidgetText:New(visitor, name, config, row, col, layer, errorLevel, call
 	setmetatable(obj, self)
 
 	obj.widget = LibWidget:New(obj, visitor, name, config, row, col, layer, widgetType, errorLevel)
+	WidgetPlugin:New(visitor.environment)
 
 	obj.error = LibError:New(MAJOR .. " : " .. name, errorLevel)
 

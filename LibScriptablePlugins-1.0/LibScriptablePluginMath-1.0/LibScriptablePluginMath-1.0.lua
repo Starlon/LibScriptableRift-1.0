@@ -4,7 +4,7 @@ local MINOR = 19
 local PluginMath = LibStub:NewLibrary(MAJOR, MINOR)
 if not PluginMath then return end
 
-local _G = _G
+local math = _G.math
 
 if not PluginMath.__index then
 	PluginMath.__index = PluginMath
@@ -22,30 +22,30 @@ function PluginMath:New(environment)
 		environment[k] = v
 	end
 	
-	environment.abs = _G.abs
-	environment.acos = _G.acos
-	environment.asin = _G.asin
-	environment.atan = _G.atan
-	environment.atan2 = _G.atan2
-	environment.ceil = _G.ceil
-	environment.cos = _G.cos
-	environment.deg = _G.deg
-	environment.exp = _G.exp
-	environment.floor = _G.floor
-	environment.frexp = _G.frexp
-	environment.ldexp = _G.ldexp
-	environment.log = _G.log
-	environment.log10 = _G.log10
-	environment.max = _G.max
-	environment.min = _G.min
-	environment.mod = _G.mod
-	environment.rad = _G.rad
-	environment.random = _G.random
-	environment.sin = _G.sin
-	environment.sqrt = _G.sqrt
-	environment.tan = _G.tan
-	environment.pow = _G.math.pow
-	environment.rand = _G.random
+	environment.abs = math.abs
+	environment.acos = math.acos
+	environment.asin = math.asin
+	environment.atan = math.atan
+	environment.atan2 = math.atan2
+	environment.ceil = math.ceil
+	environment.cos = math.cos
+	environment.deg = math.deg
+	environment.exp = math.exp
+	environment.floor = math.floor
+	environment.frexp = math.frexp
+	environment.ldexp = math.ldexp
+	environment.log = math.log
+	environment.log10 = math.log10
+	environment.max = math.max
+	environment.min = math.min
+	environment.mod = math.mod
+	environment.rad = math.rad
+	environment.random = math.random
+	environment.sin = math.sin
+	environment.sqrt = math.sqrt
+	environment.tan = math.tan
+	environment.pow = math.pow
+	environment.rand = math.random
 	environment.PI = 3.14159265358979323846
 	environment.E = 2.71828
 	environment.PHI = 1.61033
@@ -54,7 +54,7 @@ function PluginMath:New(environment)
 end
 
 local function isnonzero(x)
-	return abs(x) > 0.00001
+	return (abs(x) > 0.00001) and 1 or 0
 end
 ScriptEnv.isnonzero = isnonzero
 

@@ -177,7 +177,6 @@ function WidgetIcon:Start()
 	if(self.speed <= 0 or self.active) then
 		return;
 	end
-	self.error:Print("WidgetIcon:Start")
 	self.timer:Start();
 	self.enabled = true;
 	self.active = true
@@ -188,7 +187,6 @@ end
 -- @usage object:Stop()
 -- @return Nothing
 function WidgetIcon:Stop()
-	self.error:Print("WidgetIcon:Stop")
 	self.timer:Stop()
 	self.enabled = false
 	self.active = false
