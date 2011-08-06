@@ -75,7 +75,7 @@ function WidgetBar:New(visitor, name, config, row, col, layer, errorLevel, callb
 	
 	setmetatable(obj, self)
 	
-	obj.error = LibError:New(MAJOR, errorLevel)
+	obj.error = visitor.error --LibError:New(MAJOR, errorLevel)
 		
 	obj.errorLevel = errorLevel or 3
 

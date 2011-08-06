@@ -13,13 +13,13 @@ local LibError = LibStub("LibScriptableUtilsError-1.0", true)
 assert(LibError, MAJOR .. " requires LibScriptableUtilsError-1.0")
 local LibWidget = LibStub("LibScriptableWidget-1.0", true)
 assert(LibWidget, MAJOR .. " requires LibScriptableWidget-1.0")
+local Evaluator = LibStub("LibScriptableUtilsEvaluator-1.0")
+assert(Evaluator, MAJOR .. " requires LibScriptableUtilsEvaluator-1.0")
 local Utils = LibStub("LibScriptablePluginUtils-1.0", true)
 assert(Utils, MAJOR .. " requires LibScriptablePluginUtils-1.0")
 local Locale = LibStub("LibScriptableLocale-1.0", true)
 assert(Locale, MAJOR .. " requires LibScriptableLocale-1.0")
 local L = Locale.L
-
-local error = LibError:New(MAJOR .. ".static")
 
 local pool = setmetatable({}, {__mode = "k"})
 
@@ -74,7 +74,7 @@ function WidgetHistogram:New(visitor, name, config, row, col, layer, errorLevel,
 
 	setmetatable(obj, self)
 	
-	obj.error = LibError:New(MAJOR .. ": " .. name, errorLevel)
+	obj.error = visitor.error --LibError:New(MAJOR .. ": " .. name, errorLevel)
 		
 	obj.errorLevel = errorLevel
 
@@ -95,7 +95,8 @@ function WidgetHistogram:New(visitor, name, config, row, col, layer, errorLevel,
     obj.expression =  LibProperty:New(obj, visitor, name .. " expression", config.expression, "", config.unit, errorLevel)
     obj.expr_min = LibProperty:New(obj, visitor, name .. " min", config.min, "", errorLevel, config.unit);
     obj.expr_max = LibProperty:New(obj, visitor, name .. " max", config.max, "", errorLevel, config.unit);
-	obj.color = LibProperty:New(obj, visitor, name .. " color", config.color, "", errorLevel, config.unit);
+	--obj.color = LibProperty:New(obj, visitor, name .. " color", config.color, "", errorLevel, config.unit);
+	obj.color = config.color
 	obj.width = config.width or WidgetHistogram.defaults.width
 	obj.height = config.height or WidgetHistogram.defaults.height
 	obj.reversed = config.reversed
@@ -114,7 +115,7 @@ function WidgetHistogram:New(visitor, name, config, row, col, layer, errorLevel,
 	table.wipe(obj.history)
 	
 	for i = 1, obj.width do
-		tinsert(obj.history, {0, 1, 0, 0})
+		tinsert(obj.history, {1, 1, 1, 1})
 	end
 		
 	return obj	
@@ -131,7 +132,6 @@ function WidgetHistogram:Del()
 	hist.expression:Del()
 	hist.expr_min:Del()
 	hist.expr_max:Del()
-	hist.color:Del()
 end
 
 --- Resize the widget
@@ -234,15 +234,11 @@ function WidgetHistogram:Update()
 
 	assert(type(val) == "number", format("%s: expression is not a number (%s)", self.name, type(val)))
 	
-	self.color:Eval()
-	
-	local r, g, b, a
-	
-	if self.color.is_valid then
-		r, g, b, a = self.color.res1, self.color.res2, self.color.res3, self.color.res4
-	else
-		r, g, b, a = 1, 0, 0, 1
-	end
+	local r, g, b, a = Evaluator.ExecuteCode(self.environment, "WidgetHistogram.color", self.color)
+	r = r or 1
+	g = g or 1
+	b = b or 1
+	a = a or 1
 	
 	local max, min
     if( self.expr_min.is_valid ) then

@@ -463,6 +463,10 @@ local function PowerName(unit)
 end
 ScriptEnv.PowerName = PowerName
 
+local function PowerType(unit)
+	return select(2, UnitPowerType(unit))
+end
+ScriptEnv.PowerType = PowerType
 
 local function Name(unit, titled)
 	if unit ~= "player" and not UnitExists(unit) then
