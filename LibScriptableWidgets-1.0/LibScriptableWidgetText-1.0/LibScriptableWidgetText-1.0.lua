@@ -540,7 +540,12 @@ function textScroll(self)
 
 	if self.clearOverride then self.unitOverride = false; self.clearOverride = false end
 
-	self:Draw()
+	if self.buffer ~= self.oldBuffer then
+		self:Draw()
+	else
+		self.oldBuffer = self.buffer
+	end
+	
 
 	dst:Del()
 	src:Del()
