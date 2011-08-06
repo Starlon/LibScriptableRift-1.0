@@ -161,7 +161,7 @@ function WidgetText:New(visitor, name, config, row, col, layer, errorLevel, call
 	obj.widget = LibWidget:New(obj, visitor, name, config, row, col, layer, widgetType, errorLevel)
 	WidgetPlugin:New(visitor.environment)
 
-	obj.error = LibError:New(MAJOR .. " : " .. name, errorLevel)
+	obj.error = visitor.error --LibError:New(MAJOR .. " : " .. name, errorLevel)
 
 	obj.config = config
 	obj.callback = callback
