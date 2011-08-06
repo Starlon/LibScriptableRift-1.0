@@ -139,7 +139,7 @@ WidgetText.defaults = {
 -- @param col This widget's column
 -- @param layer This widget's layer
 -- @param errorLevel The self.errorLevel for this object
--- @param callback Your draw function. The widget is passed as first parameter and data is passed as 2nd.
+-- @param callback Your draw function. The widget is passed as first parameter.
 -- @return A new LibScriptableWidgetText object
 function WidgetText:New(visitor, name, config, row, col, layer, errorLevel, callback)
 	assert(name, "WidgetText requires a name.")
@@ -165,7 +165,6 @@ function WidgetText:New(visitor, name, config, row, col, layer, errorLevel, call
 
 	obj.config = config
 	obj.callback = callback
-	obj.data = data
 	obj.timer = timer
 
 	if not timer then
@@ -350,7 +349,7 @@ end
 -- @return Nothing
 function WidgetText:Draw()
 	if type(self.callback) == "function" then
-		self:callback(self.data)
+		self:callback()
 	end
 end
 

@@ -72,11 +72,11 @@ do
 			return runnable
 		end
 		
-		local ret1, ret2, ret3, ret4 = runnable()
+		local ret1, ret2, ret3, ret4, ret5 = runnable()
 								
 		if not ret1 then ret1 = defval end
 
-		return ret1, ret2, ret3, ret4
+		return ret1, ret2, ret3, ret4, ret5
 	end
 	
 	--- Retrieve a piece of code's runnable object
