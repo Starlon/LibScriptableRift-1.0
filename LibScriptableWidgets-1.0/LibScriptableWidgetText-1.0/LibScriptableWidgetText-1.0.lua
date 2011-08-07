@@ -84,17 +84,17 @@ end
 
 local safe = {}
 local function copy(src)
-    local dst = new()
+	local dst = new()
 	safe[src] = true
-    if type(src) == "table" then
-        for k, v in pairs(src) do
-            if type(v) == "table" then
+	if type(src) == "table" then
+		for k, v in pairs(src) do
+			if type(v) == "table" then
 				v = copy(v)
 			end
 			dst[k] = v
-        end
-    end
-    return dst
+		end
+	end
+	return dst
 end
 
 local kvargsPool = setmetatable({}, {__mode = "k"})
@@ -237,16 +237,16 @@ function WidgetText:Init(config)
 		obj.scroll = 0
 	end
 
-    -- /* Init pingpong scroller. start scrolling left (wrong way) to get a delay */
-    if (obj.align == self.ALIGN_PINGPONG) then
-        obj.direction = self.SCROLL_LEFT;
-        obj.delay = PINGPONGWAIT;
-    end
+	-- /* Init pingpong scroller. start scrolling left (wrong way) to get a delay */
+	if (obj.align == self.ALIGN_PINGPONG) then
+		obj.direction = self.SCROLL_LEFT;
+		obj.delay = PINGPONGWAIT;
+	end
 
 	assert(type(obj.update) == "number", "You must provide a text widget with a refresh rate: update")
 
-	obj.timer = obj.timer or LibTimer:New("WidgetText.timer " .. obj.widget.name, obj.update or WidgetText.defaults.update, obj.repeating or WidgetText.defaults.repeating, textUpdate, obj, obj.errorLevel)
-	obj.textTimer = obj.textTimer or LibTimer:New("WidgetText.textTimer " .. obj.widget.name, obj.speed or WidgetText.defaults.speed, true, textScroll, obj, obj.errorLevel)
+	obj.timer = obj.timer or LibTimer:New("WidgetText.timer " .. obj.widget.name, obj.update, obj.repeating, textUpdate, obj, obj.errorLevel)
+	obj.textTimer = obj.textTimer or LibTimer:New("WidgetText.textTimer " .. obj.widget.name, obj.speed, true, textScroll, obj, obj.errorLevel)
 	
 end
 
@@ -308,15 +308,14 @@ WidgetText.IntersectUpdate = LibWidget.IntersectUpdate
 -- @usage :Start()
 -- @return Nothing
 function WidgetText:Start()
-	if self.active then return end
-	self:Update()
+	self.unit = self.unitOverride or self.visitor.environment.unit
 	if self.update > 0 then
 		self.timer:Start(self.update)
 	end
 	if self.speed > 0 then
 		self.textTimer:Start(self.speed)
 	end
-	self.active = true
+	self:Update()
 end
 
 --- Stop a LibScriptableWidgetText object
@@ -330,7 +329,6 @@ function WidgetText:Stop()
 		self.textTimer:Stop()
 	end
 	self.oldBuffer = false
-	self.active = false
 end
 
 --- Update data. This will be called by this widget's timer, or else call it yourself.
@@ -338,7 +336,7 @@ end
 -- @return Nothing
 function WidgetText:Update()
 	textUpdate(self)
-	if self.speed > 0 then
+	if (self.align == self.ALIGN_MARQUEE or self.align == self.ALIGN_AUTOMATIC or self.align == self.ALIGN_PINGPONG) then
 		textScroll(self)
 	end
 end
@@ -389,8 +387,8 @@ function textScroll(self)
 	src:Resize(0)
 	dst:Resize(self.cols)
 
-    if width < 0 then
-        width = 0
+	if width < 0 then
+		width = 0
 	end
 
 	if self.align == self.ALIGN_LEFT then
@@ -445,14 +443,14 @@ function textScroll(self)
 		self.error:Print("No alignment specified")
 	end
 	
-    dstPtr = 0;
-    local num = 0;
+	dstPtr = 0;
+	local num = 0;
 
-    -- /* process prefix */
-    src:FromString(pre)
-    while (num < self.cols) do
-        if (srcPtr >= src:Size()) then
-            break
+	-- /* process prefix */
+	src:FromString(pre)
+	while (num < self.cols) do
+		if (srcPtr >= src:Size()) then
+			break
 		end
 		if dstPtr >= self.cols then
 			break
@@ -460,16 +458,16 @@ function textScroll(self)
 		dst:Replace(dstPtr, src.buffer[srcPtr]) --PluginUtils:replaceText(dst, dstPtr, src, srcPtr)
 		dstPtr = dstPtr + 1
 		srcPtr = srcPtr + 1
-        num = num + 1
-    end
+		num = num + 1
+	end
 
-    src:FromString(str)
-    srcPtr = 0;
+	src:FromString(str)
+	srcPtr = 0;
 
 	local offset = pad
 
-    if(offset < 0) then
-        offset = 0;
+	if(offset < 0) then
+		offset = 0;
 	end
 
 	-- pad beginning
@@ -480,50 +478,50 @@ function textScroll(self)
 		pad = pad - 1
 	end
 
-    --/* copy content */
-    while (num < self.cols) do
+	--/* copy content */
+	while (num < self.cols) do
 		if dstPtr >= self.cols then
 			break
 		end
-        if (srcPtr >= src:Size()) then
-            break;
+		if (srcPtr >= src:Size()) then
+			break;
 		end
 		local offset = pad
 		if offset < 0 then offset = 0 end
 		dst:Replace(dstPtr, src.buffer[srcPtr])
 		dstPtr = dstPtr + 1
 		srcPtr = srcPtr + 1
-        num = num + 1
-    end
+		num = num + 1
+	end
 
-    len = src:Size()
+	len = src:Size()
 
 	-- pad end
-    while (num < self.cols - len) do
+	while (num < self.cols - len) do
 		if dstPtr >= self.cols then
 			break
 		end
 		dst:Replace(dstPtr, " ")
 		dstPtr = dstPtr + 1
-        num = num + 1;
-    end
+		num = num + 1;
+	end
 
-    srcPtr = 0;
-    src:FromString(post)
+	srcPtr = 0;
+	src:FromString(post)
 
-    --/* process postfix */
-    while (num < self.cols) do
+	--/* process postfix */
+	while (num < self.cols) do
 		if dstPtr >= self.cols then
 			break
 		end
-        if (srcPtr >= src:Size()) then
-            break;
+		if (srcPtr >= src:Size()) then
+			break;
 		end
 		dst:Replace(dstPtr, src.buffer[srcPtr])
 		dstPtr = dstPtr + 1
 		srcPtr = srcPtr + 1
-        num = num + 1
-    end
+		num = num + 1
+	end
 
 	if self.dontRtrim then
 		self.buffer = dst:AsString()
@@ -554,9 +552,9 @@ end
 
 function textUpdate(self)
 	assert(self.value, self.name .. ": WidgetText has no value")
-	if not self.prefix then return self.error:Print("WidgetText needs a prefix")end
-	if not self.postfix then return self.error:Print("WidgetText needs a postfix") end
-	if not self.color then return self.error:Print("WidgetText needs a color") end
+	if not self.prefix then return self.error:Print("WidgetText needs a prefix", 2)end
+	if not self.postfix then return self.error:Print("WidgetText needs a postfix", 2) end
+	if not self.color then return self.error:Print("WidgetText needs a color", 2) end
 
 	self._update = 1
 	self.visitor.environment.self = self
@@ -566,33 +564,33 @@ function textUpdate(self)
 	self.color:Eval()
 	self.visitor.environment.self = nil
 
-    -- /* str or number? */
-    if (self.precision == 0xBABE) then
-        str = self.value:P2S();
-    else
+	-- /* str or number? */
+	if (self.precision == 0xBABE) then
+		str = self.value:P2S();
+	else
 	local fmt = format("return format(\"%%.%df\", %f)", self.precision, self.value:P2N())
 	str = LibEvaluator.ExecuteCode(self.visitor.environment, "precision", fmt)
-    end
+	end
 
-    if str == "" or str ~= self.string then
-        self._update = self._update + 1;
-        self.string = str;
-    end
+	if str == "" or str ~= self.string then
+		self._update = self._update + 1;
+		self.string = str;
+	end
 
-    if self._update > 0 then
+	if self._update > 0 then
 		--[[
-        /* if there's a marquee scroller active, it has its own */
-        /* update callback timer, so we do nothing here; otherwise */
-        /* we simply call this scroll callback directly */
+		/* if there's a marquee scroller active, it has its own */
+		/* update callback timer, so we do nothing here; otherwise */
+		/* we simply call this scroll callback directly */
 		]]
-        if (self.align ~= self.ALIGN_MARQUEE and self.align ~= self.ALIGN_AUTOMATIC and self.align ~= self.ALIGN_PINGPONG) then
+		if (self.align ~= self.ALIGN_MARQUEE and self.align ~= self.ALIGN_AUTOMATIC and self.align ~= self.ALIGN_PINGPONG) then
 			if(strlen(self.string) > self.cols and not self.limited) then
 				self.cols = strlen(self.string)
 			end
-            		textScroll(self)
+					textScroll(self)
 			return false
-        end
-    end
+		end
+	end
 
 
 	return true

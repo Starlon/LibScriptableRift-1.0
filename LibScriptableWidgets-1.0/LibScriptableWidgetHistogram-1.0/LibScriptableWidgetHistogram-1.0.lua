@@ -182,22 +182,16 @@ end
 -- @usage object:Start()
 -- @return Nothing
 function WidgetHistogram:Start()
-	--self.error:Print("WidgetHistogram:Start")
-    if( self.update < 0 or self.active ) then
-        return;
-	end
-    self.timer:Start();
-    self:Update();
-	self.active = true
+	self.unit = self.unitOverride or self.visitor.environment.unit
+	self.timer:Start();
+	self:Update();
 end
 
 --- Stop the widget's timer
 -- @usage object:Stop()
 -- @return Nothing
 function WidgetHistogram:Stop()
-	--self.error:Print("WidgetHistogram:Stop")
-    self.timer:Stop();
-	self.active = false
+	self.timer:Stop();
 end
 
 -- Draw the widget. This just calls the real draw function you provided at object creation.
