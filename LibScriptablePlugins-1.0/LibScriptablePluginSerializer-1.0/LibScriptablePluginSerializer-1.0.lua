@@ -1,5 +1,5 @@
 local MAJOR = "LibScriptablePluginSerializer-1.0"
-local MINOR = 22+1
+local MINOR = 24
 
 local PluginSerializer = LibStub:NewLibrary(MAJOR, MINOR)
 if not PluginSerializer then return end

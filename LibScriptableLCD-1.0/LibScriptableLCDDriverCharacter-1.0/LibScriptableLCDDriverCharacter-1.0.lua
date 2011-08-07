@@ -1,5 +1,5 @@
 local MAJOR = "LibScriptableLCDDriverCharacter-1.0"
-local MINOR = 22+1
+local MINOR = 24
 assert(LibStub, MAJOR.." requires LibStub") 
 local DriverCharacter = LibStub:NewLibrary(MAJOR, MINOR)
 if not DriverCharacter then return end

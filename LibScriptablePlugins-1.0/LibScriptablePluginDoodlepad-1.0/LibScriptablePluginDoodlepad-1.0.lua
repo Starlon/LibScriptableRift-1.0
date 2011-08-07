@@ -1,6 +1,6 @@
 -- Huge appreciation goes out to ckknight for 99% of the following.
 local MAJOR = "LibScriptablePluginDoodlepad-1.0"
-local MINOR = 22+1
+local MINOR = 24
 
 local PluginDoodlepad = LibStub:NewLibrary(MAJOR, MINOR)
 if not PluginDoodlepad then return end

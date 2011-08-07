@@ -1,6 +1,6 @@
 
 local MAJOR = "LibScriptablePluginUnitTooltipScan-1.0" 
-local MINOR = 22+1
+local MINOR = 24
 assert(LibStub, MAJOR.." requires LibStub") 
 local LibUnitTooltipScan = LibStub:NewLibrary(MAJOR, MINOR)
 if not LibUnitTooltipScan then return end

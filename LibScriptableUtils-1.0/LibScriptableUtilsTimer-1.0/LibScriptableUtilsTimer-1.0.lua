@@ -2,7 +2,7 @@
 -- All rights reserved.
 local name, addon = ...
 local MAJOR = "LibScriptableUtilsTimer-1.0" 
-local MINOR = 22+1
+local MINOR = 24
 assert(LibStub, MAJOR.." requires LibStub") 
 local LibTimer = LibStub:NewLibrary(MAJOR, MINOR)
 if not LibTimer then return end

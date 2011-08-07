@@ -1,5 +1,5 @@
 local MAJOR = "LibScriptablePluginDBM-1.0" 
-local MINOR = 22+1
+local MINOR = 24
 do return end
 local PluginDBM = LibStub:NewLibrary(MAJOR, MINOR)
 if not PluginDBM then return end

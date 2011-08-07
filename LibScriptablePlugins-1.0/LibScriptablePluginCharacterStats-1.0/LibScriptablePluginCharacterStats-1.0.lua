@@ -1,5 +1,5 @@
 local MAJOR = "LibScriptablePluginCharacterStats-1.0" 
-local MINOR = 22+1
+local MINOR = 24
 
 local PluginCharacterStats = LibStub:NewLibrary(MAJOR, MINOR)
 if not PluginCharacterStats then return end
