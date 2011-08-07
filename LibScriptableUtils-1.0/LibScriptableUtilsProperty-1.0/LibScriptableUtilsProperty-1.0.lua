@@ -84,7 +84,7 @@ function LibProperty:Eval(unit)
 	
 	local update = 1
 
-	unit = unit or self.environment.unit
+	unit = unit or self.widget.unit or self.environment.unit
 	
 	local old = self.ret1
 
