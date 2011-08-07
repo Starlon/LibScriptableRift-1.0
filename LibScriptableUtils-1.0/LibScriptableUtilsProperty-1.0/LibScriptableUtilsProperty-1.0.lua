@@ -79,18 +79,17 @@ end
 --- Evaluate a property's code
 -- @usage object:Eval()
 -- @return Nothing
-function LibProperty:Eval()
+function LibProperty:Eval(unit)
 	if not self.is_valid then return 0 end
 	
 	local update = 1
+
+	unit = unit or self.environment.unit
 	
 	local old = self.ret1
 
 	self.environment.self = self.widget
-	local unit = self.environment.unit
-	self.environment.unit = self.widget.unitOverride or self.environment.unit
 	self.ret1, self.ret2, self.ret3, self.ret4 = Evaluator.ExecuteCode(self.environment, self.name, self.expression, false, self.defval)
-	self.environment.unit = unit
 	
 	if old == self.ret1 then
 		update = 0

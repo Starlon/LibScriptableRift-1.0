@@ -56,9 +56,8 @@ local tremove = table.remove
 -- @param layer This widget's layer
 -- @param errorLevel The errorLevel for this object
 -- @param callback This widget's real draw function
--- @param data Some data to pass back through the draw function
 -- @return A new LibScriptableWidgetBar object
-function WidgetBar:New(visitor, name, config, row, col, layer, errorLevel, callback, data) 
+function WidgetBar:New(visitor, name, config, row, col, layer, errorLevel, callback) 
 
 	assert(name, "Please provide the bar with a name")
 	assert(config, "Please provide the bar with a config")
@@ -84,7 +83,8 @@ function WidgetBar:New(visitor, name, config, row, col, layer, errorLevel, callb
 	obj.lcd_type = visitor.type
 
 	obj.callback = callback
-	obj.data = data
+
+	obj.unitOverride = config.unitOverride
 
 	obj.expression = LibProperty:New(obj, visitor, name .. " expression", config.expression, "", config.unit, errorLevel)
 	obj.expression2 = LibProperty:New(obj, visitor, name .. "expression2", config.expression2, "", config.unit, errorLevel);
@@ -128,13 +128,18 @@ function WidgetBar:New(visitor, name, config, row, col, layer, errorLevel, callb
 
 	obj.timer = LibTimer:New("WidgetBar.timer " .. obj.widget.name, obj.update, true, self.Update, obj)
 		
+--[[
 	if config.events then
 		for event in pairs(config.events) do
 			obj.widget:RegisterEvent(event)
-			obj[event] = function(...) obj:Update() end
+			obj[event] = function(unit) 
+				if unit == obj.unit then 
+					obj:Update() 
+				end
+			end
 		end
 	end
-
+]]
 --	QObject::connect(visitor_->GetWrapper(), SIGNAL(_ResizeLCD(int, int, int, int)),
 --		this, SLOT(Resize(int, int, int, int)));
 		
@@ -200,6 +205,7 @@ end
 -- @return Nothing
 function WidgetBar:Start()
 	self.timer:Start();
+	self.unit = self.unitOverride or self.visitor.environment.unit
 	self:Update();
 end
 
@@ -226,7 +232,8 @@ end
 function WidgetBar:Update()
 	if not self.expression.is_valid then return end
 	
-	self.expression:Eval();
+	self.expression:Eval(self.unit);
+
 	local val1, valMax = self.expression:P2N();
 	
 	self.color1:Eval()

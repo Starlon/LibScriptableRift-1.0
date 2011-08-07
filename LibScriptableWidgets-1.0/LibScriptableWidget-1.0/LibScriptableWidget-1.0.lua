@@ -65,7 +65,7 @@ local forEvents = {}
 local function OnEvent(frame, event, ...)
 	if forEvents[event] then
 		for k, v in pairs(forEvents[event]) do
-			if v[event] then v[event](...) end
+			if v[event] then v[event](v, ...) end
 		end
 	end
 end
@@ -165,6 +165,17 @@ function LibWidget:New(child, visitor, name, config, row, col, layer, typeOf, er
 	end
 
 	setmetatable(obj, self)
+
+	if config.events then
+		for event in pairs(config.events) do
+			obj:RegisterEvent(event)
+			obj.child[event] = function(self, unit) 
+				if unit == self.unit and self.Update then 
+					self:Update() 
+				end
+			end
+		end
+	end
 
 	obj.dummyTimer = LibTimer:New(obj.name) -- Just in case someone needs it.
 
