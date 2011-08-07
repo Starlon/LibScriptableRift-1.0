@@ -61,17 +61,18 @@ LibWidget.defaults = {
 }
 local defaults = LibWidget.defaults
 
---[[
-local function GameTooltip_SetDefaultAnchor(this, owner) 
-	for obj in pairs(objects) do
-		if obj.internalFrame:GetParent():GetName() == "GameTooltip" then
-			obj.hidden = false
+local forEvents = {}
+local function OnEvent(frame, event, ...)
+	if forEvents[event] then
+		for k, v in pairs(forEvents[event]) do
+			if v[event] then v[event](...) end
 		end
 	end
 end
 
-hooksecurefunc("GameTooltip_SetDefaultAnchor", GameTooltip_SetDefaultAnchor)
-]]
+local eventFrame = CreateFrame("Frame")
+eventFrame:SetScript("OnEvent", OnEvent)
+
 --- Create a new LibScriptableWidget object
 -- @usage WidgetText:New(child, visitor, name, config, row, col, layer, typeOf, errorLevel)
 -- @param visitor An LibScriptableCore-1.0 object, or provide your own
@@ -174,6 +175,15 @@ function LibWidget:New(child, visitor, name, config, row, col, layer, typeOf, er
 	return obj	
 end
 
+function LibWidget:RegisterEvent(event)
+	forEvents[event] = forEvents[event] or {}
+	forEvents[event][self.name] = self.child
+	eventFrame:RegisterEvent(event)
+end
+
+function LibWidget:UnregisterEvent(event)
+
+end
 
 --- Delete this widget
 -- @usage object:Del()

@@ -26,12 +26,12 @@ end
 local barUpdate
 
 SCHARS = {
-    {31, 31, 31, 31, 31, 31, 31, 31},
-    {31, 16, 16, 16, 16, 16, 16, 31},
-    {31,  0,  0,  0,  0,  0,  0, 31},
-    {31,  1,  1,  1,  1,  1,  1, 31},
-    {31, 31, 31, 31,  0,  0,  0,  0},
-    { 0,  0,  0,  0, 31, 31, 31, 31}};
+	{31, 31, 31, 31, 31, 31, 31, 31},
+	{31, 16, 16, 16, 16, 16, 16, 31},
+	{31,  0,  0,  0,  0,  0,  0, 31},
+	{31,  1,  1,  1,  1,  1,  1, 31},
+	{31, 31, 31, 31,  0,  0,  0,  0},
+	{ 0,  0,  0,  0, 31, 31, 31, 31}};
 
 WidgetBar.DIR_EAST, WidgetBar.DIR_WEST = 1, 2
 WidgetBar.STYLE_NORMAL, WidgetBar.STYLE_HOLLOW = 1, 2
@@ -83,15 +83,21 @@ function WidgetBar:New(visitor, name, config, row, col, layer, errorLevel, callb
 
 	obj.widget = LibWidget:New(obj, visitor, name, config, row, col, layer, widgetType, errorLevel)
 
-    obj.lcd_type = visitor.type
+	if config.events then
+		for event in pairs(config.events) do
+			obj.widget:RegisterEvent(event)
+		end
+	end
 
-    obj.callback = callback
+	obj.lcd_type = visitor.type
+
+	obj.callback = callback
 	obj.data = data
 
-    obj.expression = LibProperty:New(obj, visitor, name .. " expression", config.expression, "", config.unit, errorLevel)
-    obj.expression2 = LibProperty:New(obj, visitor, name .. "expression2", config.expression2, "", config.unit, errorLevel);
-    obj.expr_min = LibProperty:New(obj, visitor, name .. " min", config.min, nil, config.unit, errorLevel)
-    obj.expr_max = LibProperty:New(obj, visitor, name .. " max", config.max, nil, config.unit, errorLevel)
+	obj.expression = LibProperty:New(obj, visitor, name .. " expression", config.expression, "", config.unit, errorLevel)
+	obj.expression2 = LibProperty:New(obj, visitor, name .. "expression2", config.expression2, "", config.unit, errorLevel);
+	obj.expr_min = LibProperty:New(obj, visitor, name .. " min", config.min, nil, config.unit, errorLevel)
+	obj.expr_max = LibProperty:New(obj, visitor, name .. " max", config.max, nil, config.unit, errorLevel)
 
 	obj.color1 = LibProperty:New(obj, visitor, name .. " color1", config.color1, "", config.unit, errorLevel)
 	obj.color2 = LibProperty:New(obj, visitor, name .. " color2", config.color2 or config.color1, "", config.unit, errorLevel)
@@ -100,26 +106,26 @@ function WidgetBar:New(visitor, name, config, row, col, layer, errorLevel, callb
 	
 	--[[obj.color = {}
 	obj.color_valid = {}
-    obj.color_valid[0] = obj.widget:WidgetColor(section, "barcolor0", obj.color[0]);
-    obj.color_valid[1] = obj.widget:WidgetColor(section, "barcolor1", obj.color[1]);
+	obj.color_valid[0] = obj.widget:WidgetColor(section, "barcolor0", obj.color[0]);
+	obj.color_valid[1] = obj.widget:WidgetColor(section, "barcolor1", obj.color[1]);
 
 	obj.fg_color = {}
 	obj.bg_color = {}
-    obj.fg_valid = obj.widget:WidgetColor(section, "foreground", obj.fg_color);
-    obj.bg_valid = obj.widget:WidgetColor(section, "background", obj.bg_color);
+	obj.fg_valid = obj.widget:WidgetColor(section, "foreground", obj.fg_color);
+	obj.bg_valid = obj.widget:WidgetColor(section, "background", obj.bg_color);
 	]]
 	
-    obj.length = config.length or WidgetBar.defaults.length --visitor.CFG:FetchRaw(config, "length", WidgetBar.defaults.length)
+	obj.length = config.length or WidgetBar.defaults.length --visitor.CFG:FetchRaw(config, "length", WidgetBar.defaults.length)
 
-    obj.height = config.height or WidgetBar.defaults.height --visitor.CFG:FetchRaw(config, "height", WidgetBar.defaults.height)
+	obj.height = config.height or WidgetBar.defaults.height --visitor.CFG:FetchRaw(config, "height", WidgetBar.defaults.height)
 
-    obj.direction = config.direction or WidgetBar.defaults.direction --visitor.CFG:FetchRaw(config, "direction", WidgetBar.defaults.direction);
+	obj.direction = config.direction or WidgetBar.defaults.direction --visitor.CFG:FetchRaw(config, "direction", WidgetBar.defaults.direction);
 	
 	obj.orientation = config.orientation or WidgetBar.defaults.orientation
 
-    obj.update = config.update or WidgetBar.defaults.update --visitor.CFG:FetchRaw(config, "update", WidgetBar.defaults.update)
+	obj.update = config.update or WidgetBar.defaults.update --visitor.CFG:FetchRaw(config, "update", WidgetBar.defaults.update)
 
-    obj.style = config.style or WidgetBar.defaults.style --visitor.CFG:FetchRaw(config, "style", WidgetBar.defaults.style);
+	obj.style = config.style or WidgetBar.defaults.style --visitor.CFG:FetchRaw(config, "style", WidgetBar.defaults.style);
 	
 	obj.texture = config.texture
 	
@@ -130,8 +136,8 @@ function WidgetBar:New(visitor, name, config, row, col, layer, errorLevel, callb
 
 	obj.timer = LibTimer:New("WidgetBar.timer " .. obj.widget.name, obj.update, true, barUpdate, obj)
 		
---    QObject::connect(visitor_->GetWrapper(), SIGNAL(_ResizeLCD(int, int, int, int)),
---        this, SLOT(Resize(int, int, int, int)));
+--	QObject::connect(visitor_->GetWrapper(), SIGNAL(_ResizeLCD(int, int, int, int)),
+--		this, SLOT(Resize(int, int, int, int)));
 		
 	return obj	
 end
@@ -155,17 +161,17 @@ end
 -- @param old_cols The old cols size
 -- @return Nothing
 function WidgetBar:Resize(rows, cols, old_rows, old_cols)
-    local xres = self.visitor.lcd.XRES;
-    local yres = self.visitor.lcd.YRES
-    local y = rows_ * yres / old_rows;
-    local x = cols_ * xres / old_cols;
-    local r = row_ * yres / old_rows;
-    local c = col_ * xres / old_cols;
-    self.rows = round(self.visitor.lcd.LROWS * y / yres);
-    self.cols = round(self.visitor.lcd.LCOLS * x / xres);
-    self.row = round(self.visitor.lcd.LROWS * r / yres);
-    self.col = round(self.visitor.lcd.LCOLS * c / xres);
-    self:Update();
+	local xres = self.visitor.lcd.XRES;
+	local yres = self.visitor.lcd.YRES
+	local y = rows_ * yres / old_rows;
+	local x = cols_ * xres / old_cols;
+	local r = row_ * yres / old_rows;
+	local c = col_ * xres / old_cols;
+	self.rows = round(self.visitor.lcd.LROWS * y / yres);
+	self.cols = round(self.visitor.lcd.LCOLS * x / xres);
+	self.row = round(self.visitor.lcd.LROWS * r / yres);
+	self.col = round(self.visitor.lcd.LCOLS * c / xres);
+	self:Update();
 end
 
 --- Check for frames intersecting the mouse's focus
@@ -193,11 +199,11 @@ end
 -- @usage object:Start()
 -- @return Nothing
 function WidgetBar:Start()
-    if( self.update < 0 or not self.expression.is_valid or self.active) then
-        return;
+	if( self.update < 0 or not self.expression.is_valid or self.active) then
+		return;
 	end
-    self.timer:Start();
-    self:Update();
+	self.timer:Start();
+	self:Update();
 	self.active = true
 end
 
@@ -205,7 +211,7 @@ end
 -- @usage object:Stop()
 -- @return Nothing
 function WidgetBar:Stop()
-    self.timer:Stop();
+	self.timer:Stop();
 	self.active = false
 end
 
@@ -231,8 +237,8 @@ end
 function WidgetBar:Update()
 	if not self.expression.is_valid then return end
 	
-    self.expression:Eval();
-    local val1, valMax = self.expression:P2N();
+	self.expression:Eval();
+	local val1, valMax = self.expression:P2N();
 	
 	self.color1:Eval()
 	self.color2:Eval()
@@ -241,51 +247,51 @@ function WidgetBar:Update()
 		val1 = 1
 	end
 	
-    local val2 = val1;
-    if( self.expression2.is_valid ) then
-        self.expression2:Eval();
-        val2 = self.expression2:P2N();
-    end
+	local val2 = val1;
+	if( self.expression2.is_valid ) then
+		self.expression2:Eval();
+		val2 = self.expression2:P2N();
+	end
 
-    local max, min;
-    if( self.expr_min.is_valid ) then
-        self.expr_min:Eval();
-        min = self.expr_min:P2N();
-    else
-        min = self.min;
-        if( val1 < min ) then
-            min = val1;
+	local max, min;
+	if( self.expr_min.is_valid ) then
+		self.expr_min:Eval();
+		min = self.expr_min:P2N();
+	else
+		min = self.min;
+		if( val1 < min ) then
+			min = val1;
 		end
-        if( val2 < min ) then
-            min = val2;
+		if( val2 < min ) then
+			min = val2;
 		end
-    end
+	end
 
-    if( self.expr_max.is_valid ) then
-        self.expr_max:Eval();
-        max = self.expr_max:P2N();
-    else 
-        max = self.max;
-        if( val1 > max ) then
-            max = val1;
+	if( self.expr_max.is_valid ) then
+		self.expr_max:Eval();
+		max = self.expr_max:P2N();
+	else 
+		max = self.max;
+		if( val1 > max ) then
+			max = val1;
 		end
-        if( val2 > max ) then
-            max = val2;
+		if( val2 > max ) then
+			max = val2;
 		end
-    end
+	end
 	
-    self.min = min;
-    self.max = max;
+	self.min = min;
+	self.max = max;
 
-    if( max > min ) then
-        self.val1 = (val1 - min ) / (max - min);
-        self.val2 = (val2 - min ) / (max - min);
-    else
-        self.val1 = 0.0;
-        self.val2 = 0.0;
-    end
+	if( max > min ) then
+		self.val1 = (val1 - min ) / (max - min);
+		self.val2 = (val2 - min ) / (max - min);
+	else
+		self.val1 = 0.0;
+		self.val2 = 0.0;
+	end
 
-    self:Draw();
+	self:Draw();
 end
 
 --- Get an Ace3 option table. Plug this into a group type's args.
