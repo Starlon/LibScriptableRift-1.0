@@ -23,8 +23,6 @@ if not WidgetBar.__index then
 	WidgetBar.__index = WidgetBar
 end
 
-local barUpdate
-
 SCHARS = {
 	{31, 31, 31, 31, 31, 31, 31, 31},
 	{31, 16, 16, 16, 16, 16, 16, 31},
@@ -47,6 +45,7 @@ WidgetBar.defaults = {
 }
 
 local widgetType = {bar = true}
+local tremove = table.remove
 
 --- Create a new LibScriptableWidgetBar object
 -- @usage WidgetBar:New(visitor, name, config, row, col, layer, errorLevel, callback, data)
@@ -65,11 +64,9 @@ function WidgetBar:New(visitor, name, config, row, col, layer, errorLevel, callb
 	assert(config, "Please provide the bar with a config")
 	assert(config.expression, name .. ": Please provide the bar with an expression")
 			
-	local obj = next(pool)
+	local obj = tremove(pool)
 
-	if obj then
-		pool[obj] = nil
-	else
+	if not obj then
 		obj = {}
 	end
 	
@@ -83,11 +80,6 @@ function WidgetBar:New(visitor, name, config, row, col, layer, errorLevel, callb
 
 	obj.widget = LibWidget:New(obj, visitor, name, config, row, col, layer, widgetType, errorLevel)
 
-	if config.events then
-		for event in pairs(config.events) do
-			obj.widget:RegisterEvent(event)
-		end
-	end
 
 	obj.lcd_type = visitor.type
 
@@ -134,8 +126,15 @@ function WidgetBar:New(visitor, name, config, row, col, layer, errorLevel, callb
 	obj.min = 0;
 	obj.max = 0;
 
-	obj.timer = LibTimer:New("WidgetBar.timer " .. obj.widget.name, obj.update, true, barUpdate, obj)
+	obj.timer = LibTimer:New("WidgetBar.timer " .. obj.widget.name, obj.update, true, self.Update, obj)
 		
+	if config.events then
+		for event in pairs(config.events) do
+			obj.widget:RegisterEvent(event)
+			obj[event] = function(...) obj:Update() end
+		end
+	end
+
 --	QObject::connect(visitor_->GetWrapper(), SIGNAL(_ResizeLCD(int, int, int, int)),
 --		this, SLOT(Resize(int, int, int, int)));
 		
@@ -151,6 +150,7 @@ function WidgetBar:Del()
 	self.widget:Del()
 	self.error:Del()
 	self:Stop()
+	setmetatable(self, nil)
 	wipe(self)
 end
 
@@ -199,12 +199,8 @@ end
 -- @usage object:Start()
 -- @return Nothing
 function WidgetBar:Start()
-	if( self.update < 0 or not self.expression.is_valid or self.active) then
-		return;
-	end
 	self.timer:Start();
 	self:Update();
-	self.active = true
 end
 
 --- Stop the widget's timer
@@ -212,7 +208,6 @@ end
 -- @return Nothing
 function WidgetBar:Stop()
 	self.timer:Stop();
-	self.active = false
 end
 
 --- Draw the widget. This just calls the real draw function you provided.
@@ -222,12 +217,6 @@ end
 function WidgetBar:Draw()
 	if type(self.callback) == "function" then
 		self:callback(self.data)
-	end
-end
-
-function barUpdate(bar) 
-	if bar then
-		bar:Update()
 	end
 end
 
