@@ -45,7 +45,7 @@ local defaults = {
 	tooltip = "",
 	maxGestures = 4,
 	minGestures = 1,
-	minLength = 600
+	minLength = 300
 }
 
 WidgetGestures.defaults = defaults
@@ -55,7 +55,7 @@ function LibMouseGestures:Stop()
 	self.drawLayer:SetScript("OnMouseDown", nil)
 	self.drawLayer:SetScript("OnMouseUp", nil)
 	self.drawLayer:SetScript("OnUpdate", nil)
-	self.drawLayer:EnableMouse()
+	self.drawLayer:EnableMouse(false)
 	self.drawLayer:ClearAllPoints()
 	self.drawLayer:SetParent(nil)
 	self.drawLayer:Hide()
@@ -264,7 +264,6 @@ end
 -- @usage object:Start()
 -- @return Nothing
 function WidgetGestures:Start()
-	self.rec = LibMouseGestures:New(self.drawLayer, self.rec)
 	self.rec:StartCapture(self:NewCapture())
 end
 
@@ -322,6 +321,7 @@ end
 
 function WidgetGestures.StartFunc(rec, ...)
 	local self = rec.widgetData
+
 	if self and type(self.startFunc) == "function" then
 		self.startFunc(rec, ...)
 	end
@@ -346,7 +346,6 @@ function WidgetGestures.NextFunc(rec, ...)
 	if self and type(self.nextFunc) == "function" then
 		self.nextFunc(rec, ...)
 	end
-print("next")
 end
 
 function WidgetGestures.CancelFunc(rec, ...)
