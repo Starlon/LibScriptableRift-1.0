@@ -1,4 +1,4 @@
-local MAJOR = "LibScriptableWidgetBar-1.0" 
+local MAJOR = "LibScriptableWidgetBar-1.0"  
 local MINOR = 22+1
 
 assert(LibStub, MAJOR.." requires LibStub") 
