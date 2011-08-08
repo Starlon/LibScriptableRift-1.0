@@ -307,8 +307,8 @@ WidgetText.IntersectUpdate = LibWidget.IntersectUpdate
 --- Start a LibScriptableWidgetText object
 -- @usage :Start()
 -- @return Nothing
-function WidgetText:Start()
-	self.unit = self.unitOverride or self.visitor.environment.unit
+function WidgetText:Start(unit)
+	self.unit = unit or self.unitOverride or self.visitor.environment.unit
 	if self.update > 0 then
 		self.timer:Start(self.update)
 	end
