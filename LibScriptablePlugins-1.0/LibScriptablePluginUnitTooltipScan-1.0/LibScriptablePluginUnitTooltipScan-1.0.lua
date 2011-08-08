@@ -87,7 +87,7 @@ function LibUnitTooltipScan.GetUnitTooltipScan(unit)
 	tooltip:SetUnit(unit)
 	tooltip:Show()
 	scanunit = unit
-	return getName(), getGuild(), UnitIsPlayer(unit) and getLocation()
+	return getName(), getGuild(), getLocation()
 end
 
 local LEVEL_start = "^" .. (type(LEVEL) == "string" and LEVEL or "Level")
@@ -104,14 +104,14 @@ function getLocation()
     end
 
     local hasFaction = factionText and not UnitPlayerControlled(scanunit) and not UnitIsPlayer(scanunit) and (UnitFactionGroup(scanunit) or factionList[factionText])
-
 	if UnitInParty(scanunit) or UnitInRaid(scanunit) then
 		if hasGuild and hasFaction then
 			return self.leftLines[5]:GetText()
 		elseif (hasGuild or hasFaction) then
-			if self.leftLines[4]:GetText() == PVP then return nil end
+			local text = self.leftLines[4]:GetText()
+			if text == PVP then return nil end
 			return self.leftLines[4]:GetText()
-		elseif not left_3:find(LEVEL_start) and not left_3 == PVP then
+		elseif not left_3:find(LEVEL_start) and left_3 ~= PVP then
 			return left_3
 		end
 	end
