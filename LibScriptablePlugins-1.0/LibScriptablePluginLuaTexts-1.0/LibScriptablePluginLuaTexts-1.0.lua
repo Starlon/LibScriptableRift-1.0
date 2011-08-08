@@ -509,7 +509,9 @@ end
 ScriptEnv.RankIndex = RankIndex
 
 local function Realm(unit)
-	return select(2, UnitName(unit))
+	local txt = select(2, UnitName(unit))
+	if txt == "" then return end
+	return txt
 end
 ScriptEnv.Realm = Realm
 
