@@ -336,9 +336,6 @@ end
 -- @return Nothing
 function WidgetText:Update()
 	textUpdate(self)
-	if (self.align == self.ALIGN_MARQUEE or self.align == self.ALIGN_AUTOMATIC or self.align == self.ALIGN_PINGPONG) then
-		textScroll(self)
-	end
 end
 
 --- Executes the widget's draw function -- the callback parameter
@@ -530,20 +527,13 @@ function textScroll(self)
 	end
 
 	if self.dogtag then
-		local unit = type(self.unitOverride) == "string" and self.unitOverride or self.visitor.environment.unit or "mouseover"
+		local unit = (type(self.unitOverride) == "string" and self.unitOverride) or self.visitor.environment.unit or "mouseover"
 		local kvargs = newKVargs(unit)
 		self.buffer = LibDogTag:Evaluate(self.buffer, "Unit", kvargs)
 		delKVargs(kvargs)
 	end
 
 	if self.clearOverride then self.unitOverride = false; self.clearOverride = false end
-
-	if self.buffer ~= self.oldBuffer then
-		self:Draw()
-	else
-		self.oldBuffer = self.buffer
-	end
-	
 
 	dst:Del()
 	src:Del()
@@ -557,19 +547,17 @@ function textUpdate(self)
 	if not self.color then return self.error:Print("WidgetText needs a color", 2) end
 
 	self._update = 1
-	self.visitor.environment.self = self
 	self._update = self._update + self.prefix:Eval()
 	self._update = self._update + self.postfix:Eval()
 	self.value:Eval()
 	self.color:Eval()
-	self.visitor.environment.self = nil
 
 	-- /* str or number? */
 	if (self.precision == 0xBABE) then
 		str = self.value:P2S();
 	else
-	local fmt = format("return format(\"%%.%df\", %f)", self.precision, self.value:P2N())
-	str = LibEvaluator.ExecuteCode(self.visitor.environment, "precision", fmt)
+		local fmt = format("return format(\"%%.%df\", %f)", self.precision, self.value:P2N())
+		str = LibEvaluator.ExecuteCode(self.visitor.environment, "precision", fmt)
 	end
 
 	if str == "" or str ~= self.string then
@@ -587,9 +575,9 @@ function textUpdate(self)
 			if(strlen(self.string) > self.cols and not self.limited) then
 				self.cols = strlen(self.string)
 			end
-					textScroll(self)
-			return false
+			textScroll(self)
 		end
+		self:Draw()
 	end
 
 

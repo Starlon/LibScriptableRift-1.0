@@ -57,12 +57,14 @@ function LibProperty:New(widget, visitor, name, expression, defval, errorLevel)
 		obj.is_valid = false; 
 	else
 		obj.visitor.environment.self = widget
-		obj.visitor.environment.unit = widget.unitOverride or obj.visitor.environment.unit or "player"
-		obj.res1, obj.res2, obj.res3, obj.res4 = Evaluator.ExecuteCode(visitor.environment, name, expression, false, defval)
+		obj.visitor.environment.unit = "player"
+		obj.res1 = Evaluator.ExecuteCode(visitor.environment, name, expression, false, defval)
 		if obj.res1 == nil then
 			obj.error:Print(("Property invalid: expression = \"%s\""):format(expression))
 			obj.is_valid = false
+			assert(false)
 		end
+		obj.res1 = false
 	end
 	return obj	
 end
@@ -76,6 +78,7 @@ function LibProperty:Del()
 	wipe(self)
 end
 
+local count = 0
 --- Evaluate a property's code
 -- @usage object:Eval()
 -- @return Nothing
@@ -84,12 +87,12 @@ function LibProperty:Eval(unit)
 	
 	local update = 1
 
-	unit = unit or self.widget.unit or self.environment.unit
-	
+	self.environment.unit = self.widget.unit or self.environment.unit
+
 	local old = self.ret1
 
 	self.environment.self = self.widget
-	self.ret1, self.ret2, self.ret3, self.ret4 = Evaluator.ExecuteCode(self.environment, self.name, self.expression, false, self.defval)
+	self.ret1, self.ret2, self.ret3, self.ret4, self.ret5 = Evaluator.ExecuteCode(self.environment, self.name, self.expression, false, self.defval)
 	
 	if old == self.ret1 then
 		update = 0
@@ -104,9 +107,9 @@ end
 function LibProperty:P2N()
 	if not self.is_valid then return self.defval end
 	if type(self.ret1) == "string" then
-		return self.ret1 and tonumber(self.ret1), self.ret2 and tonumber(self.ret2), self.ret3 and tonumber(self.ret3), self.ret4 and tonumber(self.ret4)		
+		return self.ret1 and tonumber(self.ret1), self.ret2 and tonumber(self.ret2), self.ret3 and tonumber(self.ret3), self.ret4 and tonumber(self.ret4), self.ret5 and tonumber(self.ret5)
 	elseif type(self.ret1) == "number" then
-		return self.ret1, self.ret2, self.ret3, self.ret4
+		return self.ret1, self.ret2, self.ret3, self.ret4, self.ret5
 	end
 end
 
@@ -122,8 +125,8 @@ function LibProperty:P2S()
 	
 	
 	if type(self.ret1) == "number" then
-		return tostring(self.ret1) and tostring(self.ret1), self.ret2 and tostring(self.ret2), self.ret3 and tostring(self.ret3), self.ret4 and tostring(self.ret4)
+		return tostring(self.ret1) and tostring(self.ret1), self.ret2 and tostring(self.ret2), self.ret3 and tostring(self.ret3), self.ret4 and tostring(self.ret4), self.ret5 and tostring(self.ret5)
 	elseif type(self.ret1) == "string" then
-		return self.ret1, self.ret2, self.ret3, self.ret4
+		return self.ret1, self.ret2, self.ret3, self.ret4, self.ret5
 	end
 end

@@ -203,9 +203,9 @@ end
 --- Start the widget's timer
 -- @usage object:Start()
 -- @return Nothing
-function WidgetBar:Start()
+function WidgetBar:Start(unit)
 	self.timer:Start();
-	self.unit = self.unitOverride or self.visitor.environment.unit
+	self.unit = unit or self.unitOverride or self.visitor.environment.unit
 	self:Update();
 end
 
@@ -232,7 +232,7 @@ end
 function WidgetBar:Update()
 	if not self.expression.is_valid then return end
 	
-	self.expression:Eval(self.unit);
+	self.expression:Eval();
 
 	local val1, valMax = self.expression:P2N();
 	
