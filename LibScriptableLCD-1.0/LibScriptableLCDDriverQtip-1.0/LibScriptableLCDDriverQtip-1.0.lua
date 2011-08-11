@@ -19,8 +19,6 @@ PluginString = PluginString:New(PluginString)
 local LibQTip = LibStub('LibQTip-1.0', true)
 assert(LibQTip, MAJOR .. " requires LibQTip-1.0")
 
-LibCore:RegisterDriver("QTip")
-
 local pool = setmetatable({}, {__mode = "k"})
 
 local options

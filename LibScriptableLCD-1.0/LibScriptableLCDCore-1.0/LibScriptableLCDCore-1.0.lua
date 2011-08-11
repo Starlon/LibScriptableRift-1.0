@@ -97,8 +97,6 @@ local keyEventFrame = CreateFrame("Frame")
 
 if not LibCore.__index then
 	LibCore.__index = LibCore
-	LibCore.driverList = {}
-	LibCore.driverDict = {}
 end
 
 LibCore.TRANSITION_RIGHT = 0
@@ -664,12 +662,6 @@ int LibCore::MoveWidget(std::string widget, int row, int col) {
     return 0;
 }
 ]]
-
-
-function LibCore:RegisterDriver(driver)
-	tinsert(LibCore.driverList, driver)
-	LibCore.driverDict[driver] = #LibCore.driverList
-end
 
 function KeyEvent(_, modifier, up)
 	for _, core in pairs(objects) do
