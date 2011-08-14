@@ -527,7 +527,7 @@ function textScroll(self)
 	end
 
 	if self.dogtag then
-		local unit = (type(self.unitOverride) == "string" and self.unitOverride) or self.visitor.environment.unit or "mouseover"
+		local unit = type(self.dogtagUnit) == "string" and self.dogtagUnit or self.unit
 		local kvargs = newKVargs(unit)
 		self.buffer = LibDogTag:Evaluate(self.buffer, "Unit", kvargs)
 		delKVargs(kvargs)
