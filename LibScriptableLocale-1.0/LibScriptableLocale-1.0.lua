@@ -5,6 +5,7 @@ assert(LibStub, MAJOR.." requires LibStub")
 local LibLocale = LibStub:NewLibrary(MAJOR, MINOR)
 if not LibLocale then return end
 
+local function GetLocale() end
 
 if GetLocale() == "deDE" then
 	LibLocale.L = LibStub("LibScriptableLocale-deDE-1.0").L

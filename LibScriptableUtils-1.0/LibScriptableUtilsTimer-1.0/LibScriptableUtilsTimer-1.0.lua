@@ -8,37 +8,19 @@ local LibTimer = LibStub:NewLibrary(MAJOR, MINOR)
 if not LibTimer then return end
 local LibError = LibStub("LibScriptableUtilsError-1.0")
 assert(LibError, MAJOR .. " requires LibScriptableUtilsError-1.0")
-
+local GetTime = Inspect.Time.Frame
 local pool = setmetatable({}, {__mode = "k"})
 
+local objects = {}
 local cache = {}
 local storage = {}
 local update
 local OnFinish
 local tconcat = table.concat
-
-LibTimer.frame = CreateFrame("Frame")
+local tinsert = table.insert
 
 if not LibTimer.__index then
 	LibTimer.__index = LibTimer
-end
-
--- Recycle functions from ShefkiTimer-1.0
--- Full timer recycling unlike AceTimer.  We recycle everything because we don't
--- want to making any more AnimationGroup and Animation objects than necessary.
-local timerCache = {}
-local function new()
-	local timer = table.remove(timerCache)
-	if not timer then
-		local ag = LibTimer.frame:CreateAnimationGroup()
-		timer = ag:CreateAnimation("Animation")
-	end
-	return timer
-end
-
-local function del(timer)
-	if not timer then return end
-	timerCache[timer] = true
 end
 
 --[[
@@ -122,11 +104,8 @@ function LibTimer:New(name, duration, repeating, callback, data, errorLevel)
 	obj.data = data
 	obj.errorLevel = errorLevel
 	
-	local timer = new()
-	obj.timer = timer
+	tinsert(objects, obj)
 	
-	timer.obj = obj
-			
 	return obj	
 	
 end
@@ -156,26 +135,11 @@ function LibTimer:Start(duration, data, func)
 	if self.duration == 0 then return end
 	
 	self.startTime = GetTime()
+	self.active = true
 		
 	self.data = data or self.data
 	if type(func) == "function" then self.callback = func end
-	
-	local timer = self.timer
-	local delay = self.duration
-	local repeating = self.repeating
-	local ag = timer:GetParent()
-	
-	timer:SetScript("OnFinished",OnFinished)
-	timer:SetScript("OnUpdate",nil)
-	timer:SetDuration(delay)
-	if repeating then
-		ag:SetLooping("REPEAT")
-	else
-		ag:SetLooping("NONE")
-	end
-	
-	ag:Play()
-
+		
 end
 
 -- Set the timer's refresh rate. This also stops the timer.
@@ -197,26 +161,31 @@ local canceled_in_OnFinished
 -- @usage object:Stop()
 -- @return True if the timer was stopped
 function LibTimer:Stop()
-	self.timer:GetParent():Stop()
+	self.active = false
 end
 
 --- Return the timer's remaining duration
--- @usage object:TimeLapsed()
+-- @usage object:TimeElapsed()
 -- @return The remaining duration
-function LibTimer:TimeLapsed()
+function LibTimer:TimeElapsed()
 	if type(self.startTime) ~= "number" then return 0 end
 	return GetTime() - self.startTime
 end
 
---- Deprecated
-function LibTimer:TimeRemaining()
+local function update()
+	local time = GetTime()
+	for k, self in pairs(objects) do
+		if time - self.startTime > self.duration then
+			if self.safecall and false then 
+				safecall(self.callback, type(self.data) == "table" and unpack(self.data) or self.data)
+			else
+				self.callback(self.data)
+			end
+			self.error:Print(("Elapsed - %f"):format(self:TimeElapsed()), 3)
+			
+		end
+	end
 end
 
-function OnFinished(self, elapsed)
-	if self.safecall then 
-		safecall(self.obj.callback, self.obj.data)
-	else
-		self.obj.callback(self.obj.data)
-	end
-	self.obj.error:Print(("Lapsed - %f"):format(self.obj:TimeLapsed()), 3)
-end
+-- Our update event. This triggers every single frame.
+tinsert(Event.System.Update.Begin, {update, "LibScriptableUtilsTimer_1_0", "refresh"})
