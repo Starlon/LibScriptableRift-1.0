@@ -25,6 +25,8 @@ if not LibWidget.__index then
 	LibWidget.__index = LibWidget
 end
 
+local strlen = string.len
+
 local function rfind(str, char)
 	local i = strlen(str)
 	while i > 0 do
@@ -61,6 +63,7 @@ LibWidget.defaults = {
 }
 local defaults = LibWidget.defaults
 
+--[[
 local forEvents = {}
 local function OnEvent(frame, event, ...)
 	if forEvents[event] then
@@ -72,6 +75,7 @@ end
 
 local eventFrame = CreateFrame("Frame")
 eventFrame:SetScript("OnEvent", OnEvent)
+]]
 
 --- Create a new LibScriptableWidget object
 -- @usage WidgetText:New(child, visitor, name, config, row, col, layer, typeOf, errorLevel)
@@ -122,14 +126,15 @@ function LibWidget:New(child, visitor, name, config, row, col, layer, typeOf, er
 	obj.scriptShown = config.scriptShown or defaults.scriptShown
 	obj.scriptHidden = config.scriptHidden or defaults.scriptHidden
 
-	obj.frame = _G[obj.frameName]
-	obj.internalFrame = CreateFrame("Frame")
+	--obj.frame = _G[obj.frameName]
+	--[[obj.internalFrame = CreateFrame("Frame")
 	obj.intersectFrame = _G[obj.intersectFrameName]
 	obj.intersectFrame:HookScript("OnShow", self.OnShow)
 	obj.intersectFrame:HookScript("OnHide", self.OnHide)
 	obj.internalFrame:SetParent(obj.intersectFrame)
 	obj.internalFrame.obj = obj
-
+	]]
+	
 	obj.runnable = {}
 	obj.runnable[SCRIPT_SHOW] = LibEvaluator.GetRunnable(visitor.environment, "SCRIPT_SHOW", obj.scriptShow)
 	obj.runnable[SCRIPT_HIDE] = LibEvaluator.GetRunnable(visitor.environment, "SCRIPT_HIDE", obj.scriptHide)

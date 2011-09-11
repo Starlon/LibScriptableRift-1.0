@@ -348,17 +348,17 @@ function LibCore:BuildLayouts()
 					if(typeOf == "text") then
 						widget = WidgetText:New(self, name, widget_v, widgets[i].row, widgets[i].col, widgets[i].layer, self.errorLevel, self.lcd.TextDraw)
 					elseif (typeOf == "bar") then
-						widget = WidgetBar:New(self, name, widget_v, widgets[i].row, widgets[i].col, widgets[i].layer, self.erroLevel, self.lcd.BarDraw)
+						--widget = WidgetBar:New(self, name, widget_v, widgets[i].row, widgets[i].col, widgets[i].layer, self.erroLevel, self.lcd.BarDraw)
 					elseif (typeOf == "icon") then
-						widget = WidgetIcon:New(self, name, widget_v, widgets[i].row, widgets[i].col, widgets[i].layer, self.errorLevel, self.lcd.IconDraw)
+						--widget = WidgetIcon:New(self, name, widget_v, widgets[i].row, widgets[i].col, widgets[i].layer, self.errorLevel, self.lcd.IconDraw)
 					elseif (typeOf == "histogram") then
-						widget = WidgetHistogram:New(self, name, widget_v, widgets[i].row, widgets[i].col, widgets[i].layer, self.errorLevel, self.lcd.HistogramDraw)
+						--widget = WidgetHistogram:New(self, name, widget_v, widgets[i].row, widgets[i].col, widgets[i].layer, self.errorLevel, self.lcd.HistogramDraw)
 					elseif (typeOf == "bignums") then
 						--widget = WidgetBignums:New(self, name, widget_v, widgets[i].row, widgets[i].col, widgets[i].layer, self.errorLevel, self.lcd.BignumsDraw)
 					elseif (typeOf == "key") then
 						--widget = WidgetKey:New(self, name, widget_v)
 					elseif (typeOf == "timer") then
-						widget = WidgetTimer:New(self, name, widget_v, self.errorLevel) 
+						--widget = WidgetTimer:New(self, name, widget_v, self.errorLevel) 
 					elseif (typeOf == "script") then
 						--widget = WidgetScript:New(self, name, widget_v)
 					else

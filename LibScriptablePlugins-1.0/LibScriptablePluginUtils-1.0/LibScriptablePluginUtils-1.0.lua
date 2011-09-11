@@ -6,8 +6,10 @@ local PluginUtils = LibStub:NewLibrary(MAJOR, MINOR)
 if not PluginUtils then return end
 local LibError = LibStub("LibScriptableUtilsError-1.0", false)
 assert(LibError, MAJOR .. " requires LibScriptableUtilsError-1.0")
-local LibBossIDs = LibStub("LibBossIDs-1.0")
 local _G = _G
+
+local tinsert = table.insert
+local tremove = table.remove
 
 local ScriptEnv = {}
 
@@ -35,6 +37,7 @@ end})
 --local DEBUG = PitBull4.DEBUG
 --local expect = PitBull4.expect
 
+--[[
 do
 	local target_same_mt = { __index=function(self, key)
 		if type(key) ~= "string" then
@@ -233,6 +236,7 @@ do
 	end
 	ScriptEnv.GetLocalizedClassification = PluginUtils.GetLocalizedClassification
 end
+]]
 
 --- Leave a function as-is or if a string is passed in, convert it to a namespace-method function call.
 -- @param namespace a table with the method func_name on it

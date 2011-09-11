@@ -40,10 +40,11 @@ Embed = {
   ["Libs/LibStub"] = true,
   ["Libs/CallbackHandler-1.0"] = true,
   ["LibScriptableUtils-1.0"] = true,
-  --["LibScriptableWidgets-1.0"] = true,
+  ["LibScriptableWidgets-1.0"] = true,
   ["LibScriptableLocale-1.0"] = true,
   ["LibScriptablePlugins-1.0"] = true,
-  ["LibScriptableLCD-1.0"] = true
+  ["LibScriptableLCD-1.0"] = true,
+  ["LibScriptableLocale-1.0"] = true
 }
 
 -- This line would set up dependencies with several other addons.

@@ -23,6 +23,5 @@ Dependencies = {
   LibScriptableUtilsError_1_0 = {"required", "before"},
   LibScriptableUtilsBuffer_1_0 = {"required", "before"},
   LibScriptableUtilsTimer_1_0 = {"required", "before"},
-  LibScriptableLCDCore_1_0 = {"required", "before"},
 }
 

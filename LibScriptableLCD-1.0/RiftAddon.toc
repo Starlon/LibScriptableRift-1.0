@@ -10,9 +10,31 @@ Email = "sisibley@gmail.com"
 
 Environment = "1.3"
 
-Embed = {
-  ["LibScriptableLCDCore-1.0"] = true,
-  ["LibScriptableLCDCoreLite-1.0"] = true,
-  ["LibScriptableLCDText-1.0"] = true,
-  ["LibScriptableLCDDriver-1.0"] = true,
+--[[
+RunOnStartup = {
+	"LibScriptableLCDCore-1.0/LibScriptableLCDCore-1.0.lua",
+	"LibScriptableLCDCoreLite-1.0/LibScriptableLCDCoreLite-1.0.lua",
+	"LibScriptableLCDText-1.0/LibScriptableLCDText-1.0.lua",
+	"LibScriptableLCDDriver-1.0/LibScriptableLCDDriver-1.0.lua"
 }
+]]
+
+Embed = {
+	["LibScriptableLCDCoreLite-1.0"] = true,
+	["LibScriptableLCDCore-1.0"] = true,
+	["LibScriptableLCDText-1.0"] = true,
+	["LibScriptableLCDDriver-1.0"] = true
+}
+
+-- This line would set up dependencies with several other addons.
+--[[
+Dependencies = {
+  LibStub = {"required", "before"}, 
+  LibCallbackHandler = {"required", "before"},
+  LibScriptableUtilsError_1_0 = {"required", "before"},
+  LibScriptableUtilsBuffer_1_0 = {"required", "before"},
+  LibScriptableUtilsTimer_1_0 = {"required", "before"},
+  LibScriptableUtilsCFG_1_0 = {"required", "before"},
+  LibScriptableWidgetText_1_0 = {"required", "before"},
+}
+]]

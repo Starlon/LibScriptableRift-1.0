@@ -52,8 +52,8 @@ _G.LCD4Rift.config = {
 		["update"] = 0,
 		["timeout"] = 2000,
 		["transition_speed"] = 50,
-		["widgets"] = {"widget_key_up", "widget_key_down", "widget_resources_timer"},
-		["layouts"] = {"layout_LCD4Rift", "layout_histogram_cpu", "layout_histogram_mem"},
+		["widgets"] = {},
+		["layouts"] = {"layout_LCD4Rift"},
 		["font"] = {normal="Interface\\AddOns\\LCD4Rift\\Fonts\\ttf-bitstream-vera-1.10\\VeraMo.ttf", bold="Interface\\AddOns\\LCD4Rift\\Fonts\\ttf-bitstream-vera-1.10\\VeraMoBd.ttf", size=12},
 		["points"] = {{"CENTER", "UIParent", "TOP", 0, -100}}
     },
@@ -202,6 +202,7 @@ Update()
 				[1] = "widget_level_label",
 				[10] = "widget_level",
 			},
+			--[[
 			[5] = {
 				[1] = "widget_mem_label",
 				[10] = "widget_mem",
@@ -212,6 +213,7 @@ Update()
 				[10] = "widget_cpu",
 				[20] = "widget_cpu_bar"
 			},
+			]]
 		},
 		["transition"] = TRANSITION_TENTACLE,
     },

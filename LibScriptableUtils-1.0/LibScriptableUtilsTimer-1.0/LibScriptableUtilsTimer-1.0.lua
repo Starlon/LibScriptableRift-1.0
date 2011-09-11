@@ -120,7 +120,6 @@ function LibTimer:Del()
 	pool[timer] = true
 	timer:Stop()
 	timer.error:Del()
-	del(timer.timer)
 end
 
 --- Start a timer.

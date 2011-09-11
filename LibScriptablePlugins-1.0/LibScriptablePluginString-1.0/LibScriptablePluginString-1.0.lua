@@ -22,7 +22,7 @@ function PluginString:New(environment)
 	environment.strbyte = _G.strbyte
 	environment.strchar = _G.strchar
 	environment.strfind = _G.strfind
-	environment.strlen = _G.strlen
+	environment.strlen = _G.string.len
 	environment.strlower = _G.strlower
 	environment.strmatch = _G.strmatch
 	environment.strrep = _G.strrep
