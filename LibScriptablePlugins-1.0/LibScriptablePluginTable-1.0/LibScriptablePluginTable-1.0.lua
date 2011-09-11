@@ -23,11 +23,11 @@ function PluginTable:New(environment)
 	environment.getn = _G.getn
 	environment.ipairs = _G.ipairs
 	environment.pairs = _G.pairs
-	environment.sort = _G.sort
+	environment.sort = _G.table.sort
 	environment.tContains = _G.tContains
-	environment.tinsert = _G.tinsert
-	environment.tremove = _G.tremove
-	environment.wipe = _G.wipe
+	environment.tinsert = _G.table.insert
+	environment.tremove = _G.table.remove
+	environment.wipe = _G.table.wipe
 	
 	return environment
 end

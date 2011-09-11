@@ -10,6 +10,7 @@ assert(LibError, MAJOR .. " requires LibScriptableUtilsError-1.0")
 local LibCFG = LibStub("LibScriptableUtilsCFG-1.0", true)
 assert(LibCFG, MAJOR .. " requires LibScriptableUtilsCFG-1.0")
 
+--[[
 local WidgetText = LibStub("LibScriptableWidgetText-1.0", true)
 assert(WidgetText, MAJOR .. " requires LibScriptableWidgetText-1.0")
 local WidgetBar = LibStub("LibScriptableWidgetBar-1.0", true)
@@ -29,9 +30,8 @@ assert(WidgetGestures, MAJOR .. "LibScriptableWidgetGestures-1.0")
 
 local Evaluator = LibStub("LibScriptableUtilsEvaluator-1.0", true)
 assert(Evaluator, MAJOR .. " requires LibScriptableUtilsEvaluator-1.0")
+]]
 
-local PluginRangeCheck = LibStub("LibScriptablePluginRangeCheck-1.0", true)
-assert(PluginRangeCheck, MAJOR .. " requires LibScriptableRangeCheck-1.0")
 local PluginUnit = LibStub("LibScriptablePluginUnit-1.0", true)
 assert(PluginUnit, MAJOR .. " requires LibScriptablePluginUnit-1.0")
 local PluginBit = LibStub("LibScriptablePluginBit-1.0", true)
@@ -44,51 +44,16 @@ local PluginString = LibStub("LibScriptablePluginString-1.0", true)
 assert(PluginString, MAJOR .. " requires LibScriptablePluginString-1.0")
 local PluginTable = LibStub("LibScriptablePluginTable-1.0", true)
 assert(PluginTable, MAJOR .. " requires LibScriptablePluginTable-1.0")
-local PluginResourceTools = LibStub("LibScriptablePluginResourceTools-1.0", true)
-assert(PluginResourceTools, MAJOR .. " requires LibScriptablePluginResourceTools-1.0")
-local PluginCharacterStats = LibStub("LibScriptablePluginCharacterStats-1.0", true)
-assert(PluginCharacterStats, MAJOR .. " requires LibScriptablePluginCharacterStats-1.0")
-local PluginLocation = LibStub("LibScriptablePluginLocation-1.0", true)
-assert(PluginLocation, MAJOR .. " requires LibScriptablePluginLocation-1.0")
-local PluginUnitTooltipScan = LibStub("LibScriptablePluginUnitTooltipScan-1.0", true)
-assert(PluginUnitTooltipScan, MAJOR .. " requires LibScriptablePluginUnitTooltipScan-1.0")
-local PluginDBM = LibStub("LibScriptablePluginDBM-1.0", true) -- no assertion needed.
-local PluginLinq = LibStub("LibScriptablePluginLinq-1.0", true)
-assert(PluginLinq, MAJOR .. " requires LibScriptablePluginLinq-1.0")
-local PluginGuild = LibStub("LibScriptablePluginGuild-1.0", true)
-assert(PluginGuild, MAJOR .. " requires LibScriptablePluginGuild-1.0")
-local PluginSpell = LibStub("LibScriptablePluginSpell-1.0", true)
-assert(PluginSpell, MAJOR .. " requires LibScriptablePluginSpell-1.0")
-local PluginComm = LibStub("LibScriptablePluginComm-1.0", true)
-assert(PluginComm, MAJOR .. " requires LibScriptablePluginComm-1.0")
-local PluginSerializer = LibStub("LibScriptablePluginSerializer-1.0", true)
-assert(PluginSerializer, MAJOR .. " requires LibScriptablePluginSerializer-1.0")
+--local PluginResourceTools = LibStub("LibScriptablePluginResourceTools-1.0", true)
+--assert(PluginResourceTools, MAJOR .. " requires LibScriptablePluginResourceTools-1.0")
 local PluginColor = LibStub("LibScriptablePluginColor-1.0", true)
 assert(PluginColor, MAJOR .. " requires LibScriptablePluginColor-1.0")
-local PluginLuaTexts = LibStub("LibScriptablePluginLuaTexts-1.0", true)
-assert(PluginLuaTexts, MAJOR .. " requires LibScriptablePluginLuaTexts-1.0")
-local PluginTalents = LibStub("LibScriptablePluginTalents-1.0", true)
-assert(PluginTalents, MAJOR .. " requires LibScriptablePluginTalents-1.0")
-local PluginUtils = LibStub("LibScriptablePluginUtils-1.0", true)
-assert(PluginUtils, MAJOR .. " requires LibScriptablePluginUtils-1.0")
-local PluginUnitControl = LibStub("LibScriptablePluginUnitControl-1.0", true)
-assert(PluginUnitControl, MAJOR .. " requires LibScriptablePluginUnitControl-1.0")
-local PluginFail = LibStub("LibScriptablePluginFail-1.0")
-assert(PluginFail, MAJOR .. " requires LibScriptablePluginFail-1.0")
-local PluginBlend = LibStub("LibScriptablePluginBlend-1.0")
-assert(PluginBlend, MAJOR .. " requires LibScriptablePluginBlend-1.0")
-local PluginNameplate = LibStub("LibScriptablePluginNameplate-1.0")
-assert(PluginNameplate, MAJOR .. " requires LibScriptablePluginNameplate-1.0")
-local PluginDPS = LibStub("LibScriptablePluginDPS-1.0", true)
-assert(PluginDPS, MAJOR .. " requires LibScriptablePluginDPS-1.0")
-local PluginNoise = LibStub("LibScriptablePluginNoise-1.0", true)
-assert(PluginNoise, MAJOR .. " requires LibScriptablePluginNoise-1.0")
-local PluginSkada = LibStub("LibScriptablePluginSkada-1.0", true)
-assert(PluginSkada, MAJOR .. " requires LibScriptablePluginSkada-1.0")
-local PluginRecount = LibStub("LibScriptablePluginRecount-1.0", true)
-assert(PluginRecount, MAJOR .. " requires LibScriptablePluginRecount-1.0")
-local PluginDoodlepad = LibStub("LibScriptablePluginDoodlepad-1.0")
-assert(PluginDoodlepad, MAJOR .. " requires LibScriptablePluginDoodlepad-1.0")
+--local PluginLuaTexts = LibStub("LibScriptablePluginLuaTexts-1.0", true)
+--assert(PluginLuaTexts, MAJOR .. " requires LibScriptablePluginLuaTexts-1.0")
+--local PluginUtils = LibStub("LibScriptablePluginUtils-1.0", true)
+--assert(PluginUtils, MAJOR .. " requires LibScriptablePluginUtils-1.0")
+--local PluginBlend = LibStub("LibScriptablePluginBlend-1.0")
+--assert(PluginBlend, MAJOR .. " requires LibScriptablePluginBlend-1.0")
 
 local pool = setmetatable({}, {__mode = "k"})
 local objects = {}
@@ -128,13 +93,15 @@ function LibCore:New(environment, name, errorLevel)
 		obj = {}
 	end
 
+	--[[
 	if type(config) == "string" then
 		config = Evaluator.ExecuteCode(environment, "LibCore:New", config)
 	end
-
+	]]
+	
 	setmetatable(obj, self)
 	
-	tinsert(objects, obj)
+	table.insert(objects, obj)
 		
 	obj.visitor = visitor
 	obj.environment = environment
@@ -144,35 +111,16 @@ function LibCore:New(environment, name, errorLevel)
 	environment.visitor = obj
 	
 	-- Plugins
-	PluginRangeCheck:New(environment)
 	PluginUnit:New(environment)
 	PluginBit:New(environment)
 	PluginLua:New(environment)
 	PluginMath:New(environment)
 	PluginString:New(environment)
 	PluginTable:New(environment)
-	PluginResourceTools:New(environment)
-	PluginLocation:New(environment)
-	PluginUnitTooltipScan:New(environment)
-	if PluginDBM then PluginDBM:New(environment) end
-	PluginLinq:New(environment)
-	PluginGuild:New(environment)
-	PluginSpell:New(environment)
-	PluginComm:New(environment)
-	PluginSerializer:New(environment)
 	PluginColor:New(environment)
-	PluginLuaTexts:New(environment)
-	PluginTalents:New(environment)
-	PluginUtils:New(environment)
-	PluginUnitControl:New(environment)
-	PluginFail:New(environment)
-	PluginBlend:New(environment)
-	PluginNameplate:New(environment)
-	PluginDPS:New(environment)
-	PluginNoise:New(environment)
-	PluginSkada:New(environment)	
-	PluginRecount:New(environment)
-	PluginDoodlepad:New(environment)
+	--PluginLuaTexts:New(environment)
+	--PluginUtils:New(environment)
+	--PluginBlend:New(environment)
 	
 	environment._G = _G
 	environment.environment = environment
@@ -232,9 +180,11 @@ function KeyEvent(_, modifier, up)
 	end
 end
 
+--[[
 local keyEventFrame = CreateFrame("Frame")
 keyEventFrame:RegisterEvent("MODIFIER_STATE_CHANGE")
 keyEventFrame:RegisterEvent("OnEvent", KeyEvent)
+]]
 
 function LibCore:RebuildOpts(visitor, db)
 	local options = {

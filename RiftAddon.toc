@@ -29,6 +29,7 @@ Environment = "1.3"
 -- Finally, addons must include a list of files that will be executed when the addon starts. These files must be packaged along with your addon and will be run in order.
 
 RunOnStartup = {
+	"debug.lua"
 }
 
 -- While none of our examples currently make use of this, the addon framework supports embedding addons.
@@ -40,7 +41,8 @@ Embed = {
   ["LibScriptableUtils-1.0"] = true,
   --["LibScriptableWidgets-1.0"] = true,
   ["LibScriptableLocale-1.0"] = true,
-  ["LibScriptablePlugins-1.0"] = true
+  ["LibScriptablePlugins-1.0"] = true,
+  ["LibScriptableLCD-1.0"] = true
 }
 
 -- This line would set up dependencies with several other addons.

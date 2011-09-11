@@ -7,8 +7,6 @@ local MINOR = 24
 assert(LibStub, MAJOR.." requires LibStub")
 local LibPluginBlend = LibStub:NewLibrary(MAJOR, MINOR)
 if not LibPluginBlend then return end
-local LibError = LibStub("LibScriptableUtilsError-1.0")
-assert(LibError, MAJOR .. " requires LibScriptableUtilsError-1.0")
 
 local bit = bit
 local band = bit.band

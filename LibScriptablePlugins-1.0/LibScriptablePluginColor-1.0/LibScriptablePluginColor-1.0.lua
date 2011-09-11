@@ -7,6 +7,8 @@ local ScriptEnv = {}
 local PluginColor = LibStub:NewLibrary(MAJOR, MINOR)
 if not PluginColor then return end
 
+local tinsert = table.insert
+
 -- Populate an environment with this plugin's fields
 -- @usage :New(environment) 
 -- @parma environment This will be the environment when setfenv is called.
@@ -21,7 +23,6 @@ function PluginColor:New(environment)
 	return environment
 end
 
-local LibEvaluator = LibStub("LibScriptableUtilsEvaluator-1.0")
 local pool = setmetatable({}, {__mode = "k"})
 
 local function new()

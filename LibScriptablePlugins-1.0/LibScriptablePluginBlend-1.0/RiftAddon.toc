@@ -13,11 +13,12 @@ Version = "1.0"
 Environment = "1.3"
 
 RunOnStartup = {
-	"LibScriptablePluginBlend-1.0.lua",
+	--"LibScriptablePluginBlend-1.0.lua",
 }
 
 -- This line would set up dependencies with several other addons.
 Dependencies = {
   LibStub = {"required", "before"}, 
-  LibCallbackHandler = {"required", "before"},   
+  LibCallbackHandler = {"required", "before"},
+  --LibScriptableUtilsError_1_0 = {"required", "before"}  
 }

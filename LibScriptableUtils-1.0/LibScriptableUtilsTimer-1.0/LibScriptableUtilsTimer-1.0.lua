@@ -175,14 +175,14 @@ end
 local function update()
 	local time = GetTime()
 	for k, self in pairs(objects) do
-		if time - self.startTime > self.duration then
+		if time - self.startTime > self.duration and self.active then
 			if self.safecall and false then 
 				safecall(self.callback, type(self.data) == "table" and unpack(self.data) or self.data)
 			else
 				self.callback(self.data)
 			end
 			self.error:Print(("Elapsed - %f"):format(self:TimeElapsed()), 3)
-			
+			if not self.repeating then self:Stop() else self:Start() end
 		end
 	end
 end
