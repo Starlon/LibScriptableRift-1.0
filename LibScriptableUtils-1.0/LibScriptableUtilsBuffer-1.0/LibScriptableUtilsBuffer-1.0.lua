@@ -140,7 +140,7 @@ function LibBuffer:Resize(size)
 
 	if size > 0 then
 		for i = 0, size - 1 do
-			assert(self.buffer[i] ~= nil, format("resize %d %d", i, size))
+			assert(self.buffer[i] ~= nil, string.format("resize %d %d", i, size))
 		end
 	end
 end

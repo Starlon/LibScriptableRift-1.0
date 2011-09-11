@@ -3,14 +3,10 @@ local MINOR = 24
 assert(LibStub, MAJOR.." requires LibStub")
 local LCDText = LibStub:NewLibrary(MAJOR, MINOR)
 if not LCDText then return end
---local core = LibStub("LibScriptableLCDCore-1.0")
---assert(core, MAJOR .. " requires LibScriptableLCDCore-1.0")
 local LibError = LibStub("LibScriptableUtilsError-1.0")
 assert(LibError, MAJOR .. " requires LibScriptableUtilsError-1.0")
 local LibBuffer = LibStub("LibScriptableUtilsBuffer-1.0", true)
 assert(LibBuffer, MAJOR .. " requires LibScriptableUtilsBuffer-1.0")
-local PluginUtils = LibStub("LibScriptablePluginUtils-1.0", true)
-assert(PluginUtils, MAJOR .. " requires LibScriptablePluginUtils-1.0")
 local LibTimer = LibStub("LibScriptableUtilsTimer-1.0", true)
 assert(LibTimer, MAJOR .. " requires LibScriptableUtilsTimer-1.0")
 
@@ -19,7 +15,6 @@ local pool = setmetatable({}, {__mode = "k"})
 local objects = {}
 local objectsDict = {}
 local update
-local frame = CreateFrame("Frame")
 
 local DEFAULT_LIMIT = 50
 

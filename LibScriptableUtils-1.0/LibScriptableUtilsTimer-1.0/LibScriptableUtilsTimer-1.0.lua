@@ -103,6 +103,7 @@ function LibTimer:New(name, duration, repeating, callback, data, errorLevel)
 	obj.callback = callback or function() obj.error:Print("No callback", 2) end
 	obj.data = data
 	obj.errorLevel = errorLevel
+	obj.startTime = 0
 	
 	tinsert(objects, obj)
 	

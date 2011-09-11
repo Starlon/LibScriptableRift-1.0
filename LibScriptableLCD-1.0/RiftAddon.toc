@@ -11,5 +11,8 @@ Email = "sisibley@gmail.com"
 Environment = "1.3"
 
 Embed = {
+  ["LibScriptableLCDCore-1.0"] = true,
   ["LibScriptableLCDCoreLite-1.0"] = true,
+  ["LibScriptableLCDText-1.0"] = true,
+  ["LibScriptableLCDDriver-1.0"] = true,
 }
