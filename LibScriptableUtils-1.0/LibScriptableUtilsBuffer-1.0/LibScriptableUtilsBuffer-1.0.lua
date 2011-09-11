@@ -12,6 +12,13 @@ if not LibBuffer.__index then
 	LibBuffer.__index = LibBuffer
 end
 
+table.wipe = function(tbl) 
+	if type(tbl) ~= "table" then return end
+	for i = 1, #tbl do
+		table.remove(tbl, 1)
+	end
+end
+
 local new, del
 do
 	local pool = setmetatable({}, {__mode = "k"})
@@ -188,7 +195,7 @@ local function new()
 		obj = {}
 	end
 
-	wipe(obj)
+	table.wipe(obj)
 	return obj
 end
 
@@ -202,7 +209,7 @@ end
 function LibBuffer:AsString()
 	assert(type(self.defval) == "string")
 	local tbl = new()
-	wipe(tbl)
+	table.wipe(tbl)
 	for i = 0, self:Size() - 1 do
 		if type(self.buffer[i]) == "string" then
 			tbl[i + 1] = self.buffer[i]
@@ -211,7 +218,7 @@ function LibBuffer:AsString()
 		end
 	end
 	local str = table.concat(tbl)
-	wipe(tbl)
+	table.wipe(tbl)
 	del(tbl)
 	return str
 end

@@ -520,7 +520,7 @@ function textScroll(self)
 		num = num + 1
 	end
 
-	if self.dontRtrim then
+	if self.dontRtrim or true then -- FIXME: rtrim's not working atm since strtrim isn't available
 		self.buffer = dst:AsString()
 	else
 		self.buffer = rtrim(dst:AsString())

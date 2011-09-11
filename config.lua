@@ -190,30 +190,6 @@ Update()
 				[1] = "widget_name_label", -- column
 				[10] = "widget_name"
 			},
-			[2] = {
-				[1] = "widget_class_label",
-				[10] = "widget_class"
-			},
-			[3] = {
-				[1] = "widget_race_label",
-				[10] = "widget_race",
-			},
-			[4] = {
-				[1] = "widget_level_label",
-				[10] = "widget_level",
-			},
-			--[[
-			[5] = {
-				[1] = "widget_mem_label",
-				[10] = "widget_mem",
-				[20] = "widget_mem_bar"
-			},
-			[6] = {
-				[1] = "widget_cpu_label",
-				[10] = "widget_cpu",
-				[20] = "widget_cpu_bar"
-			},
-			]]
 		},
 		["transition"] = TRANSITION_TENTACLE,
     },
@@ -271,24 +247,13 @@ Update()
 	},
 	["widget_name"] = {
 		type = "text",
-		value = "return '--' .. select(1, UnitName('player')) .. '--'",
+		value = "return '--' .. UnitName('player') .. '--'",
 		cols = 20,
 		align = ALIGN_PINGPONG,
 		update = 1000,
 		speed = 100,
 		direction = SCROLL_LEFT,
 		dontRtrim = true
-	},
-	["widget_class_label"] = {
-		type = "text",
-		value = 'return "Class:"',
-		cols = 9,
-		align = ALIGN_RIGHT
-	},
-	["widget_class"] = {
-		type = "text",
-		value = "return UnitClass('player')",
-		cols = 10
 	},
 	["widget_race_label"] = {
 		type = "text",

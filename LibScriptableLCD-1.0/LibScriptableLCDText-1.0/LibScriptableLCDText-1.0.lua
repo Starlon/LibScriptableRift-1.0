@@ -162,7 +162,7 @@ function LCDText:TextBlit(row, col, height, width)
 					else
 						bold.buffer[n] = 0
 					end
-					assert(self.LayoutFB[l].buffer[n], format("1 %d %d", n, self.LROWS * self.LCOLS))
+					assert(self.LayoutFB[l].buffer[n], string.format("1 %d %d", n, self.LROWS * self.LCOLS))
 					fb:Replace(n, self.LayoutFB[l].buffer[n] or " ")
 				end
 				l = l - 1
@@ -174,7 +174,7 @@ function LCDText:TextBlit(row, col, height, width)
 
 	--fb:Copy(self.LayoutFB[0])
 	for i = 0, fb:Size() - 1 do
-		assert(fb.buffer[i], format("2 %d %d", i, fb:Size()))
+		assert(fb.buffer[i], string.format("2 %d %d", i, fb:Size()))
 	end
 
 	--/* loop over layout rows */
@@ -257,6 +257,7 @@ end
 function LCDText.TextDraw(widget, data)
 	local lcd = widget.visitor.lcd
 	local n  = widget.widget.row * lcd.LCOLS + widget.widget.col
+	widget.buffer = widget.buffer or "error"
 	local len = strlen(widget.buffer)
 	local layer = widget.widget.layer
 	local fb;

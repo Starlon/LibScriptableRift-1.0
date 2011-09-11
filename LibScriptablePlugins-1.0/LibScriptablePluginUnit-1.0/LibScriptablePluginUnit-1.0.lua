@@ -102,7 +102,7 @@ ScriptEnv.UnitMark = UnitMark
 
 local function UnitName(unit)
 	local details = Detail(unit)
-	if details then return details.Name end
+	if details then return details.name end
 end
 ScriptEnv.UnitName = UnitName
 
