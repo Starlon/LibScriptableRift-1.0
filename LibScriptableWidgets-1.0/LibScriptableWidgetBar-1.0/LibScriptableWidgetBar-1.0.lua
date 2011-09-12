@@ -156,7 +156,7 @@ function WidgetBar:Del()
 	self.error:Del()
 	self:Stop()
 	setmetatable(self, nil)
-	wipe(self)
+	--wipe(self)
 end
 
 --- Resize the widget. Note that this simply repositions this widget on your surface.
@@ -183,6 +183,7 @@ end
 -- @usage object:IntersectUpdate(bars)
 -- @param frame An optional Frame object.
 -- @return Nothing
+--[[
 function WidgetBar:IntersectUpdate(frame)
 	local frame = frame or _G["ChatFrame1"]
 	if type(frame) == "table" and frame.GetFrameStrata and frame:IsShown() and self.config and self.config.intersect then
@@ -198,7 +199,7 @@ function WidgetBar:IntersectUpdate(frame)
 		end
 	end
 end
-
+]]
 
 --- Start the widget's timer
 -- @usage object:Start()

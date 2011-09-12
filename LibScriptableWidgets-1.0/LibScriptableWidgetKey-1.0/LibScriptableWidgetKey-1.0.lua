@@ -12,8 +12,6 @@ local Locale = LibStub("LibScriptableLocale-1.0", true)
 assert(Locale, MAJOR .. " requires LibScriptableLocale-1.0")
 local L = Locale.L
 
-local frame = CreateFrame("Frame")
-frame:RegisterEvent("MODIFIER_STATE_CHANGED")
 local pool = setmetatable({}, {__mode = "k"})
 local objects = {}
 
@@ -21,16 +19,8 @@ if not WidgetKey.__index then
 	WidgetKey.__index = WidgetKey
 end
 
-function OnKey(frame, event, ...)
-	for widget in pairs(objects) do
-		widget:KeyEvent(...)
-	end
-end
-frame:SetScript("OnEvent", OnKey)
-
-
 WidgetKey.defaults = {
-	expression = 'print("Execute Key:" .. (self.name or ' .. MAJOR ..'))',
+	expression = 'print("Execute Key:" .. (self.name or "' .. MAJOR ..'"))',
 	test = "return true",
 	up = false,
 	modifier = 1
