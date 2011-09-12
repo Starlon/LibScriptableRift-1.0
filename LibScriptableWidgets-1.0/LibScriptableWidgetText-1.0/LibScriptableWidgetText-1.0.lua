@@ -350,6 +350,12 @@ function WidgetText:Draw()
 	end
 end
 
+local function strtrim(text)
+	text = text:gsub("%w+$", "")
+	text = text:gsub("^%w+", "")
+	return text
+end
+
 local function rtrim(text)
 	local pos = 0
 
@@ -522,7 +528,7 @@ function textScroll(self)
 		num = num + 1
 	end
 
-	if self.dontRtrim or true then -- FIXME: rtrim's not working atm since strtrim isn't available
+	if self.dontRtrim then
 		self.buffer = dst:AsString()
 	else
 		self.buffer = rtrim(dst:AsString())
