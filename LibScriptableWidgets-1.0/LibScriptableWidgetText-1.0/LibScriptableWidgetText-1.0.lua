@@ -351,8 +351,8 @@ function WidgetText:Draw()
 end
 
 local function strtrim(text)
-	text = text:gsub("%w+$", "")
-	text = text:gsub("^%w+", "")
+	text = text:gsub("%s+$", "")
+	text = text:gsub("^%s+", "")
 	return text
 end
 
