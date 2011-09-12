@@ -17,25 +17,20 @@ end
 function PluginString:New(environment)
 	
 	environment.string = _G.string
-	environment.format = _G.format
-	environment.gsub = _G.gsub
-	environment.strbyte = _G.strbyte
-	environment.strchar = _G.strchar
-	environment.strfind = _G.strfind
-	environment.strlen = _G.string.len
-	environment.strlower = _G.strlower
-	environment.strmatch = _G.strmatch
-	environment.strrep = _G.strrep
-	environment.strsub = _G.strsub
-	environment.strupper = _G.strupper
-	environment.tonumber = _G.tonumber
-	environment.tostring = _G.tostring
-	environment.strlenutf8 = _G.strlenutf8
-	environment.strtrim = _G.strtrim
-	environment.strsplit = _G.strsplit
-	environment.strjoin = _G.strjoin
-	environment.strconcat = _G.strconcat
-	environment.tostringall = _G.tostringall
+	environment.byte = string.byte
+	environment.char = string.char
+	environment.find = string.find
+	environment.format = string.format
+	environment.gfind = string.gfind
+	environment.gmatch = string.gmatch
+	environment.gsub = string.gsub
+	environment.len = string.len
+	environment.lower = string.lower
+	environment.match = string.match
+	environment.rep = string.rep
+	environment.reverse = string.reverse
+	environment.sub = string.sub
+	envornment.upper = string.upper
 	
 	environment.short = function(value)
 		assert(type(value) == "number", MAJOR .. ".short requires a number")

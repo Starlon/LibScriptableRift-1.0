@@ -16,14 +16,18 @@ end
 -- @return A new plugin object, aka the environment
 function PluginBit:New(environment)
 
-	environment.bnot = _G.bit.bnot
-	environment.band = _G.bit.band
-	environment.bor = _G.bit.bor
-	environment.bxor = _G.bit.bxor
-	environment.lshift = _G.bit.lshift
-	environment.rshift = _G.bit.rshift
-	environment.arshift = _G.bit.arshift
-	environment.mod = _G.bit.mod
+	environment.arshift = bit.arshift
+	environment.band = bit.band
+	environment.bnot = bit.bnot
+	environment.bor = bit.bor
+	environment.bswap = bit.bswap
+	environment.bxor = bit.bxor
+	environment.lshift = bit.lshift
+	environment.rol = bit.rol
+	environment.ror = bit.ror
+	environment.rshift = bit.rshift
+	environment.tobit = bit.tobit
+	environment.tohex = bit.tohex
 	
 	return environment
 	

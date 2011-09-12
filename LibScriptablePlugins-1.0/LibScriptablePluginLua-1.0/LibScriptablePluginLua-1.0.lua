@@ -17,28 +17,36 @@ end
 function PluginLua:New(environment)
 	
 	-- Lua functions
-	environment.assert = _G.assert
-	environment.collectgarbage = _G.collectgarbage
-	environment.date = _G.date
-	environment.error = _G.error
-	environment.gcinfo = _G.gcinfo
-	environment.getfenv = _G.getfenv
-	environment.getmetatable = _G.getmetatable
-	environment.loadstring = _G.loadstring
-	environment.next = _G.next
-	environment.newproxy = _G.newproxy
-	environment.pcall = _G.pcall
-	environment.select = _G.select
-	environment.setfenv = _G.setfenv
-	environment.setmetatable = _G.setmetatable
-	environment.time = _G.time
-	environment.type = _G.type
-	environment.unpack = _G.unpack
-	environment.xpcall = _G.xpcall
-	environment.random = _G.random
-	environment.coroutine = _G.coroutine
-	environment.GetTime = _G.GetTime
-	environment.print = _G.print
+	environment._G = _G
+	environment.assert = assert
+	environment.collectgarbage = collectgarbage
+	environment.coroutine = coroutine
+	envrionment.debug = debug
+	environment.dump = dump
+	environment.error = error
+	environment.gcinfo = gcinfo
+	environment.getfenv = getfenv
+	environment.getmetatable = getmetatable
+	environment.ipairs = ipairs
+	environment.load = load
+	environment.loadstring = loadstring
+	environment.newproxy = newproxy
+	environment.next = next
+	environment.pairs = pairs
+	environment.pcall = pcall
+	environment.print = print
+	environment.print_raw = print_raw
+	environment.rawequal = rawequal
+	environment.rawget = rawget
+	environment.rawset = rawset
+	environment.select = select
+	environment.setfenv = setfenv
+	environment.setmetatable = setmetatable
+	environment.tonumber = tonumber
+	environment.tostring = tostring
+	environment.type = type
+	environment.unpack = unpack
+	environment.xpcall = xpcall
 	
 	return environment
 end
