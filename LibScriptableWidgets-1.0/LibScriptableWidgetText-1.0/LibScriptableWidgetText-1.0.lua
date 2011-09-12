@@ -47,6 +47,8 @@ local map = {value = L["Value"], prefix = L["Prefix"], postfix = L["Postfix"], p
 
 local widgetType = {text = true, rc = true}
 
+local strlen = string.len
+
 WidgetPlugin.New = function(environment)
 	environment.ALIGN_LEFT, environment.ALIGN_CENTER, environment.ALIGN_RIGHT, environment.ALIGN_MARQUEE, environment.ALIGN_AUTOMATIC, environment.ALIGN_PINGPONG = 1, 2, 3, 4, 5, 6
 	environment.SCROLL_RIGHT, environment.SCROLL_LEFT = 1, 2

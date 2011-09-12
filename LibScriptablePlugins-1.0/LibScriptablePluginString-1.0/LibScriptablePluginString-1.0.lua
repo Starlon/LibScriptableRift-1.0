@@ -30,7 +30,7 @@ function PluginString:New(environment)
 	environment.rep = string.rep
 	environment.reverse = string.reverse
 	environment.sub = string.sub
-	envornment.upper = string.upper
+	environment.upper = string.upper
 	
 	environment.short = function(value)
 		assert(type(value) == "number", MAJOR .. ".short requires a number")

@@ -6,6 +6,8 @@ if not LibBuffer then return end
 local LibError = LibStub("LibScriptableUtilsError-1.0")
 assert(LibError, MAJOR .. " requires LibScriptableUtilsError-1.0")
 
+local strlen = string.len
+
 local pool = setmetatable({}, {__mode = "k"})
 
 if not LibBuffer.__index then

@@ -21,7 +21,7 @@ function PluginLua:New(environment)
 	environment.assert = assert
 	environment.collectgarbage = collectgarbage
 	environment.coroutine = coroutine
-	envrionment.debug = debug
+	environment.debug = debug
 	environment.dump = dump
 	environment.error = error
 	environment.gcinfo = gcinfo

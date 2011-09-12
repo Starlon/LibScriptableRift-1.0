@@ -258,7 +258,7 @@ function LCDText.TextDraw(widget, data)
 	local lcd = widget.visitor.lcd
 	local n  = widget.widget.row * lcd.LCOLS + widget.widget.col
 	widget.buffer = widget.buffer or "error"
-	local len = strlen(widget.buffer)
+	local len = string.len(widget.buffer)
 	local layer = widget.widget.layer
 	local fb;
 	if lcd.transitioning and widget.widget.layout_base == lcd.transitionLayout then
