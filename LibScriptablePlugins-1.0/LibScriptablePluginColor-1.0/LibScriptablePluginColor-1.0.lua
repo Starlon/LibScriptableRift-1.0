@@ -161,7 +161,7 @@ function HSV2RGB (h, s, v)
 	end
 
 	h = h / 60.0;
-	i = floor(h);
+	i = math.floor(h);
 	f = h - i;
 	w = v * (1.0 - s);
 	q = v * (1.0 - (s * f));
@@ -270,14 +270,28 @@ ScriptEnv.ThreatStatusColor = ThreatStatusColor
 -- @usage Gradient(perc)
 -- @param perc A value between 0 and 1 -- The position within the gradient
 -- @return Red, green, and blue
-local function Gradient(perc)
+local function GradientHealth(perc)
     if perc <= 0.5 then
         return 1, perc*2, 0
     else
         return 2 - perc*2, 1, 0
     end
 end
-ScriptEnv.Gradient = Gradient
+ScriptEnv.GradientHealth = GradientHealth
+
+local function GradientMana(perc)
+	local r, g, b
+	if perc <= 0.5 then
+		r, g, b = 1, 0, perc*2
+	else
+		r, g, b = 2 - perc*2, 0, 1
+	end
+	local h, s, v = RGB2HSV(r, g, b)
+	s = 0.5
+	r, g, b = HSV2RGB(h, s, v)
+	return r, g, b
+end
+ScriptEnv.GradientMana = GradientMana
 
 --- Retrieve a table representing the colors along a gradient red through blue
 -- @usage RedThroughBlue()

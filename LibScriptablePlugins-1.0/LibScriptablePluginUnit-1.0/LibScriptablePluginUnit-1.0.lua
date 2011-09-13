@@ -57,6 +57,7 @@ local function UnitComboUnit(unit)
 	local details = Detail(unit)
 	if details then return details.comboUnit end
 end
+ScriptEnv.UnitComboUnit = UnitComboUnit
 
 --- energy:	The unit's energy.
 local function UnitEnergy(unit)
@@ -70,6 +71,7 @@ local function UnitGuaranteedLoot(unit)
 	local details = Detail(unit)
 	if details then return details.guaranteedLoot end
 end
+ScriptEnv.UnitGuaranteedLoot = UnitGuaranteedLoot
 
 --- guild:	The unit's guild.
 local function UnitGuild(unit)

@@ -129,6 +129,7 @@ WidgetText.defaults = {
 	direction = WidgetText.SCROLL_RIGHT,
 	update = 0,
 	cols = 40,
+	fontSize = 13,
 	background = {0, 0, 0, 0},
 	limited = false
 }
@@ -232,6 +233,7 @@ function WidgetText:Init(config)
 	obj.background = config.background or copy(self.defaults.background)
 	obj.frame = config.frame
 	obj.dogtag = config.dogtag
+	obj.fontSize = config.fontSize or self.defaults.fontSize
 	
 	if obj.direction == self.SCROLL_LEFT then
 		obj.scroll = obj.cols -- marquee starting point
