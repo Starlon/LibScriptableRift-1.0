@@ -18,18 +18,19 @@ RunOnStartup = {
 
 -- This line would set up dependencies with several other addons.
 Dependencies = {
-  LibStub = {"required", "before"}, 
-  LibCallbackHandler = {"required", "before"},
-  LibScriptableUtilsError_1_0 = {"required", "before"},
-  LibScriptableUtilsTimer_1_0 = {"required", "before"},
-  LibScriptableUtilsCFG_1_0 = {"required", "before"},
-  LibScriptablePluginBit_1_0 = {"required", "before"},  
-  LibScriptablePluginBlend_1_0 = {"required", "before"},
-  LibScriptablePluginColor_1_0 = {"required", "before"},
-  LibScriptablePluginLua_1_0 = {"required", "before"},
-  LibScriptablePluginMath_1_0 = {"required", "before"},
-  LibScriptablePluginString_1_0 = {"required", "before"},
-  LibScriptablePluginTable_1_0 = {"required", "before"},
-  LibScriptablePluginUnit_1_0 = {"required", "before"},
+  LibStub = {"optional", "before"}, 
+  LibCallbackHandler = {"optional", "before"},
+  LibScriptableUtilsError_1_0 = {"optional", "before"},
+  LibScriptableUtilsTimer_1_0 = {"optional", "before"},
+  LibScriptableUtilsCFG_1_0 = {"optional", "before"},
+  LibScriptablePluginBit_1_0 = {"optional", "before"},  
+  LibScriptablePluginBlend_1_0 = {"optional", "before"},
+  LibScriptablePluginColor_1_0 = {"optional", "before"},
+  LibScriptablePluginLua_1_0 = {"optional", "before"},
+  LibScriptablePluginMath_1_0 = {"optional", "before"},
+  LibScriptablePluginString_1_0 = {"optional", "before"},
+  LibScriptablePluginTable_1_0 = {"optional", "before"},
+  LibScriptablePluginUnit_1_0 = {"optional", "before"},
+  LibScriptablePluginLuaTexts_1_0 = {"optional", "before"}
 }
 

@@ -6,14 +6,8 @@ local PluginLuaTexts = LibStub:NewLibrary(MAJOR, MINOR)
 if not PluginLuaTexts then return end
 local PluginUtils = LibStub("LibScriptablePluginUtils-1.0", true)
 assert(PluginUtils, MAJOR .. " requires LibScriptablePluginUtils-1.0")
-local PluginUnitTooltipScan = LibStub("LibScriptablePluginUnitTooltipScan-1.0", true)
-assert(PluginUnitTooltipScan, MAJOR .. " requires LibScriptablePluginUnitTooltipScan-1.0")
-local LibHook = LibStub("LibScriptableUtilsHook-1.0", true)
-assert(LibHook, MAJOR .. " requires LibScriptableUtilsHook-1.0")
 local LibTimer = LibStub("LibScriptableUtilsTimer-1.0", true)
 assert(LibTimer, MAJOR .. " requires LibScriptableUtilsTimer-1.0")
-local PluginTalents = LibStub("LibScriptablePluginTalents-1.0")
-assert(PluginTalents, MAJOR .. " requires LibScriptablePluginTalents-1.0")
 local PluginColor = LibStub("LibScriptablePluginColor-1.0")
 assert(PluginColor, MAJOR .. " requires LibScriptablePluginColor-1.0")
 local Locale = LibStub("LibScriptableLocale-1.0", true)
@@ -25,17 +19,11 @@ local ScriptEnv = {}
 
 ScriptEnv.Colorize = PluginColor.Colorize
 
-local timerframe = CreateFrame("Frame")
-PluginLuaTexts.timerframe = timerframe
-timerframe:Hide()
-
 local player_guid
 
 if not PluginLuaTexts.__index then
 	PluginLuaTexts.__index = PluginLuaTexts
 end
-
-local spellcastEvents = {['UNIT_SPELLCAST_START']=true,['UNIT_SPELLCAST_CHANNEL_START']=true,['UNIT_SPELLCAST_STOP']=true,['UNIT_SPELLCAST_FAILED']=true,['UNIT_SPELLCAST_INTERRUPTED']=true,['UNIT_SPELLCAST_SUCCEEDED']=true,['UNIT_SPELLCAST_DELAYED']=true,['UNIT_SPELLCAST_CHANNEL_UPDATE']=true,['UNIT_SPELLCAST_CHANNEL_STOP']=true}
 
 -- Populate an environment with this plugin's fields
 -- @usage :New(environment) 
@@ -45,88 +33,9 @@ function PluginLuaTexts:New(environment, config)
 	for k, v in pairs(ScriptEnv) do
 		environment[k] = v
 	end
-
-	local obj = setmetatable({}, {__index=PluginLuaTexts})
-
-
-	-- UNIT_SPELLCAST_SENT has to always be registered so we can capture
-	-- additional data not always available.
-	obj.frame = CreateFrame("Frame")
-	obj.frame:SetScript("OnEvent", function(frame, event, ...)
-		if PluginLuaTexts[event] then
-			PluginLuaTexts[event](frame.obj, event, ...)
-		else
-			PluginLuaTexts:OnEvent(event, ...)
-		end
-	end)
-	obj.frame:RegisterEvent("UNIT_SPELLCAST_SENT")
-	obj.frame:RegisterEvent("PARTY_MEMBERS_CHANGED")
-	obj.frame:RegisterEvent("PLAYER_FLAGS_CHANGED")
-	for k, _ in pairs(spellcastEvents) do
-		obj.frame:RegisterEvent(k)
-	end
-	obj.frame.environment = environment
-	obj.frame.obj = obj
-	obj.frame:Show()
-
-	-- Hooks to trap OnEnter/OnLeave for the frames.
-	--self:AddFrameScriptHook("OnEnter")
-	--self:AddFrameScriptHook("OnLeave")
-
-	-- Cache the player's guid for later use
-	player_guid = UnitGUID("player")
-	environment.player_guid = player_guid
-
-	--LibHook:CreateHook(_G, "SetCVar", PluginLuaTexts, true)
-	--self:SecureHook("SetCVar")
-	PluginLuaTexts:SetCVar()
-	local events = {
-		-- Harcoded events basically the ones that aren't just unit=true ones
-		['UNIT_PET_EXPERIENCE'] = {pet=true},
-		['PLAYER_XP_UPDATE'] = {player=true},
-		['UNIT_COMBO_POINTS'] = {all=true},
-		['UPDATE_FACTION'] = {all=true},
-		['UNIT_LEVEL'] = {all=true},
-
-		-- They pass the unit but they don't provide the pairing (e.g.
-		-- the target changes) so we'll miss updates if we don't update
-		-- every text on every one of these events.  /sigh
-		['UNIT_THREAT_LIST_UPDATE'] = {all=true},
-		['UNIT_THREAT_SITUATION_UPDATE'] = {all=true},
-	}
-
-	timerframe:Show()
-	config = config or {}
-	obj.size = config.size or 1
-	obj.attach_to = config.attach_to or "root"
-	obj.location = config.location or "edget_top_left"
-	obj.position = config.position or 1
-	obj.exists = config.exists or false
-	obj.code = config.code or ""
-	obj.events = events
-	obj.enabled = config.enabled or true
-	obj.config = config
-	--fix_unit_healthmax(obj)
-	environment.LuaTexts = obj
 	
-	return environment, obj
+	return environment
 end
-
---[[
-local mouseover_check_cache = {}
-local spell_cast_cache = {}
-local power_cache = {}
-local cast_data = {}
-local to_update = {}
-local afk_cache = {}
-local dnd_cache = {}
-local offline_cache = {}
-local dead_cache = {}
-local offline_times = {}
-local afk_times = {}
-local dnd = {}
-local dead_times = {}
-]]
 
 local texts = {}
 local no_update = {}
@@ -212,41 +121,7 @@ do
 end
 ]]
 
--- Fix a typo in the original default event names. 
--- s/UNIT_HEALTHMAX/UNIT_MAXHEALTH/
-local function fix_unit_healthmax(self)	
-	for _,profile in pairs(self.config) do
-		if profile.global then
-			local events = profile.global.events
-			if events then
-				local old_event = events.UNIT_HEALTHMAX
-				if not events.UNIT_MAXHEALTH and old_event then
-					events.UNIT_MAXHEALTH = old_event
-					events.UNIT_HEALTHMAX = nil
-				end
-			end
-		end
-		local layouts = profile.layouts
-		if layouts then
-			for _,layout in pairs(layouts) do	
-				local elements = layout.elements
-				if elements then
-					for _,text in pairs(elements)	do
-						local events = text.events
-						if events then
-							local old_event = events.UNIT_HEALTHMAX
-							if not events.UNIT_MAXHEALTH and old_event then
-								events.UNIT_MAXHEALTH = old_event
-								events.UNIT_HEALTHMAX = nil
-							end
-						end
-					end
-				end
-			end
-		end
-	end
-end
-
+--[[
 do
 	local target_same_mt = { __index=function(self, key)
 		if type(key) ~= "string" then
@@ -384,15 +259,7 @@ do
 	end
 end
 
-
--- Pre 3.2.0 compatability support
-local wow_320 = select(4, GetBuildInfo()) >= 30200
-local GetQuestDifficultyColor
-if not wow_320 then
-	GetQuestDifficultyColor = _G.GetDifficultyColor
-else
-	GetQuestDifficultyColor = _G.GetQuestDifficultyColor
-end
+]]
 
 -- The following functions exist to provide a method to help people moving
 -- from LibDogTag.  They implement the functionality that exists in some of
@@ -407,7 +274,7 @@ end
 
 -- A number of these functions are borrowed or adapted from the code implmenting
 -- similar tags in DogTag.  Permission to do so granted by ckknight.
-
+--[[
 local UnitToLocale = {player = L["Player"], target = L["Target"], pet = L["%s's pet"]:format(L["Player"]), focus = L["Focus"], mouseover = L["Mouse-over"]}
 setmetatable(UnitToLocale, {__index=function(self, unit)
 	if unit:find("pet$") then
@@ -439,107 +306,8 @@ setmetatable(UnitToLocale, {__index=function(self, unit)
 	self[unit] = L["%s's target"]:format(self[nonTarget])
 	return self[unit]
 end})
+]]
 
-local function VehicleName(unit)
-	local name = UnitName(unit:gsub("vehicle", "pet")) or UnitName(unit) or L["Vehicle"]
-	local owner_unit = unit:gsub("vehicle", "")
-	if owner_unit == "" then
-		owner_unit = "player"
-	end
-	local owner = UnitName(owner_unit)
-	if owner then
-		return L["%s's %s"]:format(owner, name)
-	else
-		return name
-	end
-end
-ScriptEnv.VehicleName = VehicleName
-
-local PowerTypes = {[0] = L["Mana"], [1] = L["Rage"], [2] = L["Focus"], [3] = L["Energy"], [4] = L["Happiness"], [5] = L["Runes"], [6] = L["Runic Power"], [7] = L["Soul Shards"], [8] = L["Eclipse"], [9] = L["Holy Power"]}
-
-
-local function PowerName(unit)
-	return strjoin("", PowerTypes[UnitPowerType(unit)],":")
-end
-ScriptEnv.PowerName = PowerName
-
-local function PowerType(unit)
-	return select(2, UnitPowerType(unit))
-end
-ScriptEnv.PowerType = PowerType
-
-local function Name(unit, titled)
-	if unit ~= "player" and not UnitExists(unit) then
-		return UnitToLocale[unit]
-	else
-		if unit:match("%d*pet%d*$") then
-			local vehicle = unit:gsub("pet", "vehicle")
-			if UnitIsUnit(unit, vehicle) then
-				return VehicleName(vehicle)
-			end
-		elseif unit:match("%d*vehicle%d*$") then
-			return VehicleName(unit)
-		end
-	end
-	if titled then
-		return UnitPVPName(unit)
-	else
-		return UnitName(unit)
-	end
-end
-ScriptEnv.Name = Name
-
-local function Guild(unit, tooltip)
-	if tooltip then
-		return select(2, PluginUnitTooltipScan.GetUnitTooltipScan(unit))
-	else
-		return select(1, GetGuildInfo(unit))
-	end
-end
-ScriptEnv.Guild = Guild
-
-local function Rank(unit)
-	return select(2, GetGuildInfo(unit))
-end
-ScriptEnv.Rank = Rank
-
-local function RankIndex(unit)
-	return select(3, GetGuildInfo(unit))
-end
-ScriptEnv.RankIndex = RankIndex
-
-local function Realm(unit)
-	local txt = select(2, UnitName(unit))
-	if txt == "" then return end
-	return txt
-end
-ScriptEnv.Realm = Realm
-
-local function Faction(unit)
-	return UnitFactionGroup(unit)
-end
-ScriptEnv.Faction = Faction
-
-local function HasAura(unit, aura)
-    local i = 1
-    while true do
-        local buff = UnitBuff(unit, i)
-        if not buff then return end
-        if buff == aura then return true end
-        i = i + 1
-    end
-end
-ScriptEnv.HasAura = HasAura
-
-
-local L_DAY_ONELETTER_ABBR    = DAY_ONELETTER_ABBR:gsub("%s*%%d%s*", "")
-local L_HOUR_ONELETTER_ABBR   = HOUR_ONELETTER_ABBR:gsub("%s*%%d%s*", "")
-local L_MINUTE_ONELETTER_ABBR = MINUTE_ONELETTER_ABBR:gsub("%s*%%d%s*", "")
-local L_SECOND_ONELETTER_ABBR = SECOND_ONELETTER_ABBR:gsub("%s*%%d%s*", "")
-local L_DAYS_ABBR = DAYS_ABBR:gsub("%s*%%d%s*","")
-local L_HOURS_ABBR = HOURS_ABBR:gsub("%s*%%d%s*","")
-local L_MINUTES_ABBR = MINUTES_ABBR:gsub("%s*%%d%s*","")
-local L_SECONDS_ABBR = SECONDS_ABBR:gsub("%s*%%d%s*","")
 
 local t = {}
 local function FormatDuration(number, format)
@@ -742,81 +510,6 @@ local function DND(unit)
 end
 ScriptEnv.DND = DND
 
-local classification_lookup = {
-	rare = L["Rare"],
-	rareelite = L["Rare-Elite"],
-	elite = L["Elite"],
-	worldboss = L["Boss"]
-}
-
-classification_lookup = setmetatable(classification_lookup, {__index = function(self, i)
-	if rawget(self, key) then return rawget(self, key) or "" end
-end})
-
-local function Classification(unit)
-	return classification_lookup[PluginUtils.BetterUnitClassification(unit)]
-end
-ScriptEnv.Classification = Classification
-
-local ShortClassification_abbrev = {
-	[L["Rare"]] = L["Rare_short"],
-	[L["Rare-Elite"]] = L["Rare-Elite_short"],
-	[L["Elite"]] = L["Elite_short"],
-	[L["Boss"]] = L["Boss_short"]
-}
-
-local function ShortClassification(arg)
-	local short = ShortClassification_abbrev[arg]
-	if not short and PluginLuaTexts.GetBestUnitID(arg) then
-		-- If it's empty then maybe arg is a unit
-		short = ShortClassification_abbrev[Classification(arg)]
-	end
-	return short
-end
-ScriptEnv.ShortClassification = ShortClassification
-
-local function Class(unit)
-	if UnitIsPlayer(unit) then
-		return UnitClass(unit) or UNKNOWN
-	else
-		return UnitClassBase(unit) or UNKNOWN
-	end
-end
-ScriptEnv.Class = Class
-
-local ShortClass_abbrev = {
-	[L["Priest"]] = L["Priest_short"],
-	[L["Mage"]] = L["Mage_short"],
-	[L["Shaman"]] = L["Shaman_short"],
-	[L["Paladin"]] = L["Paladin_short"],
-	[L["Warlock"]] = L["Warlock_short"],
-	[L["Druid"]] = L["Druid_short"],
-	[L["Rogue"]] = L["Rogue_short"],
-	[L["Hunter"]] = L["Hunter_short"],
-	[L["Warrior"]] = L["Warrior_short"],
-	[L["Death Knight"]] = L["Death Knight_short"],
-	[L["Priest_female"]] = L["Priest_short"],
-	[L["Mage_female"]] = L["Mage_short"],
-	[L["Shaman_female"]] = L["Shaman_short"],
-	[L["Paladin_female"]] = L["Paladin_short"],
-	[L["Warlock_female"]] = L["Warlock_short"],
-	[L["Druid_female"]] = L["Druid_short"],
-	[L["Rogue_female"]] = L["Rogue_short"],
-	[L["Hunter_female"]] = L["Hunter_short"],
-	[L["Warrior_female"]] = L["Warrior_short"],
-	[L["Death Knight_female"]] = L["Death Knight_short"],
-}
-
-local function ShortClass(arg)
-	local short = ShortClass_abbrev[arg]
-	if not short and PluginLuaTexts.GetBestUnitID(arg) then
-		-- If it's empty then maybe arg is a unit
-		short = ShortClass_abbrev[Class(arg)]
-	end
-	return short
-end
-ScriptEnv.ShortClass = ShortClass
-
 local function Level(unit)
 	local level = UnitLevel(unit)
 	if level <= 0 then
@@ -826,54 +519,6 @@ local function Level(unit)
 end
 ScriptEnv.Level = Level
 
-local function Creature(unit)
-	return UnitCreatureFamily(unit) or UnitCreatureType(unit) or UNKNOWN
-end
-ScriptEnv.Creature = Creature
-
-local function SmartRace(unit)
-	if UnitIsPlayer(unit) then
-		local race = UnitRace(unit)
-		return race or UNKNOWN
-	else
-		return Creature(unit)
-	end
-end
-ScriptEnv.SmartRace = SmartRace
-ScriptEnv.Race = SmartRace
-
-local ShortRace_abbrev = {
-	[L["Blood Elf"]] = L["Blood Elf_short"],
-	[L["Draenei"]] = L["Draenei_short"],
-	[L["Dwarf"]] = L["Dwarf_short"],
-	[L["Gnome"]] = L["Gnome_short"],
-	[L["Human"]] = L["Human_short"],
-	[L["Night Elf"]] = L["Night Elf_short"],
-	[L["Orc"]] = L["Orc_short"],
-	[L["Tauren"]] = L["Tauren_short"],
-	[L["Troll"]] = L["Troll_short"],
-	[L["Undead"]] = L["Undead_short"],
-	[L["Blood Elf_female"]] = L["Blood Elf_short"],
-	[L["Draenei_female"]] = L["Draenei_short"],
-	[L["Dwarf_female"]] = L["Dwarf_short"],
-	[L["Gnome_female"]] = L["Gnome_short"],
-	[L["Human_female"]] = L["Human_short"],
-	[L["Night Elf_female"]] = L["Night Elf_short"],
-	[L["Orc_female"]] = L["Orc_short"],
-	[L["Tauren_female"]] = L["Tauren_short"],
-	[L["Troll_female"]] = L["Troll_short"],
-	[L["Undead_female"]] = L["Undead_short"],
-}
-
-local function ShortRace(arg)
-	local short = ShortRace_abbrev[arg]
-	if not short and PluginLuaTexts.GetBestUnitID(arg) then
-		-- If it's empty then maybe arg is a unit
-		short = ShortRace_abbrev[UnitRace(arg)]
-	end
-	return short
-end
-ScriptEnv.ShortRace = ShortRace
 
 local function IsPet(unit)
 	return not UnitIsPlayer(unit) and (UnitPlayerControlled(unit) or UnitPlayerOrPetInRaid(unit))
@@ -921,43 +566,6 @@ local function Dead(unit)
 	end
 end
 ScriptEnv.Dead = Dead
-
-local MOONKIN_FORM = GetSpellInfo(24858)
-local AQUATIC_FORM = GetSpellInfo(1066)
-local FLIGHT_FORM = GetSpellInfo(33943)
-local SWIFT_FLIGHT_FORM = GetSpellInfo(40120)
-local TRAVEL_FORM = GetSpellInfo(783)
-local TREE_OF_LIFE, SHAPESHIFT = GetSpellInfo(33891)
-
-local function DruidForm(unit)
-	local _, class = UnitClass(unit)
-	if class ~= "DRUID" then
-		return nil
-	end
-	local power = UnitPowerType(unit)
-	if power == 1 then
-		return L["Bear"]
-	elseif power == 3 then
-		return L["Cat"]
-	elseif UnitAura(unit,MOONKIN_FORM,SHAPESHIFT) then
-		return L["Moonkin"]
-	elseif UnitAura(unit,TREE_OF_LIFE,SHAPESHIFT) then
-		return L["Tree"]
-	elseif UnitAura(unit,TRAVEL_FORM,SHAPESHIFT) then
-		return L["Travel"]
-	elseif UnitAura(unit,AQUATIC_FORM,SHAPESHIFT) then
-		return L["Aquatic"]
-	elseif UnitAura(unit,SWIFT_FLIGHT_FORM,SHAPESHIFT) or UnitAura(unit,SWIFT_FLIGHT_FORM,SHAPESHFIT) then
-		return L["Flight"]
-	end
-end
-ScriptEnv.DruidForm = DruidForm
-
-local DIVINE_INTERVENTION = GetSpellInfo(19752)
-local function Status(unit)
-	return Offline(unit) or UnitAura(unit,DIVINE_INTERVENTION) or (UnitIsFeignDeath(unit) and L["Feigned Death"]) or Dead(unit)
-end
-ScriptEnv.Status = Status
 
 local function HP(unit)
 	local hp = UnitHealth(unit)
@@ -1131,23 +739,6 @@ local function VeryShort(value,format)
 end
 ScriptEnv.VeryShort = VeryShort
 
-local function Combos(unit, target)
-	if unit and target then
-		return GetComboPoints(unit, target)
-	else
-		return GetComboPoints(UnitHasVehicleUI("player") and "vehicle" or "player", "target")
-	end
-end
-ScriptEnv.Combos = Combos
-
-local function ComboSymbols(symbol, unit, target)
-	if not symbol then
-		symbol = '@'
-	end
-	return string.rep(symbol,Combos(unit,target))
-end
-ScriptEnv.ComboSymbols = ComboSymbols
-
 local function Percent(x, y)
 	if y ~= 0 then
 		return Round(x / y * 100,1)
@@ -1189,43 +780,10 @@ local function RestXP(unit)
 end
 ScriptEnv.RestXP = RestXP
 
-local function ThreatPair(unit)
-	if UnitIsFriend("player", unit) then
-		if UnitExists("target") then
-			return unit, "target"
-		else
-			return
-		end
-	else
-		return "player", unit
-	end
-end
-ScriptEnv.ThreatPair = ThreatPair
-
 local function CastData(unit)
 	return cast_data[UnitGUID(unit)]
 end
 ScriptEnv.CastData = CastData
-
-local function Alpha(number)
-	if number > 1 then
-		number = 1
-	elseif number < 0 then
-		number = 0
-	end
-	PluginLuaTexts.alpha = number
-end
-ScriptEnv.Alpha = Alpha
-
-local function Outline()
-	PluginLuaTexts.outline = "OUTLINE"
-end
-ScriptEnv.Outline = Outline
-
-local function ThickOutline()
-	PluginLuaTexts.outline = "OUTLINE, THICKOUTLINE"
-end
-ScriptEnv.ThickOutline = ThickOutline
 
 local function abbreviate(text)
 	local b = text:byte(1)
@@ -1257,120 +815,8 @@ local function PVPDuration(unit)
 end
 ScriptEnv.PVPDuration = PVPDuration
 
-local count = 0
-local function PVPRank(unit)
-	local pvp = PluginTalents.UnitPVPStats(unit);
-	if not CheckInteractDistance(unit, 1) and not pvp then return L["Out of Range"] end
-	local txt;
-	if pvp then
-	  local fctn = ScriptEnv.Faction(unit)
-	  if fctn == L["Alliance"] then
-		fctn = L["Horde"]
-	  elseif fctn == L["Horde"] then
-		fctn = L["Alliance"]
-	  end
-	  local rankIcon = ScriptEnv.Texture(pvp.texture, 12)
-	  local factIcon = ScriptEnv.Texture("Interface\\PvPRankBadges\\PvPRank"..fctn..".blp", 12)
-	  txt = format("%s %s %d HKs", rankIcon, pvp.text or factIcon..L["No Rank (-1)"], pvp.lifetimeHK)
-	else
-      local elips = ""
-      for i = 0, count % 3 do
-		elips = elips .. "."
-	  end
-	  count = count + 1
-	  txt = L["Fetching"] .. elips
-	end
-	return txt
-end
-ScriptEnv.PVPRank = PVPRank
-
-local function ArenaTeam(unit, num)
-	local pvp = PluginTalents.UnitPVPStats(unit);
-	if not pvp then return "" end
-	local team = pvp.teams[num]
-	if not team then return "" end
-	local text = ""
-	if team and type(team.teamSize) == "number" and team.teamSize > 0 then
-		local points = ScriptEnv.CalculateArenaPoints(team.teamRating, team.teamSize)
-		local perc = team.teamRating / 3000
-		local emblem = ScriptEnv.Texture("Interface\\PVPFrame\\Icons\\PVP-Banner-Emblem-"..team.emblem, 12)
-		local embcol = PluginColor.RGBA2Color(team.emblemR, team.emblemG, team.emblemB)
-		local bkgcol = PluginColor.RGBA2Color(team.backR, team.backG, team.backB)
-		local brightest = PluginColor.ColorBrightest(embcol, bkgcol)
-		local r, g, b = PluginColor.Color2RGBA(brightest)
-		local tag = PluginColor.Colorize(format("%dv%d", num, num), r, g, b)
-		local wins, played = team.teamWins, team.teamPlayed
-		local losses = played - wins
-		local winlost = ""
-		if wins >= losses then
-			winlost = PluginColor.Colorize(format("%d/%d", wins, losses), 0, 1, 1)
-		else
-			winlost = PluginColor.Colorize(format("%d/%d", wins, losses), 1, 0, 0)
-		end    
-		text = format("%s %s %s %s (%.1f pts) %s", tag, emblem, team.teamName or "Name?", PluginColor.Colorize(team.teamRating, perc, 0.5, 1), points, winlost)
-	end
-	return text
-end
-ScriptEnv.ArenaTeam = ArenaTeam
-
--- http://www.arenajunkies.com/showthread.php?t=222736
--- (-6e-13*1500)^5+(7e-9*1500)^4-(4e-5*1500)^3+(0.0863*1500)^2-98.66*1500+43743
-
--- Calculate Arena Points -- Updated Formula for 2.2 -- Now always uses 1500 rating if rating is less than that
--- Specifically borrowed from Examiner
-function CalculateArenaPoints(teamRating,teamSize)
-	local multiplier = (teamSize == 5 and 1) or (teamSize == 3 and 0.88) or (teamSize == 2 and 0.76)
-	if (teamRating <= 1500) then
-		return multiplier * (0.22 * 1500 + 14);
-	else
-		return multiplier * (1511.26 / (1 + 1639.28 * 2.71828 ^ (-0.00412 * teamRating)));
-	end
-end
-ScriptEnv.CalculateArenaPoints = CalculateArenaPoints
-
-local function Texture(texture, size)
-	if type(texture) ~= "string" then return '|T:12|t' end
-	size = size or 12
-	return format("|T%s:%d|t", texture, size)
-end
-ScriptEnv.Texture = Texture
-
-local function TextureWithCoords(texture, size, size2, xoffset, yoffset, dimx, dimy, coordx1, coordx2, coordy1, coordy2)
-	--|TTexturePath:size1:size2:xoffset:yoffset:dimx:dimy:coordx1:coordx2:coordy1:coordy2|t
-	local fmt = "|T%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s|t"	
-	local text = format(fmt, texture, tostring(size), tostring(size2), tostring(xoffset), tostring(yoffset), tostring(dimx), tostring(dimy), tostring(coordx1), tostring(coordx2), tostring(coordy1), tostring(coordy2))
-	return text
-end
-ScriptEnv.TextureWithCoords = TextureWithCoords
 
 -----------------End of ScriptEnv---------------------
-
--- These events should never have the event unregistered unless
--- the module is disabled.  In general they are needed for support
--- for things that cannot be cleaned on an as needed basis and
--- require very little actual processing time.
-local protected_events = {
-	['UNIT_SPELLCAST_SENT'] = true,
-	['PARTY_MEMBERS_CHANGED'] = true,
-}
-
-function PluginLuaTexts:SetCVar()
-	predicted_power = GetCVarBool("predictedPower")
-end
-
-function PluginLuaTexts:RegisterEvent(event)
-	frame:RegisterEvent(event)
-end
-
-
-local next_spell, next_rank, next_target
-function PluginLuaTexts.UNIT_SPELLCAST_SENT(event, unit, spell, rank, target)
-	if unit ~= "player" then return end
-
-	next_spell = spell
-	next_rank = rank and tonumber(rank:match("%d+"))
-	next_target = target ~= "" and target or nil
-end
 
 local pool = setmetatable({}, {__mode='k'})
 local function new()
@@ -1626,6 +1072,7 @@ function PluginLuaTexts:OnEvent(event, unit, ...)
 	end
 end
 
+--[[
 local lastUpdate = 0
 local updateTimer = LibTimer:New(MAJOR .. " updateTimer", 500, true, function()
 	fix_cast_data()
@@ -1636,7 +1083,9 @@ local updateTimer = LibTimer:New(MAJOR .. " updateTimer", 500, true, function()
 	end
 end)
 updateTimer:Start()
+]]
 
 for k, v in pairs(ScriptEnv) do
 	PluginLuaTexts[k] = v
 end
+

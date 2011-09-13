@@ -318,7 +318,7 @@ function PluginColor:RedThroughBlue()
 	local subColors = {}
 	
 	for i = #colors, 1, -1 do
-		if mod(i, 8) == 0 then
+		if math.mod(i, 8) == 0 then
 			tinsert(subColors, colors[i])
 		end
 	end
@@ -329,7 +329,7 @@ function PluginColor:RedThroughBlue()
 
 	return subColors
 end
-ScriptEnv.RedThroughBlue = RedThroughBlue
+ScriptEnv.RedThroughBlue = PluginColor.RedThroughBlue
 
 --- Retrieve a string suitable to insert a texture within a fonstring
 -- @usage Colorize(str, r, g, b)

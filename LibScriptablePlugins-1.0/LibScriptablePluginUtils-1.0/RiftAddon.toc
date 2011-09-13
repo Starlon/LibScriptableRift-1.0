@@ -18,7 +18,7 @@ RunOnStartup = {
 
 -- This line would set up dependencies with several other addons.
 Dependencies = {
-  LibStub = {"required", "before"}, 
-  LibCallbackHandler = {"required", "before"},   
-  LibScriptableUtilsError_1_0 = {"required", "before"}
+  LibStub = {"optional", "before"}, 
+  LibCallbackHandler = {"optional", "before"},   
+  LibScriptableUtilsError_1_0 = {"optional", "before"}
 }

@@ -317,6 +317,7 @@ function WidgetText:Start(unit)
 	if self.speed > 0 then
 		self.textTimer:Start(self.speed)
 	end
+	self.buffer = false
 	self:Update()
 end
 

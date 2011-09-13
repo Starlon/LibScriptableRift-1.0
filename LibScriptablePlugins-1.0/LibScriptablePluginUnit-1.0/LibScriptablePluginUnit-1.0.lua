@@ -30,10 +30,11 @@ local function UnitAFK(unit)
 end
 ScriptEnv.UnitAFK = UnitAFK
 
+local callings = {mage = "Mage", rogue = "Rogue", cleric = "Cleric", warrior = "Warrior"}
 -- calling:	The unit's calling. May be "mage", "rogue", "cleric", or "warrior".
 local function UnitCalling(unit) 
 	local details = Detail(unit)
-	if details then return details.calling end
+	if details then return callings[details.calling] end
 end
 ScriptEnv.UnitCalling = UnitCalling
 
@@ -110,6 +111,7 @@ local function UnitLoot(unit)
 	local details = Detail(unit)
 	if details then return details.loot end
 end
+ScriptEnv.UnitLoot = UnitLoot
 
 --- mana:	The unit's mana.
 local function UnitMana(unit)
@@ -188,17 +190,19 @@ local function UnitReady(unit)
 end
 ScriptEnv.UnitReady = UnitReady
 
+local relations = {hostile = "Hostile", friendly = "Friendly"}
 --- relation:	The unit's relation to you. May be "hostile" or "friendly". Neutral targets will not have this member.
 local function UnitRelation(unit)
 	local details = Detail(unit)
-	if details then return details.relation end
+	if details then return relations[details.relation] end
 end
 ScriptEnv.UnitRelation = UnitRelation
 
+local roles = {tank = "Tank", heal = "Heals", dps = "DPS", support = "Support"}
 --- role:	The unit's role. May be "tank", "heal", "dps", "support", or nil. Provided only for the player and the player's groupmembers.
 local function UnitRole(unit)
 	local details = Detail(unit)
-	if details then return details.role end
+	if details then return roles[details.role] end
 end
 ScriptEnv.UnitRole = UnitRole
 
