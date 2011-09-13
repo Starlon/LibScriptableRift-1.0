@@ -141,109 +141,117 @@ local function RGB2Black(red, green, blue)
 end
 ScriptEnv.RGB2Black = RGB2Black
 
+local function rgb_max(r, g, b)
+	if r > g then 
+		return r > b and r or b
+	else
+		return g > b and g or b
+	end
+end
+local function rgb_min(r, g, b)
+	if r < g then
+		return r < b and r or b
+	else
+		return g < b and g or b
+	end
+end
+
+--- Returns HSV colorspace values from RGB values
+-- @usage RGB2HSV(r, g, b)
+-- @param r Red value, ranging from 0 to 1
+-- @param g Green value, ranging from 0 to 1
+-- @param b Blue value, ranging from 0 to 1
+-- @return Hue, Saturation, and Value values from RGB values
+local function RGB2HSV(r, g, b, a)
+	local min, max, delta
+	local h, s, v
+	
+	max = rgb_max(r, g, b)
+	min = rgb_min(r, g, b)
+	
+	v = max
+	delta = max - min
+	
+	if delta > 0.0001 then
+		s = delta / max
+		if r == max then
+			h = (g - b) / delta
+			if h < 0.0 then
+				h = h + 6.0
+			end
+		elseif g == max then
+			h = 2.0 + (b - r) / delta
+		elseif b == max then
+			h = 4.0 + (r - g) / delta
+		end
+		h = h / 6.0
+	else
+		s = 0.0
+		h = 0.0
+	end
+	
+	return h, s, v, a
+end
+ScriptEnv.RGB2HSV = RGB2HSV
+
 --- Return RGB values from HSV colorspace values.
 -- @usage HSV2RGB(h, s, v)
--- @param h Hue value, ranging from 0 to 360
+-- @param h Hue value, ranging from 0 to 1
 -- @param s Satration value, ranging from 0 to 1
 -- @param v Value value, ranging from 0 to 1
 -- @return Red, green, and blue values from the HSV values provided.
-function HSV2RGB (h, s, v)
+local floor = math.floor
+local function HSV2RGB(h, s, v, a)
 	local i
 	local f, w, q, t
-	local r, g, b = 0, 0, 0
-
-	if (s == 0.0) then
-		s = 0.000001;
+	local hue
+	
+	if s == 0.0 then
+		r = v
+		g = v
+		b = v
+	else
+		hue = h
+		if hue == 1.0 then
+			hue = 0.0
+		end
+		hue = hue * 6.0
+		
+		i = floor(hue)
+		f = hue - i
+		w = v * (1.0 - s)
+		q = v * (1.0 - (s * f))
+		t = v * (1.0 - (s * (1.0 - f)))
+		if i == 0 then
+			r = v
+			g = t
+			b = w
+		elseif i == 1 then
+			r = q
+			g = v
+			b = w
+		elseif i == 2 then
+			r = w
+			g = v
+			b = t
+		elseif i == 3 then
+			r = w
+			g = q
+			b = v
+		elseif i == 4 then
+			r = t
+			g = w
+			b = v
+		elseif i == 5 then
+			r = v
+			g = w
+			b = q
+		end
 	end
-
-	if (h == 360.0) then
-		h = 0.0;
-	end
-
-	h = h / 60.0;
-	i = math.floor(h);
-	f = h - i;
-	w = v * (1.0 - s);
-	q = v * (1.0 - (s * f));
-	t = v * (1.0 - (s * (1.0 - f)));
-
-	if i == 0 then
-		r = v; g = t; b = w;
-	elseif i == 1 then
-		r = q; g = v; b = w;
-	elseif i == 2 then
-		r = w; g = v; b = t;
-	elseif i == 3 then
-		r = w; g = q; b = v;
-	elseif i == 4 then
-		r = t; g = w; b = v;
-	elseif i == 5 then
-		r = v; g = w; b = q
-	end
-
-	return r, g, b
+	
+	return r, g, b, a
 end
 ScriptEnv.HSV2RGB = HSV2RGB
-
---- Creates HSV colorspace values from RGB values
--- @usage RGB2HSV(r, g, b)
--- @param r Red value
--- @param g Green value
--- @param b Blue value
--- @return Hue, Saturation, and Value values from RGB values
-function RGB2HSV(r, g, b)
-        local max, min, delta
-	local h, s, v
-
-	max = r;
-	if (g > max) then
-		max = g;
-	end
-
-	if (b > max) then
-		max = b;
-	end
-
-	min = r;
-	if (g < min) then
-		min = g;
-	end
-
-	if (b < min) then
-		min = b;
-	end
-
-	v = max;
-
-	if (max ~= 0.0) then
-		s = (max - min) / max;
-	else
-		s = 0.0;
-	end
-
-	if (s == 0.0) then
-		h = 0.0;
-	else
-		delta = max - min;
-
-		if (r == max) then
-			h = (g - b) / delta;
-		elseif (g == max) then
-			h = 2.0 + (b - r) / delta;
-		elseif (b == max) then
-			h = 4.0 + (r - g) / delta;
-		end
-
-		h = h * 60.0;
-
-		if (h < 0.0) then
-			h = h + 360;
-		end
-	end
-
-	return h, s, v
-end
-ScriptEnv.RGB2HSV = RGB2HSV
 
 --- Convert an RGB expression into a suitable color for a background behind the RGB value. This is part of LuaTexts.
 -- @usage BgColor(r, g, b)
@@ -287,11 +295,26 @@ local function GradientMana(perc)
 		r, g, b = 2 - perc*2, 0, 1
 	end
 	local h, s, v = RGB2HSV(r, g, b)
-	s = 0.5
-	r, g, b = HSV2RGB(h, s, v)
-	return r, g, b
+	s = .3
+	return HSV2RGB(h, s, v)
 end
 ScriptEnv.GradientMana = GradientMana
+
+local grad = {mage = {43 / 255, 120 / 255, 196 / 255}, 
+	cleric = {43 / 255, 120 / 255, 196 / 255}, 
+	rogue = {204 / 255, 22 / 255, 217 / 255}, 
+	warrior = {237 / 255, 233 / 255, 111 / 255}
+}
+
+local function Gradient(perc, unit)
+	local details = Inspect.Unit.Detail(unit or "player")
+	local col = grad[details.calling]
+	local h, s, v = RGB2HSV(col[1], col[2], col[3])
+	s = perc
+	local r, g, b = HSV2RGB(h, s, v)
+	return r, g, b
+end
+ScriptEnv.Gradient = Gradient
 
 --- Retrieve a table representing the colors along a gradient red through blue
 -- @usage RedThroughBlue()
