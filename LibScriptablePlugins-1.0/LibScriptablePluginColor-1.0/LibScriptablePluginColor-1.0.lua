@@ -295,7 +295,7 @@ local function GradientMana(perc)
 		r, g, b = 2 - perc*2, 0, 1
 	end
 	local h, s, v = RGB2HSV(r, g, b)
-	s = .3
+	s = .5
 	return HSV2RGB(h, s, v)
 end
 ScriptEnv.GradientMana = GradientMana
