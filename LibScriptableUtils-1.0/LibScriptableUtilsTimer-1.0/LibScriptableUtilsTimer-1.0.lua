@@ -143,14 +143,16 @@ function LibTimer:Start(duration, data, func)
 		
 	self.data = data or self.data
 	if type(func) == "function" then self.callback = func end
+
+	if self.timerID then
+		AceTimer:CancelTimer(self.timerID, true)
+	end
 	
-	--[[
 	if self.repeating then
 		self.timerID = AceTimer:ScheduleRepeatingTimer(self.callback, self.duration, self.data)
 	else
 		self.timerID = AceTimer:ScheduleTimer(callback, self.duration, self.data)
 	end
-	]]
 end
 
 -- Set the timer's refresh rate. This also stops the timer.
@@ -195,7 +197,7 @@ local function update()
 		end
 	end
 end
-tinsert(Event.System.Update.Begin, {update, "LibScriptableUtilsTimer_1_0", "refresh"})
+--tinsert(Event.System.Update.Begin, {update, "LibScriptableUtilsTimer_1_0", "refresh"})
 
 -- For some reason AceTimer implementation is slow in Rift? o.O
 
@@ -349,7 +351,7 @@ local function OnUpdate()
 end
 
 -- Our update event. This triggers every single frame.
---tinsert(Event.System.Update.Begin, {OnUpdate, "LibScriptableUtilsTimer_1_0", "refresh"})
+tinsert(Event.System.Update.Begin, {OnUpdate, "LibScriptableUtilsTimer_1_0", "refresh"})
 
 
 -- ---------------------------------------------------------------------

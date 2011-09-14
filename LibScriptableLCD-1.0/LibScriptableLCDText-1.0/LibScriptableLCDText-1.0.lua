@@ -16,6 +16,9 @@ local objects = {}
 local objectsDict = {}
 local update
 
+local tinsert = table.insert
+local tremove = table.remove
+
 local DEFAULT_LIMIT = 50
 
 if not LCDText.__index then

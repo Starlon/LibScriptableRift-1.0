@@ -27,6 +27,8 @@ local objects = {}
 
 local DEFAULT_LIMIT = 50
 
+local tinsert, tremove = table.insert, table.remove
+
 if not LibDriver.__index then
 	LibDriver.__index = LibDriver
 end

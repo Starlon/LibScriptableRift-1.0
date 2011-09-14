@@ -100,7 +100,7 @@ function LibCore:New(visitor, environment, name, config, typeOf, errorLevel)
 
 	setmetatable(obj, self)
 	
-	tinsert(objects, obj)
+	table.insert(objects, obj)
 	
 	assert(type(name) == "string" and config[name], name .. " not found in config.")
 
@@ -166,7 +166,7 @@ function LibCore:Del(core)
 	
 	for i, v in ipairs(objects) do
 		if v == self then
-			tremove(objects, i)
+			table.remove(objects, i)
 		end
 	end
 	
@@ -227,7 +227,7 @@ function LibCore:CFGSetup()
 		local layout = self.CFG:FetchRaw(layouts, i);
 		while layout do
 			self.widget_templates[layout] = {}
-			tinsert(self.layouts, layout)
+			table.insert(self.layouts, layout)
 			i = i + 1
 			layout = self.CFG:FetchRaw(layouts, i)		
 		end
@@ -237,7 +237,7 @@ function LibCore:CFGSetup()
 	
 	if widgets then
 		for i, w in ipairs(widgets) do
-			tinsert(self.static_widgets, w)
+			table.insert(self.static_widgets, w)
 		end
 	end
 	
@@ -270,7 +270,7 @@ function LibCore:CFGSetup()
 									w.row = row
 									w.col = col
 									w.layer = layer;
-									tinsert(self.widget_templates[self.layouts[i]], w)
+									table.insert(self.widget_templates[self.layouts[i]], w)
 								end
 								col = col + 1
 							end
@@ -295,7 +295,7 @@ function LibCore:CFGSetup()
 							w.row = row;
 							w.col = col;
 							w.layer = 0;
-							tinsert(self.widget_templates[self.layouts[i]], w)
+							table.insert(self.widget_templates[self.layouts[i]], w)
 						end
 						col = col + 1
 					end
@@ -311,7 +311,7 @@ function LibCore:CFGSetup()
 		ww.key = w;
 		ww.row = 0;
 		ww.col = 0;
-		tinsert(self.widget_templates[self.name], ww)
+		table.insert(self.widget_templates[self.name], ww)
 	end
 	
 end
@@ -688,7 +688,7 @@ function LibCore:RebuildOpts(visitor, db)
 					desc = "Add a widget",
 					type = "input",
 					set = function(info, v)
-						tinsert(db.widgets, "widget_" .. v)
+						table.insert(db.widgets, "widget_" .. v)
 						visitor:RebuildOpts(true)
 					end,
 					order = 1
@@ -705,7 +705,7 @@ function LibCore:RebuildOpts(visitor, db)
 					desc = "Add a layout",
 					type = "input",
 					set = function(info, v)
-						tinsert(db.layouts, "layout_" .. v)
+						table.insert(db.layouts, "layout_" .. v)
 						visitor:RebuildOpts(true)
 					end,
 					order = 1
@@ -735,7 +735,7 @@ function LibCore:RebuildOpts(visitor, db)
 						name = "Remove",
 						type = "execute",
 						func = function()
-							tremove(db.widgets, i)
+							table.remove(db.widgets, i)
 							visitor:RebuildOpts(true)
 						end,
 						order = 2
@@ -788,7 +788,7 @@ function LibCore:RebuildOpts(visitor, db)
 					desc = "Remove this layout from the display's list",
 					type = "execute",
 					func = function()
-						tremove(db.layouts, i)
+						table.remove(db.layouts, i)
 						visitor:RebuildOpts()
 					end,
 					order = 4

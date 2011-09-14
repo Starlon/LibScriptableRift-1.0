@@ -4,6 +4,7 @@ debug = true
 --@end-debug@]===]
 
 local LibDriver = LibStub("LibScriptableLCDDriver-1.0")
+local environment = {}
 
 table.insert(Command.Slash.Register("lcd4rift"), {function (commandLineParameters)
 	local display = LibDriver:New(environment, environment, "display_startip", _G.LCD4Rift.config, 2)
