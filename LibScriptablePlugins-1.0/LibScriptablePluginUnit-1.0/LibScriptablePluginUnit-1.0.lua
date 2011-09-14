@@ -200,6 +200,30 @@ local function UnitRelation(unit)
 end
 ScriptEnv.UnitRelation = UnitRelation
 
+local function UnitHostile(unit)
+	local details = Detail(unit)
+	if details then return details.relation == "hostile" end
+end
+ScriptEnv.UnitHostile = UnitHostile
+
+local pc = {r = 123 / 255, g = 171 / 255, b =252 / 255}
+local function UnitRelationColor(unit)
+	if UnitPlayer(unit) then
+		return pc.r, pc.g, pc.b
+	else
+		if UnitHostile(unit) then
+			return 1, 0, 0
+		else
+			if not UnitRelation(unit) then
+				return 1, 1, 0
+			else
+				return 0, 1, 0
+			end
+		end
+	end
+end
+ScriptEnv.UnitRelationColor = UnitRelationColor
+
 local roles = {tank = "Tank", heal = "Heals", dps = "DPS", support = "Support"}
 --- role:	The unit's role. May be "tank", "heal", "dps", "support", or nil. Provided only for the player and the player's groupmembers.
 local function UnitRole(unit)
