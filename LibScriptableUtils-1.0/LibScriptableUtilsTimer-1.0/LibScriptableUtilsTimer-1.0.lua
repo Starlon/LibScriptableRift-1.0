@@ -151,7 +151,7 @@ function LibTimer:Start(duration, data, func)
 	if self.repeating then
 		self.timerID = AceTimer:ScheduleRepeatingTimer(self.callback, self.duration, self.data)
 	else
-		self.timerID = AceTimer:ScheduleTimer(callback, self.duration, self.data)
+		self.timerID = AceTimer:ScheduleTimer(self.callback, self.duration, self.data)
 	end
 end
 

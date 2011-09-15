@@ -375,6 +375,7 @@ ScriptEnv.RedThroughBlue = PluginColor.RedThroughBlue
 -- @param g The color's green value
 -- @param b The color's blue value
 -- @return A colorized string suitable to insert in a fonstring
+--[[
 local function Colorize(str, r, g, b)
 	if type(str) ~= "string" and type(str) ~= "number" then return "" end
 	if type(r) ~= "number" then r = 1 end
@@ -383,16 +384,19 @@ local function Colorize(str, r, g, b)
 	return ("|cff%02x%02x%02x%s|r"):format(r * 255, g * 255, b * 255, tostring(str))
 end
 ScriptEnv.Colorize = Colorize
+]]
 
 --- Wraps UnitSelectionColor
 -- @usage AggroColor(unit)
 -- @param The unit in question
 -- @return Red, green, and blue
+--[[
 local function AggroColor(unit)
 	local r, g, b = UnitSelectionColor(unit)
 	return r, g, b
 end
 ScriptEnv.AggroColor = AggroColor
+]]
 
 --- Wraps GetThreatStatus Color
 -- @usage ThreatStatusColor(status)
@@ -443,6 +447,7 @@ local function HPColor(cur, max)
 end
 ScriptEnv.HPColor = HPColor
 
+--[[
 local PowerBarColor = _G.PowerBarColor
 
 local PowerTypes = {Warrior = "RAGE", Rogue = "ENERGY", Pet = "HAPPINESS", Deathknight = "RUNIC_POWER", Hunter = "FOCUS"}
@@ -467,11 +472,13 @@ local function PowerColor(power_type, unit)
 	return r, g, b
 end
 ScriptEnv.PowerColor = PowerColor
+]]
 
 --- Accessor for FACTION_BAR_COLORS, which is suitable for color reputation values
 -- @usage ReputationColor(reaction)
 -- @param reaction Indicated reaction
 -- @return red, green, and blue
+--[[
 local function ReputationColor(reaction)
   local color = FACTION_BAR_COLORS[reaction]
 	if color then
@@ -479,6 +486,7 @@ local function ReputationColor(reaction)
 	end
 end
 ScriptEnv.ReputationColor = ReputationColor
+]]
 
 local FACTION_BAR_COLORS = _G.FACTION_BAR_COLORS
 local HOSTILE_REACTION = 2
@@ -489,6 +497,7 @@ local FRIENDLY_REACTION = 5
 -- @usage HostileColor(unit)
 -- @param unit The unit in question
 -- @return red, green, and blue
+--[[
 local function HostileColor(unit)
 	local r, g, b
 	if not unit then
@@ -541,6 +550,7 @@ local function HostileColor(unit)
 	return r, g, b
 end
 ScriptEnv.HostileColor = HostileColor
+]]
 
 local RAID_CLASS_COLORS = _G.RAID_CLASS_COLORS
 
@@ -548,6 +558,7 @@ local RAID_CLASS_COLORS = _G.RAID_CLASS_COLORS
 -- @usage ClassColor(unit)
 -- @param unit The unit in question
 -- @return red, green, and blue
+--[[
 local function ClassColor(unit)
 	local r, g, b = 0.8, 0.8, 0.8 --UNKNOWN
 	local _, class = UnitClass(unit)
@@ -560,6 +571,7 @@ local function ClassColor(unit)
 	return r, g, b
 end
 ScriptEnv.ClassColor = ClassColor
+]]
 
 --- Retrieve a color suitable to color a unit's difficulty level
 -- @usage DifficultyColor(unit)

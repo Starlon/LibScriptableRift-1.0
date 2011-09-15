@@ -3,6 +3,7 @@ local MINOR = 24
 
 local PluginUnit = LibStub:NewLibrary(MAJOR, MINOR)
 if not PluginUnit then return end
+local LibTimer = LibStub("LibScriptableUtilsTimer-1.0")
 
 if not PluginUnit.__index then
 	PluginUnit.__index = PluginUnit
@@ -10,7 +11,7 @@ end
 
 local Detail = Inspect.Unit.Detail
 local ScriptEnv = {}
-local Detail = Inspect.Unit.Detail
+local GetTime = Inspect.Time.Real
 
 --- Populate an environment with this plugin's fields
 -- @usage :New(environment) 
@@ -29,6 +30,38 @@ local function UnitAFK(unit)
 	if details then return details.afk end
 end
 ScriptEnv.UnitAFK = UnitAFK
+
+local afk_times = {}
+local function UnitAFKTime(unit)
+	if UnitAFK("mouseover") then
+		local id = Inspect.Unit.Lookup(unit)
+		local start_time = afk_times[id]
+		return start_time and GetTime() - start_time
+	end
+end
+ScriptEnv.UnitAFKTime = UnitAFKTime
+
+table.insert(Event.Unit.Detail.Afk, 
+{function(units)
+	for id, unit in pairs(units) do
+		if UnitAFK(id) then
+			afk_times[id] = GetTime()
+		else
+			afk_times[id] = false
+		end
+	end
+end, "LibScriptablePluginUnit_1_0", "refresh" })
+
+LibTimer:New(MAJOR .. ".afk", 1000, false, 
+function()
+	local list = Inspect.Unit.List()
+	for id, v in pairs(list) do
+		local detail = Detail(id)
+		if not afk_times[id] and detail and detail.afk then
+			afk_times[id] = GetTime()
+		end
+	end
+end, nil, 2):Start()
 
 local callings = {mage = "Mage", rogue = "Rogue", cleric = "Cleric", warrior = "Warrior"}
 -- calling:	The unit's calling. May be "mage", "rogue", "cleric", or "warrior".
@@ -156,6 +189,37 @@ local function UnitOffline(unit)
 	if details then return details.offline end
 end
 ScriptEnv.UnitOffline = UnitOffline
+
+local offline_times = {}
+local function UnitOfflineTime(unit)
+	if UnitOffline(unit) then
+		local id = Inspect.Unit.Lookup(unit)
+		local start_time = offline_times[id]
+		return start_time and GetTime() - start_time
+	end
+end
+ScriptEnv.UnitOfflineTime = UnitOfflineTime
+
+table.insert(Event.Unit.Detail.Offline, {function(units)
+	for id, unit in pairs(units) do
+		if UnitOffline(unit) then
+			offline_times[id] = GetTime()
+		else
+			offline_times[id] = false
+		end
+	end
+end, "LibScriptablePluginUnit_1_0", "refresh" })
+
+LibTimer:New(MAJOR .. ".offline", 1000, false,
+function()
+	local list = Inspect.Unit.List()
+	for id, v in pairs(list) do
+		local detail = Detail(id)
+		if not offline_times[id] and detail and detail.offline then
+			offline_times[id] = GetTime()
+		end
+	end
+end, nil, 2):Start()
 
 --- planar:	The unit's available planar charges. Provided only for the player.
 local function UnitPlanar(unit)
