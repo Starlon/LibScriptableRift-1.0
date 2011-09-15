@@ -565,14 +565,27 @@ ScriptEnv.ClassColor = ClassColor
 -- @usage DifficultyColor(unit)
 -- @param unit The unit in question
 -- @return red, green, and blue
+local max = math.max
 local function DifficultyColor(unit)
-	local level
-	level = UnitLevel(unit)
-	if level <= 0 then
-		level = 99
+	local unit = Inspect.Unit.Detail(unit)
+	local player = Inspect.Unit.Detail("player")
+	if unit.level and player.level then
+		local greenStart = max(player.level - 2, 1)
+		local greenEnd = player.level
+		local yellowStart = player.level + 1
+		local yellowEnd = player.level + 2
+		local redStart = player.level + 3
+		local lvl = unit.level
+		if type(lvl) ~= "number" or lvl >= redStart  then
+			return 1, 0, 0
+		elseif lvl >= yellowStart and lvl <= yellowEnd then
+			return 1, 1, 0
+		elseif lvl >= greenStart and lvl <= greenEnd then
+			return 0, 1, 0
+		else
+			return 0.5, 0.5, 0.5
+		end
 	end
-	local color = GetQuestDifficultyColor(level)
-	return color.r, color.g, color.b
 end
 ScriptEnv.DifficultyColor = DifficultyColor
 
