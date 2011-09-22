@@ -24,4 +24,5 @@ Embed = {
   ["LibScriptablePluginTable-1.0"] = true,
   ["LibScriptablePluginUnit-1.0"] = true,
   ["LibScriptablePluginUtils-1.0"] = true,
+  ["LibScriptablePluginDPS-1.0"] = true
 }

@@ -21,6 +21,11 @@ do
 	
 	local cache = {} --setmetatable({},{__mode='v'})	
 	
+	LibEvaluator.Evaluate = function(self, tag, code, unit)
+		self.unit = unit
+		LibEvaluator.ExecuteCode(self, tag, code)
+	end
+	
 	--- Execute some code
 	-- @usage LibEvaluator.ExecuteCode(self, tag, code, dontSandbox, defval, forRunnable, test)
 	-- @param self The script environment.

@@ -581,7 +581,7 @@ local max = math.max
 local function DifficultyColor(unit)
 	local unit = Inspect.Unit.Detail(unit)
 	local player = Inspect.Unit.Detail("player")
-	if unit.level and player.level then
+	if unit and unit.level and player and player.level then
 		local greenStart = max(player.level - 2, 1)
 		local greenEnd = player.level
 		local yellowStart = player.level + 1
