@@ -324,3 +324,26 @@ local function UnitWarfront(unit)
 end
 ScriptEnv.UnitWarfront = UnitWarfront
 
+local function UnitCastPercent(unit)
+	local info = Inspect.Unit.Castbar(unit)
+	if info then
+		return (info.remaining or 0) / (info.duration or .00001)
+	end
+end
+ScriptEnv.UnitCastPercent = UnitCastPercent
+
+local function UnitCastName(unit)
+	local info = Inspect.Unit.Castbar(unit)
+	if info then
+		return info.abilityName
+	end
+end
+ScriptEnv.UnitCastName = UnitCastName
+
+local function UnitCastChanneled(unit)
+	local info = Inspect.Unit.Castbar(unit)
+	if info then
+		return info.channeled
+	end
+end
+ScriptEnv.UnitCastChanneled = UnitCastChanneled
