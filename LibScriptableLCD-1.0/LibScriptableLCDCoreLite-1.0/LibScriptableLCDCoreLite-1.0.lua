@@ -56,6 +56,8 @@ local PluginBlend = LibStub("LibScriptablePluginBlend-1.0", true)
 assert(PluginBlend, MAJOR .. " requires LibScriptablePluginBlend-1.0")
 local PluginDPS = LibStub("LibScriptablePluginDPS-1.0", true)
 assert(PluginDPS, MAJOR .. " requires LibScriptablePluginDPS-1.0")
+local PluginRift = LibStub("LibScriptablePluginRift-1.0", true)
+assert(PluginRift, MAJOR .. " requires LibScriptablePluginRift-1.0")
 
 local pool = setmetatable({}, {__mode = "k"})
 local objects = {}
@@ -124,6 +126,7 @@ function LibCore:New(environment, name, errorLevel)
 	PluginUtils:New(environment)
 	PluginBlend:New(environment)
 	PluginDPS:New(environment)
+	PluginRift:New(environment)
 	
 	environment._G = _G
 	environment.environment = environment
