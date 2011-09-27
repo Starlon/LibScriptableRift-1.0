@@ -99,6 +99,12 @@ local function UnitEnergy(unit)
 end
 ScriptEnv.UnitEnergy = UnitEnergy
 
+local function UnitEnergyMax(unit)
+	local details = Detail(unit)
+	if details then return details.energyMax end
+end
+ScriptEnv.UnitEnergyMax = UnitEnergyMax
+
 --- guaranteedLoot:	Signals that this unit guarantees loot on death. Shown in the user interface as a diamond above the portrait.
 local function UnitGuaranteedLoot(unit)
 	local details = Detail(unit)
