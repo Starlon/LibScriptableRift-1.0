@@ -207,8 +207,8 @@ end
 ScriptEnv.UnitOfflineTime = UnitOfflineTime
 
 table.insert(Event.Unit.Detail.Offline, {function(units)
-	for id, unit in pairs(units) do
-		if UnitOffline(unit) then
+	for id, status in pairs(units) do
+		if status then
 			offline_times[id] = GetTime()
 		else
 			offline_times[id] = false
