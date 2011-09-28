@@ -32,15 +32,15 @@ local widgetType = {icon=true}
 local function Split(str, delim)
 	local start = 1
 	local tbl = {}
-	for i = 2, strlen(str) do
+	for i = 2, string.len(str) do
 		if str:sub(i, i) == delim then
-			tinsert(tbl, str:sub(start, i - 1))
+			table.insert(tbl, str:sub(start, i - 1))
 			start = i + 1
 		end
 	end
 
-	if start < strlen(str) then
-		tinsert(tbl, str:sub(start, strlen(str)))
+	if start < string.len(str) then
+		table.insert(tbl, str:sub(start, string.len(str)))
 	end
 
 	return tbl
@@ -111,12 +111,12 @@ function WidgetIcon:Init()
 		local line = Split(row, "|")
 		for j, segment in ipairs(line) do
 			if j > #ch then
-				tinsert(ch, {}) --SpecialChar:New(visitor.lcd.YRES))
+				table.insert(ch, {}) --SpecialChar:New(visitor.lcd.YRES))
 				for i = 1, self.visitor.lcd.YRES do
 					ch[j][i] = 0
 				end
 			end
-			for c = 1, strlen(segment) do
+			for c = 1, string.len(segment) do
 				if segment:sub(c, c) == "*" then
 					ch[j][i] = bit.bxor(ch[j][i], bit.lshift(1, c - 1))
 				end
@@ -222,7 +222,7 @@ function WidgetIcon:SetupChars()
 	end]]
 	self.start = #self.visitor.lcd.specialChars
 	for i, v in ipairs(self.icon) do
-		tinsert(self.visitor.lcd.specialChars, v)
+		table.insert(self.visitor.lcd.specialChars, v)
 	end
 	self.finish = #self.visitor.lcd.specialChars
 end

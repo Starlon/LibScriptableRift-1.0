@@ -69,8 +69,6 @@ _G.LCD4Rift.config = {
 		["rows"] = 2,
 		["cols"] = 20,
 		["update"] = 0,
-		["timeout"] = 7000,
-		["transition_speed"] = 50,
 		--["widgets"] = {"widget_key_up", "widget_key_down", "widget_resources_timer"},
 		["layouts"] = {"layout_tiny"},
 		["points"] = {{"CENTER", "UIParent", "CENTER"}},
@@ -156,7 +154,6 @@ Update()
 			[1] = {
 				[1] = "widget_name"
 			},
-			--[[
 			[2] = {
 				[1] = "widget_icon_blob",
 				[2] = "widget_icon_ekg",
@@ -179,7 +176,6 @@ Update()
 				[19] = "widget_icon_blob",
 				[20] = "widget_icon_ekg",
 			}
-			]]
 		}
 	},
 	["layout_blank"] = {
@@ -252,8 +248,8 @@ Update()
 		value = "return '--' .. UnitName('player') .. '--'",
 		cols = 20,
 		align = ALIGN_PINGPONG,
-		update = 1000,
-		speed = 100,
+		update = 50,
+		speed = 50,
 		direction = SCROLL_LEFT,
 		dontRtrim = true
 	},

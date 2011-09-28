@@ -31,6 +31,8 @@ Dependencies = {
   LibScriptablePluginString_1_0 = {"optional", "before"},
   LibScriptablePluginTable_1_0 = {"optional", "before"},
   LibScriptablePluginUnit_1_0 = {"optional", "before"},
-  LibScriptableWidgetText_1_0 = {"optional", "before"}
+  LibScriptableWidgetText_1_0 = {"optional", "before"},
+  LibScriptableWidgetBar_1_0 = {"optional", "before"},
+  LibScriptableWidgetIcon_1_0 = {"optional", "before"}
 }
 

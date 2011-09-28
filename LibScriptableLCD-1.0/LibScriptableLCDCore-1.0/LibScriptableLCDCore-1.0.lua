@@ -13,11 +13,11 @@ assert(LibCFG, MAJOR .. " requires LibScriptableUtilsCFG-1.0")
 
 local WidgetText = LibStub("LibScriptableWidgetText-1.0", true)
 assert(WidgetText, MAJOR .. " requires LibScriptableWidgetText-1.0")
---[[
-local WidgetBar = LibStub("LibScriptableWidgetBar-1.0", true)
-assert(WidgetBar, MAJOR .. " requires LibScriptableWidgetBar-1.0")
+--local WidgetBar = LibStub("LibScriptableWidgetBar-1.0", true)
+--assert(WidgetBar, MAJOR .. " requires LibScriptableWidgetBar-1.0")
 local WidgetIcon = LibStub("LibScriptableWidgetIcon-1.0", true)
 assert(WidgetIcon, MAJOR .. " requires LibScriptableWidgetIcon-1.0")
+--[[
 local WidgetHistogram = LibStub("LibScriptableWidgetHistogram-1.0", true)
 assert(WidgetHistogram, MAJOR .. " requires LibScriptableWidgetHistogram-1.0")
 local WidgetBignums = LibStub("LibScriptableWidgetBignums-1.0", true)
@@ -75,7 +75,7 @@ LibCore.TRANSITION_TENTACLE = 5
 LibCore.TRANSITION_ALPHABLEND = 6
 LibCore.TRANSITION_CHECKERBOARD = 7
 
-local defaults = {rows = 4, cols = 20, transition_timeout = 10000, transition_speed = 100, timeout = 500}
+local defaults = {rows = 4, cols = 20, transition_timeout = 0, transition_speed = 100, timeout = 100}
 
 LibCore.defaults = defaults
 
@@ -350,7 +350,7 @@ function LibCore:BuildLayouts()
 					elseif (typeOf == "bar") then
 						--widget = WidgetBar:New(self, name, widget_v, widgets[i].row, widgets[i].col, widgets[i].layer, self.erroLevel, self.lcd.BarDraw)
 					elseif (typeOf == "icon") then
-						--widget = WidgetIcon:New(self, name, widget_v, widgets[i].row, widgets[i].col, widgets[i].layer, self.errorLevel, self.lcd.IconDraw)
+						widget = WidgetIcon:New(self, name, widget_v, widgets[i].row, widgets[i].col, widgets[i].layer, self.errorLevel, self.lcd.IconDraw)
 					elseif (typeOf == "histogram") then
 						--widget = WidgetHistogram:New(self, name, widget_v, widgets[i].row, widgets[i].col, widgets[i].layer, self.errorLevel, self.lcd.HistogramDraw)
 					elseif (typeOf == "bignums") then
