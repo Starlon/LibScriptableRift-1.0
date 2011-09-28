@@ -208,7 +208,7 @@ end
 
 function DriverCharacter:Blit(obj, r, c, buffer, len, bold)
 	for i = c, c + len - 1 do
-		obj:SetCell((obj.lcd.LROWS - r - 1), i, (buffer[i - c] or ' '), bold and bold[i])
+		obj:SetCell(r, i, (buffer[i - c] or ' '), bold and bold[i])
 	end
 end
 
