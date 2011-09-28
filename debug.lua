@@ -87,7 +87,7 @@ local function update()
 	end
 end
 
-local avstimer = LibTimer:New("StarVisuals.AVS", 100, true, update)
+local avstimer = LibTimer:New("StarVisuals.AVS", 90, true, update)
 
 local toggle = false
 table.insert(Command.Slash.Register("visuals"), {function (commandLineParameters)
@@ -122,7 +122,7 @@ y=sin(r)*d*.8
 				pixel = 2,
 				drawLayer = "UIParent",
 				points = {{"CENTER", "UIParent", "CENTER", 0, 255}},
-				enabled = false,
+				enabled = true,
 				drawMode = 1,
 				unit = "local"
 				--next = 2
@@ -130,17 +130,18 @@ y=sin(r)*d*.8
 	[2] = {
 				name = "3d Fearn",
 				init = [[
-n=1000; zs=sqrt(2); izs=5.893/2; iys=1.385/2
-zt = 50; yt = 25; xt = rand(100)
+n=1000; zs=sqrt(2); izs=50.893/5; iys=10.385/5
+zt = 100; yt = 200.5; xt = rand(100)
+
 ]],
 				frame = [[
 rx1=0; ry1=0; rz1=0; rx2=0; ry2=0; zt=zt+izt; yt=yt+iyt; xt=xt+ixt; cz=cos(zt); sz=sin(zt); cy=cos(yt); sy=sin(yt); cx=cos(xt); sx=sin(xt);
 red = 15 / 255; green = 63 / 255; blue = 31 / 255
-xt = xt + 10
+xt = xt + 20
 ]],
 				beat = [[
-local val = 20.05
-izt=rand(100)/1000-val; iyt=rand(100)/1000-val; ixt=rand(100)/1000-val;
+local val = 2.5
+izt=rand(100)/10-val; iyt=rand(100)/10-val; ixt=rand(100)/10-val;
 ]],
 				point = [[
 local random=rand(100);
@@ -150,12 +151,12 @@ t1=if2(below(random,93)*above(random,86),2,t1);
 t1=if2(below(random,99)*above(random,92),3,t1);
 rx2=rx1; ry2=ry1;
 rx1=if2(equal(t1,0),0,rx1);
-ry1=if2(equal(t1,0),ry1*0.18,ry1);
+ry1=if2(equal(t1,0),ry1*.18,ry1);
 rz1=if2(equal(t1,0),0,rz1);
 rx2=rx1; ry2=ry1;
-rx1=if2(equal(t1,1),rx1*0.85,rx1);
-ry1=if2(equal(t1,1),ry1*0.85+rz1*0.1+1.6,ry1);
-rz1=if2(equal(t1,1),ry2*-0.1+rz1*0.85,rz1);
+rx1=if2(equal(t1,1),rx1*.85,rx1);
+ry1=if2(equal(t1,1),ry1*.85+rz1*0.1+1.6,ry1);
+rz1=if2(equal(t1,1),ry2*-.1+rz1*0.85,rz1);
 rx2=rx1; ry2=ry1;
 rx1=if2(equal(t1,2),rx1*0.2+ry1*-0.2,rx1);
 ry1=if2(equal(t1,2),rx2*0.2+ry1*0.2+0.8,ry1);
