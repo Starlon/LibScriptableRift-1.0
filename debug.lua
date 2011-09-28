@@ -3,11 +3,11 @@ local debug = false
 debug = true
 --@end-debug@]===]
 
-local LibDriver = LibStub("LibScriptableLCDDriver-1.0")
+local LibDriverCharacter = LibStub("LibScriptableLCDDriverCharacter-1.0")
 local environment = {}
 
 table.insert(Command.Slash.Register("lcd4rift"), {function (commandLineParameters)
-	local display = LibDriver:New(environment, environment, "display_startip", _G.LCD4Rift.config, 2)
+	local display = LibDriverCharacter:New(environment, environment, "display_character", _G.LCD4Rift.config, 2)
 	display:Show()
 end, "LibScriptable_1_0", "Slash command"})
 

@@ -71,7 +71,7 @@ _G.LCD4Rift.config = {
 		["update"] = 0,
 		["timeout"] = 7000,
 		["transition_speed"] = 50,
-		["widgets"] = {"widget_key_up", "widget_key_down", "widget_resources_timer"},
+		--["widgets"] = {"widget_key_up", "widget_key_down", "widget_resources_timer"},
 		["layouts"] = {"layout_tiny"},
 		["points"] = {{"CENTER", "UIParent", "CENTER"}},
 		["parent"] = "UIParent",
@@ -156,6 +156,7 @@ Update()
 			[1] = {
 				[1] = "widget_name"
 			},
+			--[[
 			[2] = {
 				[1] = "widget_icon_blob",
 				[2] = "widget_icon_ekg",
@@ -178,6 +179,7 @@ Update()
 				[19] = "widget_icon_blob",
 				[20] = "widget_icon_ekg",
 			}
+			]]
 		}
 	},
 	["layout_blank"] = {
