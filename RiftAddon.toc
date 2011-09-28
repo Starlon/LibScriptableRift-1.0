@@ -44,6 +44,7 @@ Embed = {
   ["LibScriptableLocale-1.0"] = true,
   ["LibScriptablePlugins-1.0"] = true,
   ["LibScriptableLCD-1.0"] = true,
+  ["LibScriptableImages-1.0"] = true,
   ["LibScriptableLocale-1.0"] = true
 }
 

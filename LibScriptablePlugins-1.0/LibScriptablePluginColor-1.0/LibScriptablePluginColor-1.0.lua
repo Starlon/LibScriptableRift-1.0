@@ -48,7 +48,7 @@ end
 -- @return Returns 4 values: red, green, blue, and alpha
 local function Color2RGBA(color, thirtyTwoBit)
 	
-	local r, g, b, a = 0, 0, 0, 0
+	local r, g, b, a = 0, 0, 0, 1
 		
 	if (color == nil) then
 		return r, g, b, a;

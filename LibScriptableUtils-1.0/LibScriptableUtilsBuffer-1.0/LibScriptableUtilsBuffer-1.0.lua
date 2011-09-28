@@ -583,7 +583,10 @@ function LibBuffer:Line4(x0, y0, x1, y1, color, pitch)
 	end
 end
 
+local lshift = bit.lshift
+local rshift = bit.rshift
 function LibBuffer:Line5(x0, y0, x1, y1, color, pitch)
+
         local dy = y1 - y0;
         local dx = x1 - x0;
         local stepx, stepy;

@@ -114,3 +114,10 @@ local function equal(a, b)
 	return a == b and 1 or 0
 end
 ScriptEnv.equal = equal
+
+local random = math.random
+local function rand(val)
+	val = val or 100
+	return random() * val
+end
+ScriptEnv.rand = rand

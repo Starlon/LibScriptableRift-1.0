@@ -14,6 +14,8 @@ local bor = bit.bor
 local bxor = bit.bxor
 local lshift = bit.lshift
 local rshift = bit.rshift
+local min = math.min
+local max = math.max
 
 local ScriptEnv = {}
 local blendtable = {}

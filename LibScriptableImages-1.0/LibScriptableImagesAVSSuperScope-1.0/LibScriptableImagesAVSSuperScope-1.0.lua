@@ -7,8 +7,6 @@ local MINOR = 24
 assert(LibStub, MAJOR.." requires LibStub")
 local LibAVSSuperScope = LibStub:NewLibrary(MAJOR, MINOR)
 if not LibAVSSuperScope then return end
-local LibCore = LibStub("LibScriptableLCDCoreLite-1.0", true)
-assert(LibCore, MAJOR .. " requires LibScriptableLCDCoreLite-1.0")
 local LibWidget = LibStub("LibScriptableWidget-1.0", true)
 assert(LibWidget, MAJOR .. " requires LibScriptableWidget-1.0")
 local PluginBlend = LibStub("LibScriptablePluginBlend-1.0", true)
@@ -20,13 +18,16 @@ local Evaluator = LibStub("LibScriptableUtilsEvaluator-1.0", true)
 assert(Evaluator, MAJOR .. " requires LibScriptableUtilsEvaluator-1.0")
 local LibBuffer = LibStub("LibScriptableUtilsBuffer-1.0", true)
 assert(LibBuffer, MAJOR .. " requires LibScriptableUtilsBuffer-1.0")
-local LibError = LibStub("LibScriptableUtilsError-1.0")
+local LibError = LibStub("LibScriptableUtilsError-1.0", true)
 assert(LibError, MAJOR .. " requires LibScriptableUtilsError-1.0")
+local LibCore = LibStub("LibScriptableLCDCoreLite-1.0", true)
+assert(LibCore, MAJOR .. " requires LibScriptableLCDCoreLite-1.0")
 local Locale = LibStub("LibScriptableLocale-1.0", true)
 assert(Locale, MAJOR .. " requires LibScriptableLocale-1.0")
 local L = Locale.L
 
 local environment = {}
+local core = LibCore:New(environment, "AVSSuperScope", 2)
 
 local pool = setmetatable({}, {__mode = "k"})
 
@@ -112,8 +113,6 @@ function LibAVSSuperScope:New(name, config, errorLevel)
 	obj.line_blend_mode = config.line_blend_mode or defaults.line_blend_mode
 	obj.config = config
 
-
-	obj.core = LibCore:New(obj, "AVSSuperScope")
 	
 	obj.buffer = LibBuffer:New(MAJOR .. " buffer", obj.width * obj.height, 0, errorLevel)
 
@@ -175,11 +174,10 @@ function LibAVSSuperScope:Render(visdata, isBeat, framebuffer, fbout, w, h)
     self.linesize = 3
     self.drawmode = 1 --self.draw_type ? 1.0 : 0.0;
 
-    --scope_run(self, SCOPE_RUNNABLE_FRAME);
 	self.frame()
 
+	
     if (isBeat ~= 0) then
-        --scope_run(self, SCOPE_RUNNABLE_BEAT);
 		self.beat()
     end
 
@@ -191,23 +189,15 @@ function LibAVSSuperScope:Render(visdata, isBeat, framebuffer, fbout, w, h)
     if( l == 0 or l == 1 ) then
         l = 2;
 	end
-
     for a=0, l - 1 do	
-		--[[local r = (a*4)/1
-		local s1 = r - floor(r)
-		local yr = (visdata[floor(r)]^xorv)*(1-s1)+(floor(visdata[floor(r)+1]^xorv))*s1
-		self.v = yr/size - 1
-		]]
-
-		local i = floor(a * size / l * 100)  % self.n
-        self.v = visdata[i] or random(100) / 100;
+        self.v = math.random()
         self.i = a/(l-1);
         self.skip = 0.0;
-
+		
 		self.point()
 
-        local x = floor(((self.x + 1.0) * self.width * 0.5))
-        local y = floor(((self.y + 1.0) * self.height * 0.5))
+        local x = math.floor(((self.x + 1.0) * self.width * 0.5))
+        local y = math.floor(((self.y + 1.0) * self.height * 0.5))
 
 		local this_color = bit.bor(self.blue * 255, bit.bor(bit.lshift(self.green * 255, 8), bit.lshift(self.red * 255, 16)))
 
