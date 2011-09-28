@@ -170,7 +170,6 @@ end
 -- @usage StarDriverCharacter:Show()
 -- @return Nothing
 function DriverCharacter:Show()
-	self.error:Print("DriverCharacter:Show", 2)
 	self.frame:SetVisible(true)
 	self.core:Start()
 	self.frame:ClearAll()

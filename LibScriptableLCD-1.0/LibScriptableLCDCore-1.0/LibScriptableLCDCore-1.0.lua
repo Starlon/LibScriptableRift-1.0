@@ -404,7 +404,7 @@ function LibCore:StartLayout(key)
 		self.layoutsDict[self.currentLayout] = v
 	end
 
-    self.error:Print("StartLayout: " .. self.currentLayout)
+    --self.error:Print("StartLayout: " .. self.currentLayout)
 	
     --emit static_cast<LCDEvents *>(wrapper_)->_LayoutChangeBefore();
 	
@@ -454,8 +454,6 @@ function LibCore:StopLayout(layout)
 end
 
 function LibCore:ChangeLayout() 
-	
-    self.error:Print("ChangeLayout");
 	local t = self.CFG:FetchRaw(self.CFG.root, self.currentLayout .. ".transition")
     if(not t) then
         self:StopLayout(self.currentLayout);
@@ -472,7 +470,6 @@ function LibCore:Transition(i)
 	end
 	self.currentIndex = i
     self:ChangeLayout();
-    LCDError("LibCore::Transition " .. i);
 end
 
 function LibCore:StartTransition(direction)
