@@ -595,7 +595,7 @@ local function DifficultyColor(unit)
 		elseif lvl >= greenStart and lvl <= greenEnd then
 			return 0, 1, 0
 		else
-			return 0.5, 0.5, 0.5
+			return 0.7, 0.7, 0.7
 		end
 	end
 end
