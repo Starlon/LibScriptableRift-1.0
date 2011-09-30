@@ -177,7 +177,7 @@ x = x / 1.5; y = y / 1.5;
 				pixel = 2,
 				drawLayer = "UIParent",
 				points = {{"CENTER", "UIParent", "CENTER", 0, 0}},
-				enabled = true,
+				enabled = false,
 				drawMode = 0,
 				line_blend_mode=2
 				--next = 2
