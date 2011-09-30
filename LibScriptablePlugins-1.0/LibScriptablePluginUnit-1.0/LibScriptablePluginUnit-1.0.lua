@@ -50,7 +50,7 @@ table.insert(Event.Unit.Detail.Afk,
 			afk_times[id] = false
 		end
 	end
-end, "LibScriptablePluginUnit_1_0", "refresh" })
+end, "LibScriptablePluginUnit_1_0", "afk" })
 
 LibTimer:New(MAJOR .. ".afk", 1000, false, 
 function()
@@ -214,7 +214,7 @@ table.insert(Event.Unit.Detail.Offline, {function(units)
 			offline_times[id] = false
 		end
 	end
-end, "LibScriptablePluginUnit_1_0", "refresh" })
+end, "LibScriptablePluginUnit_1_0", "offline" })
 
 LibTimer:New(MAJOR .. ".offline", 1000, false,
 function()
