@@ -27,7 +27,7 @@ end
 -- afk:	Signals that the unit is AFK. Provided only for the player and the player's groupmembers.
 local function UnitAFK(unit)
 	local details = Detail(unit)
-	if details then return details.afk end
+	return details and details.afk
 end
 ScriptEnv.UnitAFK = UnitAFK
 
@@ -105,6 +105,13 @@ local function UnitEnergyMax(unit)
 end
 ScriptEnv.UnitEnergyMax = UnitEnergyMax
 
+--- factionName: The unit's faction name.
+local function UnitFaction(unit)
+	local details = Detail(unit)
+	return details and details.factionName
+end
+ScriptEnv.UnitFaction = UnitFaction
+
 --- guaranteedLoot:	Signals that this unit guarantees loot on death. Shown in the user interface as a diamond above the portrait.
 local function UnitGuaranteedLoot(unit)
 	local details = Detail(unit)
@@ -140,12 +147,26 @@ local function UnitHealthMax(unit)
 end
 ScriptEnv.UnitHealthMax = UnitHealthMax
 
+--- relation: The unit's relation to you. May be "hostile" or "friendly." Neutral targets will not have this member.
+local function UnitRelation(unit)
+	local detail = Detail(unit)
+	return detail and detail.relation
+end
+ScriptEnv.UnitRelation = UnitRelation
+
 --- level:	The unit's level. May be "??" if the unit is hostile and very high-level.
 local function UnitLevel(unit)
 	local details = Detail(unit)
 	if details then return details.level end
 end
 ScriptEnv.UnitLevel = UnitLevel
+
+--- locationName: The name of the unit's location. Provided only for friendly players.
+local function UnitLocation(unit)
+	local details = Detail(unit)
+	return detail and details.locationName
+end
+ScriptEnv.UnitLocation = UnitLocation
 
 --- loot:	The Unit ID that has looting rights to this corpse.
 local function UnitLoot(unit)
@@ -248,17 +269,31 @@ local function UnitPower(unit)
 end
 ScriptEnv.UnitPower = UnitPower
 
+-- publicSize: The unit's current public group size. nil if the group is not public. Provided only for friendly players.
+local function UnitPublicSize(unit)
+	local details = Detail(unit)
+	return details and details.publicSize
+end
+ScriptEnv.UnitPublicSize = UnitPublicSize
+
 --- pvp:	The unit's PvP flag.
 local function UnitPVP(unit)
 	local details = Detail(unit)
-	if details then return details.pvp end
+	return details and details.pvp
 end
 ScriptEnv.UnitPVP = UnitPVP
+
+--- ready:	The unit's race.
+local function UnitRace(unit)
+	local details = Detail(unit)
+	return details and details.race
+end
+ScriptEnv.UnitRace = UnitRace
 
 --- ready:	The unit's readycheck status.
 local function UnitReady(unit)
 	local details = Detail(unit)
-	if details then return details.ready end
+	return details and details.ready
 end
 ScriptEnv.UnitReady = UnitReady
 
@@ -302,6 +337,19 @@ local function UnitRole(unit)
 end
 ScriptEnv.UnitRole = UnitRole
 
+local function UnitTagged(unit)
+	local details = Detail(unit)
+	return detail and detail.tagged
+end
+ScriptEnv.UnitTagged = UnitTagged
+
+-- tier:
+local function UnitTier(unit)
+	local details = Detail(unit)
+	return details and details.tier
+end
+ScriptEnv.UnitTier = UnitTier
+
 --- titlePrefix:	The unit's title prefix.
 local function UnitTitlePrefix(unit)
 	local details = Detail(unit)
@@ -315,6 +363,33 @@ local function UnitTitleSuffix(unit)
 	if details then return details.suffix end
 end
 ScriptEnv.UnitTitleSuffix = UnitTitleSuffix
+
+--- tagName: The unit's tags, localized.
+local function UnitTag(unit)
+	local detail = Detail(unit)
+	if detail and detail.tag then
+		local sep = " "
+		local fields = {str:match((str:gsub("[^"..sep.."]*"..sep, "([^"..sep.."]*)"..sep)))}
+
+		return fields
+	end
+end
+ScriptEnv.UnitTag = UnitTag
+
+
+-- tagName: The unit's tags, localized.
+local function UnitTagText(unit)
+	local tags = UnitTag(unit)
+	if tags then
+		local txt = ""
+		for i, v in ipairs(tags) do
+			v = v:sub(1, v:len()-1)
+			txt = txt .. "<" .. v .. ">"
+		end
+		return txt
+	end
+end
+ScriptEnv.UnitTagText = UnitTagText
 
 --- vitality:	The unit's vitality. Provided only for the player.
 local function UnitVitality(unit)
