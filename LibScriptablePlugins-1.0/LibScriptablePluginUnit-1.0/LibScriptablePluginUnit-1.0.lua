@@ -13,6 +13,17 @@ local Detail = Inspect.Unit.Detail
 local ScriptEnv = {}
 local GetTime = Inspect.Time.Real
 
+local function capital(str)
+	return str and string.upper(string.sub(str, 1, 1)) .. string.sub(str, 2, string.len(str))
+end
+
+local function split(str, sep)
+        local sep, fields = sep or ":", {}
+        local pattern = string.format("([^%s]+)", sep)
+        str:gsub(pattern, function(c) fields[#fields+1] = c end)
+        return fields
+end
+
 --- Populate an environment with this plugin's fields
 -- @usage :New(environment) 
 -- @parma environment This will be the environment when setfenv is called.
@@ -293,8 +304,7 @@ ScriptEnv.UnitPVP = UnitPVP
 --- ready:	The unit's race.
 local function UnitRace(unit)
 	local details = Detail(unit)
-	
-	return details and (details.race and string.upper(string.sub(details.race, 1, 1)) .. string.sub(details.race, 2, string.len(details.race)))
+	return details and capital(details.race)	
 end
 ScriptEnv.UnitRace = UnitRace
 
@@ -374,12 +384,9 @@ ScriptEnv.UnitTitleSuffix = UnitTitleSuffix
 
 --- tagName: The unit's tags, localized.
 local function UnitTag(unit)
-	local detail = Detail(unit)
-	if detail and detail.tag then
-		local sep = " "
-		local fields = {str:match((str:gsub("[^"..sep.."]*"..sep, "([^"..sep.."]*)"..sep)))}
-
-		return fields
+	local details = Detail(unit)
+	if details and details.tag then
+		return split(details.tag, " ")
 	end
 end
 ScriptEnv.UnitTag = UnitTag
@@ -391,8 +398,7 @@ local function UnitTagText(unit)
 	if tags then
 		local txt = ""
 		for i, v in ipairs(tags) do
-			v = v:sub(1, v:len()-1)
-			txt = txt .. "<" .. v .. ">"
+			txt = txt .. "<" .. capital(v) .. ">"
 		end
 		return txt
 	end
