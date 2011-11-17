@@ -78,6 +78,13 @@ local function UnitCharge(unit)
 end
 ScriptEnv.UnitCharge = UnitCharge
 
+-- chargeMax:
+local function UnitChargeMax(unit)
+	local details = Detail(unit)
+	if details then return details.chargeMax end
+end
+ScriptEnv.UnitChargeMax = UnitChargeMax
+
 --- combo:	The unit's combo points. Provided only for the player.
 local function UnitCombo(unit)
 	local details = Detail(unit)
@@ -286,7 +293,8 @@ ScriptEnv.UnitPVP = UnitPVP
 --- ready:	The unit's race.
 local function UnitRace(unit)
 	local details = Detail(unit)
-	return details and details.race
+	
+	return details and (details.race and string.upper(string.sub(details.race, 1, 1)) .. string.sub(details.race, 2, string.len(details.race)))
 end
 ScriptEnv.UnitRace = UnitRace
 
