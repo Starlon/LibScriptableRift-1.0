@@ -50,22 +50,10 @@ function LibProperty:New(widget, visitor, name, expression, defval, errorLevel)
 	obj.defval = defval
 	obj.errorLevel = errorLevel
 
-	obj.is_valid = true
+	obj.is_valid = type(expression) == "string" and true
+
 	obj.error = LibStub("LibScriptableUtilsError-1.0"):New(MAJOR, errorLevel)
 	
-	if type(expression) ~= "string" then 
-		obj.is_valid = false; 
-	else
-		obj.visitor.environment.self = widget
-		obj.visitor.environment.unit = "player"
-		obj.res1 = Evaluator.ExecuteCode(visitor.environment, name, expression, false, defval)
-		if obj.res1 == nil then
-			obj.error:Print(("Property invalid: expression = \"%s\""):format(expression))
-			obj.is_valid = false
-			assert(false)
-		end
-		obj.res1 = false
-	end
 	return obj	
 end
 
