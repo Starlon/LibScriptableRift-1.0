@@ -666,3 +666,12 @@ local function RelationColor(unit, relation)
 	return Color2RGBA(0x111111) 
 end
 ScriptEnv.RelationColor = RelationColor
+
+local callings = { warrior=0xff0000, rogue=0xffff00, mage=0xf811d6, cleric=0x00ff00 }
+local function ClassColor(unit)
+	local details = Inspect.Unit.Detail(unit)
+	if details then
+		return Color2RGBA(callings[details.calling])
+	end
+end
+ScriptEnv.ClassColor = ClassColor
