@@ -604,3 +604,65 @@ ScriptEnv.DifficultyColor = DifficultyColor
 for k, v in pairs(ScriptEnv) do
 	PluginColor[k] = v
 end
+
+local relations = {
+	dead = 0xd7d7d7,
+	friendly = 0x4980ff,
+	hostile = 0xffffef00,
+	party = 0xff57d3ff,
+	raid = 0x29ff00,
+	friendlypvp = 0x28ff00,
+	hostilepvp = 0xdf0000,
+	pvpparty = 0x28ff00,
+	pvpraid = 0x28ff00,
+	guild = 0x28ff00,
+	neutral = 0xffef00,
+	hostile = 0xdf0000
+}
+
+local function RelationColor(unit, relation)
+	local details = Inspect.Unit.Detail(unit)
+	local id = Inspect.Unit.Lookup(unit)
+	local relation = relation
+--[[
+	if relation then
+		return relations[relation] and Color2RGBA(relations[relation])
+	end
+]]
+	if details then
+		local unit2 = Inspect.Unit.Lookup(id)
+		local details2 = Inspect.Unit.Detail(unit2)
+		relation = "friendly"
+		if details.health == 0 then
+			relation = "dead"
+		elseif details.name == details2.name and unit2 ~= unit then
+			if details.pvp then
+				relation = "partypvp"
+			else
+				relation = "party"
+			end
+		elseif details.raid then -- FIXME
+			if details.pvp then
+				relation = "raidpvp"
+			else
+				relation = "raid"
+			end
+		elseif details.relation == "friendly"  then
+			if details.pvp then
+				relation = "friendlypvp" 
+			else
+				relation = "friendly"
+			end
+		elseif details.relation == "hostile"  then
+			if details.pvp then
+				relation = "hostilepvp"
+			else
+				relation = "hostile"
+			end
+		end	
+
+		return Color2RGBA(relations[relation])	
+	end
+	return Color2RGBA(0x111111) 
+end
+ScriptEnv.RelationColor = RelationColor

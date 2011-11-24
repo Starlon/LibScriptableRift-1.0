@@ -182,7 +182,7 @@ ScriptEnv.UnitLevel = UnitLevel
 --- locationName: The name of the unit's location. Provided only for friendly players.
 local function UnitLocation(unit)
 	local details = Detail(unit)
-	return detail and details.locationName
+	return detail and details.locationText
 end
 ScriptEnv.UnitLocation = UnitLocation
 

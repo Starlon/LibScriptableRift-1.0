@@ -160,7 +160,7 @@ function WidgetColor:Update()
 			self.r, self.g, self.b, self.a = PluginUtils.Color2RGBA(r, true)
 		end
 	else
-		self.r, self.g, self.b, self.a = r, g, b, a
+		self.r, self.g, self.b, self.a = r, g, b, a or 1
 	end
 	
 	if type(self.draw) == "function" then
