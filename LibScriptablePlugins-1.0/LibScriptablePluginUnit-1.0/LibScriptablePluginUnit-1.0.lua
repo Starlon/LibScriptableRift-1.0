@@ -126,7 +126,7 @@ ScriptEnv.UnitEnergyMax = UnitEnergyMax
 --- factionName: The unit's faction name.
 local function UnitFaction(unit)
 	local details = Detail(unit)
-	return details and capital(details.faction)
+	return details and details.factionName
 end
 ScriptEnv.UnitFaction = UnitFaction
 
