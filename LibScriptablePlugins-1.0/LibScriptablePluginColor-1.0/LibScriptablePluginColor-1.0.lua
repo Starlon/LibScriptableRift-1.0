@@ -608,7 +608,7 @@ end
 local relations = {
 	dead = 0xd7d7d7,
 	friendly = 0x4980ff,
-	hostile = 0xffffef00,
+	hostile = 0xffffef,
 	party = 0xff57d3ff,
 	raid = 0x29ff00,
 	friendlypvp = 0x28ff00,
@@ -624,11 +624,11 @@ local function RelationColor(unit, relation)
 	local details = Inspect.Unit.Detail(unit)
 	local id = Inspect.Unit.Lookup(unit)
 	local relation = relation
---[[
+
 	if relation then
 		return relations[relation] and Color2RGBA(relations[relation])
 	end
-]]
+
 	if details then
 		local unit2 = Inspect.Unit.Lookup(id)
 		local details2 = Inspect.Unit.Detail(unit2)
@@ -667,7 +667,7 @@ local function RelationColor(unit, relation)
 end
 ScriptEnv.RelationColor = RelationColor
 
-local callings = { warrior=0xa5140f, rogue=0xffff00, mage=0xf811d6, cleric=0x7fcb2d }
+local callings = { warrior=0xfb110c, rogue=0xffff00, mage=0xf811d6, cleric=0x7fcb2d }
 local function ClassColor(unit)
 	local details = Inspect.Unit.Detail(unit)
 	if details then
@@ -677,15 +677,15 @@ end
 ScriptEnv.ClassColor = ClassColor
 
 local bgColor = { -- Default colors from CowTip
-	guild = {0, 0.15, 0, .8},
-	hostilePC = {0.25, 0, 0, .8},
-	hostileNPC = {0.15, 0, 0, .8},
-	neutralNPC = {0.15, 0.15, 0, .8},
-	friendlyPC = {0, 0, 0.25, .8},
-	friendlyNPC = {0, 0, 0.15, .8},
-	other = {0, 0, 0, .8},
-	dead = {0.15, 0.15, 0.15, .8},
-	tapped = {0.25, 0.25, 0.25, .8},
+	guild = {0, 0.15, 0, 1},
+	hostilePC = {0.25, 0, 0, 1},
+	hostileNPC = {0.15, 0, 0, 1},
+	neutralNPC = {0.15, 0.15, 0, 1},
+	friendlyPC = {0, 0, 0.25, 1},
+	friendlyNPC = {0, 0, 0.15, 1},
+	other = {0, 0, 0, 1},
+	dead = {0.15, 0.15, 0.15, 1},
+	tapped = {0.25, 0.25, 0.25, 1},
 
 }
 
