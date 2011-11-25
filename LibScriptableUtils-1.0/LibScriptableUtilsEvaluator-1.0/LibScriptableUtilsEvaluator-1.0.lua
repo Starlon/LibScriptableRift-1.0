@@ -16,6 +16,7 @@ end
 
 do 
 	local function errorhandler(str)
+		print("ouch")
 		error:Print(str)
 	end
 	
@@ -23,7 +24,7 @@ do
 	
 	LibEvaluator.Evaluate = function(self, tag, code, unit)
 		self.unit = unit
-		LibEvaluator.ExecuteCode(self, tag, code)
+		return LibEvaluator.ExecuteCode(self, tag, code)
 	end
 	
 	--- Execute some code

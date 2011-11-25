@@ -667,7 +667,7 @@ local function RelationColor(unit, relation)
 end
 ScriptEnv.RelationColor = RelationColor
 
-local callings = { warrior=0xff0000, rogue=0xffff00, mage=0xf811d6, cleric=0x00ff00 }
+local callings = { warrior=0xa5140f, rogue=0xffff00, mage=0xf811d6, cleric=0x7fcb2d }
 local function ClassColor(unit)
 	local details = Inspect.Unit.Detail(unit)
 	if details then
@@ -675,3 +675,44 @@ local function ClassColor(unit)
 	end
 end
 ScriptEnv.ClassColor = ClassColor
+
+local bgColor = { -- Default colors from CowTip
+	guild = {0, 0.15, 0, .8},
+	hostilePC = {0.25, 0, 0, .8},
+	hostileNPC = {0.15, 0, 0, .8},
+	neutralNPC = {0.15, 0.15, 0, .8},
+	friendlyPC = {0, 0, 0.25, .8},
+	friendlyNPC = {0, 0, 0.15, .8},
+	other = {0, 0, 0, .8},
+	dead = {0.15, 0.15, 0.15, .8},
+	tapped = {0.25, 0.25, 0.25, .8},
+
+}
+
+function BackgroundColor(unit)
+	local col = bgColor.other
+	local details = Inspect.Unit.Detail(unit)
+	if details.health == 0 then
+		col = bgColor.dead
+	elseif details.player then
+		local playerDetails = Inspect.Unit.Detail("player")
+		local guild = playerDetails.guild
+		if details.reaction == "hostile" then
+			col = bgColor.hostilePC
+		elseif guild and guild == details.guild then
+			col = bgColor.guild
+		else
+			col = bgColor.friendlyPC
+		end
+	else
+		if details.reaction == "hostile" then
+			col = bgColor.hostileNPC
+		elseif details.reaction then
+			col = bgColor.friendlyNPC
+		else
+			col = bgColor.neutralNPC
+		end
+	end
+	return unpack(col)
+end
+ScriptEnv.BackgroundColor = BackgroundColor
