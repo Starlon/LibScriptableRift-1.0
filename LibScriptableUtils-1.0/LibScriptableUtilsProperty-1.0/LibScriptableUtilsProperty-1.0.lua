@@ -63,7 +63,6 @@ end
 function LibProperty:Del()
 	pool[self] = true
 	self.error:Del()
-	wipe(self)
 end
 
 local count = 0

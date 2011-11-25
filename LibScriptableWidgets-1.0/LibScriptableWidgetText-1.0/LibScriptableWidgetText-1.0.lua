@@ -252,6 +252,7 @@ function WidgetText:Init(config)
 	obj.timer = obj.timer or LibTimer:New("WidgetText.timer " .. obj.widget.name, obj.update, obj.repeating, textUpdate, obj, obj.errorLevel)
 	obj.textTimer = obj.textTimer or LibTimer:New("WidgetText.textTimer " .. obj.widget.name, obj.speed, true, textScroll, obj, obj.errorLevel)
 	
+	obj.buffer = nil
 end
 
 --- Delete a LibScriptableWidgetText object
