@@ -45,7 +45,7 @@ local mode, expand = "dps", "top5"
 -- expand: all, self, top5
 local mode, expand = "dps", "top5"
 
-function SimpleMeter(unit, mode, expand)
+local function SimpleMeter(unit, mode, expand)
 
     local SimpleMeter = _G.SimpleMeter
     if SimpleMeter then
