@@ -76,6 +76,21 @@ function PluginString:New(environment)
 		return value
 	end
 
+    environment.split = function(txt, delim)
+        local tbl = {}
+	for i = 1, string.len(txt) do
+		local remaining = string.sub(txt, i) 
+                if i == string.len(txt) then
+                    buf = remaining
+                else
+                    buf = string.sub(txt, 1, -string.len(remaining))
+                end
+                table.insert(tbl, buf)
+        end
+        return tbl
+    end
+
+
 	
 	return environment
 end

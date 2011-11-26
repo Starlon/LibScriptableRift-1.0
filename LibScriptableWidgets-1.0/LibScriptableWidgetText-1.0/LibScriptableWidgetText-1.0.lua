@@ -130,7 +130,7 @@ WidgetText.defaults = {
 	update = 0,
 	cols = 40,
 	fontSize = 13,
-	background = {0, 0, 0, 0},
+	background = {0, 0, 0, 1},
 	limited = false
 }
 
@@ -170,6 +170,10 @@ function WidgetText:New(visitor, name, config, row, col, layer, errorLevel, call
 	obj.callback = callback
 	obj.timer = timer
 
+	obj.widget = LibWidget:New(self, obj.visitor, obj.name, obj.config, obj.row, obj.col, self.obj, widgetType, self.errorLevel)
+
+	obj.error = LibError:New(MAJOR .. " : "	.. self.name, self.errorLevel)
+
 	if not timer then
 		self.localTimer = true
 	end
@@ -194,28 +198,21 @@ function WidgetText:Init(config)
 	local config = config or self.config
 	self.config = config
 	
-	if obj.widget then obj.widget:Del() end
-	
-	obj.widget = LibWidget:New(self, self.visitor, self.name, self.config, self.row, self.col, self.layer, widgetType, self.errorLevel)
-
-	if obj.error then obj.error:Del() end
-	obj.error = LibError:New(MAJOR .. " : "	.. self.name, self.errorLevel)
-
 	obj.visitor = visitor
 	obj.errorLevel = errorLevel or 3
 
 	obj.unitOverride = config.unitOverride
 
-	if obj.value then obj.value:Del() end
+	--if obj.value then obj.value:Del() end
 	obj.value = LibProperty:New(self, visitor, name .. " string", config.value, "", errorLevel) -- text of marquee
 	
-	if obj.prefix then obj.prefix:Del() end
+	--if obj.prefix then obj.prefix:Del() end
 	obj.prefix = LibProperty:New(self, visitor, name .. " prefix", config.prefix, "", errorLevel) -- label on the left side
 	
-	if obj.postfix then obj.postfix:Del() end
+	--if obj.postfix then obj.postfix:Del() end
 	obj.postfix = LibProperty:New(self, visitor, name .. " postfix", config.postfix, "", errorLevel) -- label on right side
 
-	if obj.color then obj.color:Del() end
+	--if obj.color then obj.color:Del() end
 	obj.color = LibProperty:New(self, visitor,	name .. " color", config.color, "", errorLevel) -- widget's color
 	
 	obj.precision = config.precision or self.defaults.precision -- number of digits after the decimal point
@@ -249,8 +246,8 @@ function WidgetText:Init(config)
 
 	assert(type(obj.update) == "number", "You must provide a text widget with a refresh rate: update")
 
-	obj.timer = obj.timer or LibTimer:New("WidgetText.timer " .. obj.widget.name, obj.update, obj.repeating, textUpdate, obj, obj.errorLevel)
-	obj.textTimer = obj.textTimer or LibTimer:New("WidgetText.textTimer " .. obj.widget.name, obj.speed, true, textScroll, obj, obj.errorLevel)
+	obj.timer = LibTimer:New("WidgetText.timer " .. obj.widget.name, obj.update, obj.repeating, textUpdate, obj, obj.errorLevel)
+	obj.textTimer = LibTimer:New("WidgetText.textTimer " .. obj.widget.name, obj.speed, true, textScroll, obj, obj.errorLevel)
 	
 	obj.buffer = nil
 end
@@ -261,6 +258,7 @@ end
 function WidgetText:Del()
 	local marq = self
 	marq:Stop()
+	do return end
 	if marq.widget then
 		marq.widget:Del()
 	end
@@ -378,7 +376,6 @@ end
 
 
 function textScroll(self)
-	if not self.prefix or not self.postfix then return end
 
 	self.count = (self.count or 0) + 1
 	local pre = self.prefix:P2S()
@@ -549,6 +546,7 @@ function textScroll(self)
 
 	dst:Del()
 	src:Del()
+
 end
 
 
@@ -574,6 +572,7 @@ function textUpdate(self)
 
 	if str == "" or str ~= self.string then
 		self._update = self._update + 1;
+		self.buffer = str;
 		self.string = str;
 	end
 

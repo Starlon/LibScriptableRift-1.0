@@ -104,6 +104,7 @@ end
 -- @return Nothing
 function WidgetColor:Del()
 	self:Stop()
+	do return end
 	self.widget:Del()
 	self.timer:Del()
 	pool[self] = true
