@@ -572,7 +572,6 @@ function textUpdate(self)
 
 	if str == "" or str ~= self.string then
 		self._update = self._update + 1;
-		self.buffer = str;
 		self.string = str;
 	end
 

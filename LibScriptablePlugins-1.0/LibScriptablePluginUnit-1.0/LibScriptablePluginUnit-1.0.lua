@@ -81,6 +81,7 @@ local function UnitCalling(unit)
 	if details then return callings[details.calling] end
 end
 ScriptEnv.UnitCalling = UnitCalling
+ScriptEnv.UnitClass = UnitCalling
 
 -- charge:	The unit's charge. Provided only for the player.
 local function UnitCharge(unit)
