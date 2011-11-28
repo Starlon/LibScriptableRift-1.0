@@ -3,6 +3,7 @@ local MINOR = 24
 local PluginSimpleMeter = LibStub:NewLibrary(MAJOR, MINOR)
 if not PluginSimpleMeter then return end
 
+local NAME = "<SimpleMeter>"
 local _G = _G
 
 local ScriptEnv = {}
@@ -59,17 +60,17 @@ local function SimpleMeter(unit, mode, expand)
             local list, copyFrom = {}, {}
             if side == "ally" then
                 copyFrom = encounter.allies
-            else
+            elseif side == "enemy" then
                 copyFrom = encounter.enemies
             end
     
-            if #copyFrom == 0 then return "" end
+            if #copyFrom == 0 then return NAME end
     
             for _, v in pairs(copyFrom) do
                 table.insert(list, v)
             end
     
-            encounter:Sort(list, mode)
+            --encounter:Sort(list, mode)
     
       	    local time = encounter:GetCombatTime()
             timeText = "Time: " .. SimpleMeter.Util.FormatTime(time)
@@ -78,13 +79,14 @@ local function SimpleMeter(unit, mode, expand)
                 totalText = totalText .. " Ally"
             elseif side == "enemy" then
                 totalText = totalText .. " Enemy"
+            else
+                return NAME
             end
             totalText = totalText .. " " .. SimpleMeter.Modes[mode].desc .. ": "
     
             for _, id in pairs(list) do
-                for k, v in pairs(encounter.units) do
-                    if k == unitid then
-                        local unit = encounter.units[unitid]
+                    if id == unitid then
+			local unit = encounter.units[id]
                         local v = 0
             	        if mode == "dps" then
                             v = unit.damage / time
@@ -101,19 +103,18 @@ local function SimpleMeter(unit, mode, expand)
                         end
                         if (expand == "all" and v > 0)
                            or (expand == "top5" and count < 5)
-                           or (expand == "self" and id == SimpleMeter.state.playerId) then
-                                unitText = unitText .. "  " .. unit.name .. " :" .. SimpleMeter.Util.FormatNumber(v)
+                           or (expand == "self" and unitid == SimpleMeter.state.playerId) then
+                                unitText = "  " .. unit.name .. " :" .. SimpleMeter.Util.FormatNumber(v)
                                 count = count + 1
                                 break
                         end
                         total = total + v
                     end
-    		end
             end
     	end
     
         if encounter then
-            local details = Inspect.Unit.Detail(unit)
+            local details = Inspect.Unit.Detail(unitid)
             if details and details.relation == "friendly" then
                 grab("ally", mode, expand)
             elseif details and details.relation == "hostile" then
@@ -126,9 +127,9 @@ local function SimpleMeter(unit, mode, expand)
             if text ~= "0" then 
     	        return text
     	    end
-            return "<SimpleMeter>"
+            return NAME
         end
-        return "<SimpleMeter>"
+        return NAME
     end
 end
 ScriptEnv.SimpleMeter = SimpleMeter

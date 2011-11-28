@@ -308,7 +308,50 @@ setmetatable(UnitToLocale, {__index=function(self, unit)
 end})
 ]]
 
+DAYS = "Day";
+DAYS_P1 = "Days";
+DAYS_ABBR = "Day";
+DAYS_ABBR_P1 = "Days";
+DAY_ONELETTER_ABBR = "%d d";
+HOURS = "Hour";
+HOURS_P1 = "Hours";
+HOURS_ABBR = "Hr";
+HOURS_ABBR_P1 = "Hrs";
+HOUR_ONELETTER_ABBR = "%d h";
+MINUTES = "Minute"; -- Minutes of time
+MINUTES_P1 = "Minutes";
+MINUTES_ABBR = "Min";
+MINUTES_ABBR_P1 = "Mins";
+MINUTE_ONELETTER_ABBR = "%d m";
+SECONDS = "Second"; -- Seconds of time
+SECONDS_P1 = "Seconds";
+SECONDS_ABBR = "Sec";
+SECONDS_ABBR_P1 = "Secs";
+SECOND_ONELETTER_ABBR = "%d s";
 
+local L_DAY_ONELETTER_ABBR    = DAY_ONELETTER_ABBR:gsub("%s*%%d%s*", "")
+
+local L_HOUR_ONELETTER_ABBR   = HOUR_ONELETTER_ABBR:gsub("%s*%%d%s*", "")
+
+local L_MINUTE_ONELETTER_ABBR = MINUTE_ONELETTER_ABBR:gsub("%s*%%d%s*", "")
+
+local L_SECOND_ONELETTER_ABBR = SECOND_ONELETTER_ABBR:gsub("%s*%%d%s*", "")
+
+local L_DAYS_ABBR = DAYS_ABBR:gsub("%s*%%d%s*","")
+
+local L_HOURS_ABBR = HOURS_ABBR:gsub("%s*%%d%s*","")
+
+local L_MINUTES_ABBR = MINUTES_ABBR:gsub("%s*%%d%s*","")
+
+local L_SECONDS_ABBR = SECONDS_ABBR:gsub("%s*%%d%s*","")
+
+
+local tremove = table.remove
+local wipe = function(tbl) 
+	for i = 1, #tbl do
+		tremove(tbl)
+	end
+end
 local t = {}
 local function FormatDuration(number, format)
 	local negative = ""
