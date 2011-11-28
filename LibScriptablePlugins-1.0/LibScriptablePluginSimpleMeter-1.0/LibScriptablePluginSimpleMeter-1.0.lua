@@ -3,6 +3,8 @@ local MINOR = 24
 local PluginSimpleMeter = LibStub:NewLibrary(MAJOR, MINOR)
 if not PluginSimpleMeter then return end
 
+local UnitDPS = LibStub("LibScriptablePluginDPS-1.0"):New({}).UnitDPS
+
 local NAME = "<SimpleMeter>"
 local _G = _G
 
@@ -86,6 +88,7 @@ local function SimpleMeter(unit, mode, expand)
     
             for _, id in pairs(list) do
                     if id == unitid then
+			local unitspec = unit
 			local unit = encounter.units[id]
                         local v = 0
             	        if mode == "dps" then
@@ -104,10 +107,10 @@ local function SimpleMeter(unit, mode, expand)
                         if (expand == "all" and v > 0)
                            or (expand == "top5" and count < 5)
                            or (expand == "self" and unitid == SimpleMeter.state.playerId) then
-                                unitText = "  " .. unit.name .. " :" .. SimpleMeter.Util.FormatNumber(v)
+                                unitText = " " .. unit.name .. " :" .. SimpleMeter.Util.FormatNumber(v) 
                                 count = count + 1
-                                break
                         end
+			unitText = unitText .. " (" .. (UnitDPS(unitspec) or "0") .. ")"
                         total = v
 			break
                     end
@@ -124,7 +127,7 @@ local function SimpleMeter(unit, mode, expand)
                 grab("ally", mode, expand)
             end
     
-            local text = timeText .. totalText .. SimpleMeter.Util.FormatNumber(total) .. unitText
+            local text = timeText .. totalText .. unitText
             if text ~= "0" then 
     	        return text
     	    end

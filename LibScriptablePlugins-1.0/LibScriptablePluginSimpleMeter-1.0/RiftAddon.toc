@@ -20,4 +20,5 @@ RunOnStartup = {
 Dependencies = {
   LibStub = {"required", "before"}, 
   LibCallbackHandler = {"required", "before"},   
+  LibScriptablePluginDPS_1_0 = {"required", "before"}
 }
