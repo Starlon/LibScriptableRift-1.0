@@ -70,7 +70,7 @@ local function SimpleMeter(unit, mode, expand)
                 table.insert(list, v)
             end
     
-            --encounter:Sort(list, mode)
+            encounter:Sort(list, mode)
     
       	    local time = encounter:GetCombatTime()
             timeText = "Time: " .. SimpleMeter.Util.FormatTime(time)
@@ -108,7 +108,8 @@ local function SimpleMeter(unit, mode, expand)
                                 count = count + 1
                                 break
                         end
-                        total = total + v
+                        total = v
+			break
                     end
             end
     	end
