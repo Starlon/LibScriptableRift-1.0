@@ -56,7 +56,7 @@ local function SimpleMeter(unit, mode, expand)
         local encounter = SimpleMeter.state.encounters[encounterIndex]
         local unitid = Inspect.Unit.Lookup(unit)
         local total, count = 0, 0
-        local timeText,totalText, unitText = "", "", ""
+        local timeText,totalText, unitText, dpsText = "", "", "", ""
     
         local function grab(side, mode, expand)
             local list, copyFrom = {}, {}
@@ -84,7 +84,6 @@ local function SimpleMeter(unit, mode, expand)
             else
                 return NAME
             end
-            totalText = totalText .. " " .. SimpleMeter.Modes[mode].desc .. ": "
     
             for _, id in pairs(list) do
                     if id == unitid then
@@ -107,13 +106,17 @@ local function SimpleMeter(unit, mode, expand)
                         if (expand == "all" and v > 0)
                            or (expand == "top5" and count < 5)
                            or (expand == "self" and unitid == SimpleMeter.state.playerId) then
-                                unitText = " " .. unit.name .. " :" .. SimpleMeter.Util.FormatNumber(v) 
+				dpsText =  "SM " .. SimpleMeter.Util.FormatNumber(v) .. " (Mouse " .. (UnitDPS(unitspec) or "0") .. ")"
                                 count = count + 1
                         end
-			unitText = unitText .. " (" .. (UnitDPS(unitspec) or "0") .. ")"
                         total = v
 			break
                     end
+            end
+            if dpsText ~= "" then
+                totalText = totalText .. " " .. SimpleMeter.Modes[mode].desc .. " " .. dpsText
+            else 
+                totalText = totalText .. " " .. SimpleMeter.Modes[mode].desc .. " 0 "
             end
     	end
     
@@ -127,7 +130,7 @@ local function SimpleMeter(unit, mode, expand)
                 grab("ally", mode, expand)
             end
     
-            local text = timeText .. totalText .. unitText
+            local text = timeText .. totalText
             if text ~= "0" then 
     	        return text
     	    end
