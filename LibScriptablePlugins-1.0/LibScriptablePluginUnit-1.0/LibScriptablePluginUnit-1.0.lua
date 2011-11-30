@@ -35,7 +35,7 @@ function PluginUnit:New(environment)
 	return environment
 end
 
--- afk:	Signals that the unit is AFK. Provided only for the player and the player's groupmembers.
+--- afk:	Signals that the unit is AFK. Provided only for the player and the player's groupmembers.
 local function UnitAFK(unit)
 	local details = Detail(unit)
 	return details and details.afk
@@ -75,7 +75,7 @@ function()
 end, nil, 2):Start()
 
 local callings = {mage = "Mage", rogue = "Rogue", cleric = "Cleric", warrior = "Warrior"}
--- calling:	The unit's calling. May be "mage", "rogue", "cleric", or "warrior".
+--- calling:	The unit's calling. May be "mage", "rogue", "cleric", or "warrior".
 local function UnitCalling(unit) 
 	local details = Detail(unit)
 	if details then return callings[details.calling] end
@@ -83,14 +83,14 @@ end
 ScriptEnv.UnitCalling = UnitCalling
 ScriptEnv.UnitClass = UnitCalling
 
--- charge:	The unit's charge. Provided only for the player.
+--- charge:	The unit's charge. Provided only for the player.
 local function UnitCharge(unit)
 	local details = Detail(unit)
 	if details then return details.charge end
 end
 ScriptEnv.UnitCharge = UnitCharge
 
--- chargeMax:
+--- chargeMax:
 local function UnitChargeMax(unit)
 	local details = Detail(unit)
 	if details then return details.chargeMax end
@@ -288,7 +288,7 @@ local function UnitPower(unit)
 end
 ScriptEnv.UnitPower = UnitPower
 
--- publicSize: The unit's current public group size. nil if the group is not public. Provided only for friendly players.
+--- publicSize: The unit's current public group size. nil if the group is not public. Provided only for friendly players.
 local function UnitPublicSize(unit)
 	local details = Detail(unit)
 	return details and details.publicSize
@@ -362,7 +362,7 @@ local function UnitTagged(unit)
 end
 ScriptEnv.UnitTagged = UnitTagged
 
--- tier:
+--- tier:
 local function UnitTier(unit)
 	local details = Detail(unit)
 	return details and details.tier
@@ -393,7 +393,7 @@ end
 ScriptEnv.UnitTag = UnitTag
 
 
--- tagName: The unit's tags, localized.
+--- tagName: The unit's tags, localized.
 local function UnitTagText(unit)
 	local tags = UnitTag(unit)
 	if tags then
