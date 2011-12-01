@@ -94,7 +94,7 @@ end
 function LibProperty:P2N()
 	if not self.is_valid then return self.defval end
 	if type(self.ret1) == "string" then
-		return self.ret1 and tonumber(self.ret1), self.ret2 and tonumber(self.ret2), self.ret3 and tonumber(self.ret3), self.ret4 and tonumber(self.ret4), self.ret5 and tonumber(self.ret5)
+		return tonumber(self.ret1), tonumber(self.ret2), tonumber(self.ret3), tonumber(self.ret4), tonumber(self.ret5)
 	elseif type(self.ret1) == "number" then
 		return self.ret1, self.ret2, self.ret3, self.ret4, self.ret5
 	end
