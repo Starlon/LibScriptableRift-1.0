@@ -599,7 +599,8 @@ local relations = {
 	neutral = 0xffef00,
 }
 
-local function RelationColor(unit, relation)
+local function RelationColor(unit, relation, colors)
+	local relations = colors or relations
 	local details = Inspect.Unit.Detail(unit)
 	local id = Inspect.Unit.Lookup(unit)
 	local relation = relation
@@ -649,7 +650,8 @@ end
 ScriptEnv.RelationColor = RelationColor
 
 local callings = { warrior=0xff0000, rogue=0xffff00, mage=0xcc66ff, cleric=0x00ff00 }
-local function ClassColor(unit, calling)
+local function ClassColor(unit, calling, colors)
+	local callings = colors or callings
 	if calling then return Color2RGBA(callings[calling]) end
 	local details = Inspect.Unit.Detail(unit)
 	if details then
@@ -671,7 +673,8 @@ local bgColor = { -- Default colors from CowTip
 
 }
 
-function BackgroundColor(unit)
+function BackgroundColor(unit, colors)
+	local bgColor = colors or bgColor
 	local col = bgColor.other
 	local details = Inspect.Unit.Detail(unit)
 	if details.health == 0 then
@@ -699,11 +702,14 @@ function BackgroundColor(unit)
 end
 ScriptEnv.BackgroundColor = BackgroundColor
 
+local oldFrame
 table.insert(Command.Slash.Register("showcolors"), {function (commands)
 	local pixel = 25
 
 	local ctx = UI.CreateContext(MAJOR)
 	local frame = UI.CreateFrame("Frame", MAJOR, ctx)
+	if oldFrame then oldFrame:Hide() end
+	oldFrame = frame
 	frame:SetPoint("CENTER", UIParent, "CENTER", 0, -pixel*8)
 	
 	local count = 0
