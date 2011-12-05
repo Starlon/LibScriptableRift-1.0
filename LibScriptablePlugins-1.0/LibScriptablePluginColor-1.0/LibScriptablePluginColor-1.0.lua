@@ -315,6 +315,7 @@ local function Gradient(perc, unit)
 	return r, g, b
 end
 ScriptEnv.Gradient = Gradient
+ScriptEnv.UnitGradient = Gradient
 
 --- Retrieve a table representing the colors along a gradient red through blue
 -- @usage RedThroughBlue()
@@ -552,27 +553,6 @@ end
 ScriptEnv.HostileColor = HostileColor
 ]]
 
-local RAID_CLASS_COLORS = _G.RAID_CLASS_COLORS
-
---- Retrieve a color suitable to color a unit's class value
--- @usage ClassColor(unit)
--- @param unit The unit in question
--- @return red, green, and blue
---[[
-local function ClassColor(unit)
-	local r, g, b = 0.8, 0.8, 0.8 --UNKNOWN
-	local _, class = UnitClass(unit)
-	local t = RAID_CLASS_COLORS[class]
-	
-	if t then
-		r, g, b = t.r, t.g, t.b
-	end
-	
-	return r, g, b
-end
-ScriptEnv.ClassColor = ClassColor
-]]
-
 --- Retrieve a color suitable to color a unit's difficulty level
 -- @usage DifficultyColor(unit)
 -- @param unit The unit in question
@@ -606,18 +586,17 @@ for k, v in pairs(ScriptEnv) do
 end
 
 local relations = {
-	dead = 0xd7d7d7,
-	friendly = 0x4980ff,
-	hostile = 0xffffef,
-	party = 0xff57d3ff,
-	raid = 0x29ff00,
-	friendlypvp = 0x28ff00,
-	hostilepvp = 0xdf0000,
-	pvpparty = 0x28ff00,
-	pvpraid = 0x28ff00,
-	guild = 0x28ff00,
+	dead = 0xcccccc,
+	guild = 0x669966,
+	friendly = 0x66ff00,
+	friendlypvp = 0x000066,
+	hostile = 0xffff00,
+	hostilepvp = 0x990066,
+	party = 0x99ff66,
+	pvpparty = 0x9900cc,
+	raid = 0x99ff66,
+	pvpraid = 0x9933cc,
 	neutral = 0xffef00,
-	hostile = 0xdf0000
 }
 
 local function RelationColor(unit, relation)
@@ -632,18 +611,20 @@ local function RelationColor(unit, relation)
 	if details then
 		local unit2 = Inspect.Unit.Lookup(id)
 		local details2 = Inspect.Unit.Detail(unit2)
-		relation = "friendly"
+		relation = "neutral"
 		if details.health == 0 then
 			relation = "dead"
-		elseif details.name == details2.name and unit2 ~= unit then
+		elseif details.guild == details2.guild then
+			relation = "guild"
+		elseif details.party then -- FIXME
 			if details.pvp then
-				relation = "partypvp"
+				relation = "pvpparty"
 			else
 				relation = "party"
 			end
 		elseif details.raid then -- FIXME
 			if details.pvp then
-				relation = "raidpvp"
+				relation = "pvpraid"
 			else
 				relation = "raid"
 			end
@@ -667,8 +648,9 @@ local function RelationColor(unit, relation)
 end
 ScriptEnv.RelationColor = RelationColor
 
-local callings = { warrior=0xfb110c, rogue=0xffff00, mage=0xf811d6, cleric=0x7fcb2d }
-local function ClassColor(unit)
+local callings = { warrior=0xff0000, rogue=0xffff00, mage=0xcc66ff, cleric=0x00ff00 }
+local function ClassColor(unit, calling)
+	if calling then return Color2RGBA(callings[calling]) end
 	local details = Inspect.Unit.Detail(unit)
 	if details then
 		return Color2RGBA(callings[details.calling])
@@ -716,3 +698,63 @@ function BackgroundColor(unit)
 	return unpack(col)
 end
 ScriptEnv.BackgroundColor = BackgroundColor
+
+table.insert(Command.Slash.Register("showcolors"), {function (commands)
+	local pixel = 25
+
+	local ctx = UI.CreateContext(MAJOR)
+	local frame = UI.CreateFrame("Frame", MAJOR, ctx)
+	frame:SetPoint("CENTER", UIParent, "CENTER", 0, -pixel*8)
+	
+	local count = 0
+	for k, v in pairs(callings) do
+	        local texture = UI.CreateFrame("Texture", k, frame)
+	        texture:SetBackgroundColor(Color2RGBA(v))
+	        texture:SetPoint("TOPLEFT", frame, "TOPLEFT", pixel*4, pixel*count)
+	        texture:SetWidth(pixel)
+	        texture:SetHeight(pixel)
+		local text = UI.CreateFrame("Text", k, frame)
+		text:SetPoint("TOPLEFT", texture, "TOPRIGHT")
+		text:SetText(k)
+	        count = count + 1
+	end
+	
+	local list = {}
+	for k in pairs(bgColor) do
+		table.insert(list, k)
+	end
+	table.sort(list)
+	
+	local count = 0
+	for _, k in ipairs(list) do
+	        local texture = UI.CreateFrame("Texture", k, frame)
+	        texture:SetBackgroundColor(unpack(bgColor[k]))
+	        texture:SetPoint("TOPLEFT", frame, "TOPLEFT", pixel*8, pixel*count)
+	        texture:SetWidth(pixel)
+	        texture:SetHeight(pixel)
+		local text = UI.CreateFrame("Text", k, frame)
+		text:SetPoint("TOPLEFT", texture, "TOPRIGHT")
+		text:SetText(k)
+	        count = count + 1
+	end
+	
+	local list = {}
+	for k in pairs(relations) do
+	        table.insert(list, k)
+	end
+	table.sort(list)
+	
+	local count = 0
+	for _, k in pairs(list) do
+	        local texture = UI.CreateFrame("Texture", k, frame)
+	        texture:SetBackgroundColor(Color2RGBA(relations[k]))
+	        texture:SetPoint("TOPLEFT", frame, "TOPLEFT", pixel*12, count * pixel)
+	        texture:SetWidth(pixel)
+	        texture:SetHeight(pixel)
+	        local text = UI.CreateFrame("Text", k, frame)
+	        text:SetPoint("TOPLEFT", texture, "TOPRIGHT")
+	        text:SetText(k)
+	        count = count + 1
+	end
+
+end, "LibScriptablePluginColor_1_0", "showcolors slash"}) 
