@@ -19,294 +19,21 @@ local ScriptEnv = {}
 
 ScriptEnv.Colorize = PluginColor.Colorize
 
-local player_guid
-
 if not PluginLuaTexts.__index then
 	PluginLuaTexts.__index = PluginLuaTexts
 end
 
--- Populate an environment with this plugin's fields
+--- Populate an environment with this plugin's fields
 -- @usage :New(environment) 
 -- @parma environment This will be the environment when setfenv is called.
 -- @return A new plugin object, aka the environment, and the plugin object as second return value
-function PluginLuaTexts:New(environment, config)
+function PluginLuaTexts:New(environment)
 	for k, v in pairs(ScriptEnv) do
 		environment[k] = v
 	end
 	
 	return environment
 end
-
-local texts = {}
-local no_update = {}
-local event_cache = {}
-local func_cache = {}
-local power_cache = {}
-PluginLuaTexts.power_cache = power_cache
-local mouseover_check_cache = {}
-PluginLuaTexts.mouseover_check_cache = mouseover_check_cache
-local spell_cast_cache = {}
-PluginLuaTexts.spell_cast_cache = spell_cast_cache
-local cast_data = {}
-PluginLuaTexts.cast_data = cast_data
-local to_update = {}
-PluginLuaTexts.to_update = to_update
-local afk_cache = {}
-PluginLuaTexts.afk_cache = afk_cache
-local dnd_cache = {}
-PluginLuaTexts.dnd_cache = dnd_cache
-local offline_cache = {}
-PluginLuaTexts.offline_cache = offline_cache
-local dead_cache = {}
-PluginLuaTexts.dead_cache = dead_cache
-local offline_times = {}
-PluginLuaTexts.offline_times = offline_times
-local afk_times = {}
-PluginLuaTexts.afk_times = afk_times
-local dnd = {}
-PluginLuaTexts.dnd = dnd
-local dead_times = {}
-PluginLuaTexts.dead_times = dead_times
-local predicted_power = true
-
-
---[[
-do
-	-- Build the event defaults
-	local events = {
-		-- Harcoded events basically the ones that aren't just unit=true ones
-		['UNIT_PET_EXPERIENCE'] = {pet=true},
-		['PLAYER_XP_UPDATE'] = {player=true},
-		['UNIT_COMBO_POINTS'] = {all=true},
-		['UPDATE_FACTION'] = {all=true},
-		['UNIT_LEVEL'] = {all=true},
-
-		-- They pass the unit but they don't provide the pairing (e.g.
-		-- the target changes) so we'll miss updates if we don't update
-		-- every text on every one of these events.  /sigh
-		['UNIT_THREAT_LIST_UPDATE'] = {all=true},
-		['UNIT_THREAT_SITUATION_UPDATE'] = {all=true},
-	}
-
-	-- Iterate the provided codes to fill in all the rest
-	for base, codes in pairs(PROVIDED_CODES) do
-		for name, entry in pairs(codes) do
-			for event in pairs(entry.events) do
-				if not events[event] then
-					events[event] = {unit=true}
-				end
-			end
-		end
-	end
-
-	PitBull4_LuaTexts:SetDefaults({
-		elements = {
-			['**'] = {
-				size = 1,
-				attach_to = "root",
-				location = "edge_top_left",
-				position = 1,
-				exists = false,
-				code = "",
-				events = {},
-				enabled = true,
-			}
-		},
-		first = true
-	},
-	{
-		-- Global defaults
-		events = events,
-	})
-end
-]]
-
---[[
-do
-	local target_same_mt = { __index=function(self, key)
-		if type(key) ~= "string" then
-			return false
-		end
-		
-		if key:sub(-6) == "target" then
-			local value = self[key:sub(1, -7)]
-			self[key] = value
-			return value
-		end
-		
-		self[key] = false
-		return false
-	end }
-	
-	local target_same_with_target_mt = { __index=function(self, key)
-		if type(key) ~= "string" then
-			return false
-		end
-		
-		if key:sub(-6) == "target" then
-			local value = self[key:sub(1, -7)]
-			value = value and value .. "target"
-			self[key] = value
-			return value
-		end
-		
-		self[key] = false
-		return false
-	end }
-	
-	local better_unit_ids = {
-		player = "player",
-		pet = "pet",
-		vehicle = "pet",
-		playerpet = "pet",
-		mouseover = "mouseover",
-		focus = "focus",
-		target = "target",
-		playertarget = "target",
-		npc = "npc",
-	}
-	for i = 1, MAX_PARTY_MEMBERS do
-		better_unit_ids["party" .. i] = "party" .. i
-		better_unit_ids["partypet" .. i] = "partypet" .. i
-		better_unit_ids["party" .. i .. "pet"] = "partypet" .. i
-	end
-	for i = 1, MAX_RAID_MEMBERS do
-		better_unit_ids["raid" .. i] = "raid" .. i
-		better_unit_ids["raidpet" .. i] = "raidpet" .. i
-		better_unit_ids["raid" .. i .. "pet"] = "raidpet" .. i
-	end
-	for i = 1, MAX_ARENA_TEAM_MEMBERS do
-		better_unit_ids["arena" .. i] = "arena" .. i
-		better_unit_ids["arenapet" .. i] = "arenapet" .. i
-		better_unit_ids["arena" .. i .. "pet"] = "arenapet" .. i
-	end
-	for i = 1, MAX_BOSS_FRAMES do
-		better_unit_ids["boss" .. i] = "boss" .. i
-	end
-	setmetatable(better_unit_ids, target_same_with_target_mt)
-	
-	--- Return the best UnitID for the UnitID provided
-	-- @param unit the known UnitID
-	-- @usage PluginLuaTexts.GetBestUnitID("playerpet") == "pet"
-	-- @return the best UnitID. If the ID is invalid, it will return false
-	function PluginLuaTexts.GetBestUnitID(unit)
-		return better_unit_ids[unit]
-	end
-	
-	local valid_singleton_unit_ids = {
-		player = true,
-		pet = true,
-		mouseover = true,
-		focus = true,
-		target = true,
-	}
-	setmetatable(valid_singleton_unit_ids, target_same_mt)
-	
-	--- Return whether the UnitID provided is a singleton
-	-- @param unit the UnitID to check
-	-- @usage PluginLuaTexts.IsSingletonUnitID("player") == true
-	-- @usage PluginLuaTexts.IsSingletonUnitID("party1") == false
-	-- @return whether it is a singleton
-	function PluginLuaTexts.IsSingletonUnitID(unit)
-		return valid_singleton_unit_ids[unit]
-	end
-	
-	local valid_classifications = {
-		player = true,
-		pet = true,
-		mouseover = true,
-		focus = true,
-		target = true,
-		party = true,
-		partypet = true,
-		raid = true,
-		raidpet = true,
-	}
-	setmetatable(valid_classifications, target_same_mt)
-	
-	--- Return whether the classification is valid
-	-- @param classification the classification to check
-	-- @usage PluginLuaTexts.IsValidClassification("player") == true
-	-- @usage PluginLuaTexts.IsValidClassification("party") == true
-	-- @usage PluginLuaTexts.IsValidClassification("partytarget") == true
-	-- @usage PluginLuaTexts.IsValidClassification("partypettarget") == true
-	-- @usage PluginLuaTexts.IsValidClassification("party1") == false
-	-- @return whether it is a a valid classification
-	function PluginLuaTexts.IsValidClassification(unit)
-		return valid_classifications[unit]
-	end
-	
-	local non_wacky_unit_ids = {
-		player = true,
-		pet = true,
-		mouseover = true,
-		focus = true,
-		target = true,
-		party = true,
-		partypet = true,
-		raid = true,
-		raidpet = true,
-	}
-	
-	--- Return whether the classification provided is considered "wacky"
-	-- @param classification the classification in question
-	-- @usage assert(not PluginLuaTexts.IsWackyUnitGroup("player"))
-	-- @usage assert(PluginLuaTexts.IsWackyUnitGroup("targettarget"))
-	-- @usage assert(PluginLuaTexts.IsWackyUnitGroup("partytarget"))
-	-- @return whether it is wacky
-	function PluginLuaTexts.IsWackyUnitGroup(classification)
-		return not non_wacky_unit_ids[classification]
-	end
-end
-
-]]
-
--- The following functions exist to provide a method to help people moving
--- from LibDogTag.  They implement the functionality that exists in some of
--- the tags in LibDogTag.  Tags that are identical to Blizzard API calls are
--- not included and you should use the API call.  Some of them do not implement
--- all of the features of the relevent tag in LibDogTag.  People interested in
--- contributing new functions should open a ticket on the PitBull4 project as
--- a patch to the LuaTexts module.  In general tags that are simplistic work
--- on other tags should be generalized (e.g. Percent instead of PercentHP and PercentMP)
--- or should simply not exist.  A major design goal is to avoid inefficient code.
--- Functions which encourage inefficient code design will not be accepted.
-
--- A number of these functions are borrowed or adapted from the code implmenting
--- similar tags in DogTag.  Permission to do so granted by ckknight.
---[[
-local UnitToLocale = {player = L["Player"], target = L["Target"], pet = L["%s's pet"]:format(L["Player"]), focus = L["Focus"], mouseover = L["Mouse-over"]}
-setmetatable(UnitToLocale, {__index=function(self, unit)
-	if unit:find("pet$") then
-		local nonPet = unit:sub(1, -4)
-		self[unit] = L["%s's pet"]:format(self[nonPet])
-		return self[unit]
-	elseif not unit:find("target$") then
-		if unit:find("^party%d$") then
-			local num = unit:match("^party(%d)$")
-			self[unit] = L["Party member #%d"]:format(num)
-			return self[unit]
-		elseif unit:find("^raid%d%d?$") then
-			local num = unit:match("^raid(%d%d?)$")
-			self[unit] = L["Raid member #%d"]:format(num)
-			return self[unit]
-		elseif unit:find("^partypet%d$") then
-			local num = unit:match("^partypet(%d)$")
-			self[unit] = UnitToLocale["party" .. num .. "pet"]
-			return self[unit]
-		elseif unit:find("^raidpet%d%d?$") then
-			local num = unit:match("^raidpet(%d%d?)$")
-			self[unit] = UnitToLocale["raid" .. num .. "pet"]
-			return self[unit]
-		end
-		self[unit] = unit
-		return unit
-	end
-	local nonTarget = unit:sub(1, -7)
-	self[unit] = L["%s's target"]:format(self[nonTarget])
-	return self[unit]
-end})
-]]
 
 DAYS = "Day";
 DAYS_P1 = "Days";
@@ -519,11 +246,14 @@ local function Paren(value)
 end
 ScriptEnv.Paren = Paren
 
+--[[
 local function IsAFK(unit)
 	return not not afk_times[UnitGUID(unit)]
 end
 ScriptEnv.IsAFK = IsAFK
+]]
 
+--[[
 local function AFKDuration(unit)
 	local afk = afk_times[UnitGUID(unit)]
 	if afk then
@@ -532,7 +262,9 @@ local function AFKDuration(unit)
 	end
 end
 ScriptEnv.AFKDuration = AFKDuration
+]]
 
+--[[
 local function AFK(unit)
 	local afk = AFKDuration(unit)
 	if afk then
@@ -651,6 +383,7 @@ ScriptEnv.Power = Power
 -- more symmetry
 local MaxPower = UnitPowerMax
 ScriptEnv.MaxPower = MaxPower
+]]
 
 local function Round(number, digits)
 	if not digits then
@@ -791,6 +524,7 @@ local function Percent(x, y)
 end
 ScriptEnv.Percent = Percent
 
+--[[
 local function XP(unit)
 	if unit == "player" then
 		return UnitXP(unit)
@@ -827,6 +561,7 @@ local function CastData(unit)
 	return cast_data[UnitGUID(unit)]
 end
 ScriptEnv.CastData = CastData
+]]
 
 local function abbreviate(text)
 	local b = text:byte(1)
@@ -849,6 +584,7 @@ local function Abbreviate(value)
 end
 ScriptEnv.Abbreviate = Abbreviate
 
+--[[
 local function PVPDuration(unit)
 	if unit and not UnitIsUnit(unit,"player") then return end
   if IsPVPTimerRunning() then
@@ -858,275 +594,8 @@ local function PVPDuration(unit)
 end
 ScriptEnv.PVPDuration = PVPDuration
 
-
------------------End of ScriptEnv---------------------
-
-local pool = setmetatable({}, {__mode='k'})
-local function new()
-	local t = next(pool)
-	if t then
-		pool[t] = nil
-	else
-		t = {}
-	end
-	return t
-end
-
-local function del(t)
-	wipe(t)
-	pool[t] = true
-	return nil
-end
-
-local function copy(t)
-	local n = {}
-	for k,v in pairs(t) do
-		n[k] = v
-	end
-	return n
-end
-
-local function update_cast_data(event, unit, event_spell, event_rank, event_cast_id)
-	local guid = UnitGUID(unit)
-	if not guid then return end
-	local data = cast_data[guid]
-	if not data then
-		data = new()
-		cast_data[guid] = data
-	end
-
-	local spell, rank, name, icon, start_time, end_time, is_trade_skill, cast_id, interrupt = UnitCastingInfo(unit)
-	local channeling = false
-	if not spell then
-		spell, rank, name, icon, start_time, end_time, uninterruptble = UnitChannelInfo(unit)
-		channeling = true
-	end
-	if spell then
-		data.spell = spell
-		rank = rank and tonumber(rank:match("%d+"))
-		data.rank = rank
-		local old_start = data.start_time
-		start_time = start_time * 0.001
-		data.start_time = start_time
-		data.end_time = end_time * 0.001
-		if event == "UNIT_SPELLCAST_DELAYED" or event == "UNIT_SPELLCAST_CHANNEL_UPDATE" then
-			data.delay = (data.delay or 0) + (start_time - (old_start or start_time))
-		else
-			data.delay = 0
-		end
-		if guid == player_guid and spell == next_spell and rank == next_rank then
-			data.target = next_target
-		end
-		data.casting = not channeling
-		data.channeling = channeling
-		data.fade_out = false
-		data.interruptible = not uninterruptible
-		if event ~= "UNIT_SPELLCAST_INTERRUPTED" then
-			-- We can't update the cache of the cast_id on UNIT_SPELLCAST_INTERRUPTED  because
-			-- for whatever reason it ends up giving us 0 inside this event.
-			data.cast_id = cast_id
-		end
-		data.stop_time = nil
-		data.stop_message = nil
-		return
-	end
-	if not data.spell then
-		cast_data[guid] = del(data)
-		return
-	end
-
-	if data.cast_id == event_cast_id then
-		-- The event was for the cast we're current casting
-		if event == "UNIT_SELLCAST_FAILED" then
-			data.stop_message = _G.FAILED
-		elseif event == "UNIT_SPELLCAST_INTERRUPTED" then
-			data.stop_message = _G.INTERRUPTED
-		elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
-			-- Sometimes the interrupt event happens just before the
-			-- success event so clear the stop_message if we get succeded.
-			data.stop_message = nil
-		end
-	end
-
-	data.casting = false
-	data.channeling = false
-	data.fade_out = true
-	if not data.stop_time then
-		data.stop_time = GetTime()
-	end
-end
-
-local tmp = {}
-local function fix_cast_data()
-	local frame
-	local current_time = GetTime()
-	for guid, data in pairs(cast_data) do
-		tmp[guid] = data
-	end
-	for guid, data in pairs(tmp) do
-		if data.casting then
-			if current_time > data.end_time and player_guid ~= guid then
-				data.casting = false
-				data.fade_out = true
-				data.stop_time = current_time
-			end
-		elseif data.channeling then
-			if current_time > data.end_time then
-				data.channeling = false
-				data.fade_out = true
-				data.stop_time = current_time
-			end
-		elseif data.fade_out then
-			local alpha = 0
-			local stop_time = data.stop_time
-			if stop_time then
-				alpha = stop_time - current_time + 1
-			end
-
-			if alpha <0 then
-				cast_data[guid] = del(data)
-			end
-		else
-			cast_data[guid] = del(data)
-		end
-	end
-	wipe(tmp)
-end
-
-local group_members = {}
-local first = true
-local function update_timers()
-	if first then
-		first = false
-		PluginLuaTexts:PARTY_MEMBERS_CHANGED()
-	end
-	for unit, guid in pairs(group_members) do
-		if not UnitIsConnected(unit) then
-			if not offline_times[guid] then
-				offline_times[guid] = GetTime()
-			end
-			afk_times[guid] = nil
-			if dnd[guid] then
-				dnd[guid] = nil
-			end
-		else
-			offline_times[guid] = nil
-			if UnitIsAFK(unit) then
-				if not afk_times[guid] then
-					afk_times[guid] = GetTime()
-				end
-			else
-				afk_times[guid] = nil
-				local dnd_change = false
-				if UnitIsDND(unit) then
-					if not dnd[guid] then
-						dnd[guid] = true
-						dnd_change = true
-					end
-				else
-					if dnd[guid] then
-						dnd[guid] = nil
-						dnd_change = true
-					end
-				end
-			end
-		end
-		if UnitIsDeadOrGhost(unit) then
-			if not dead_times[guid] then
-				dead_times[guid] = GetTime()
-			end
-		else
-			dead_times[guid] = nil
-		end
-	end
-end
-
-function PluginLuaTexts:PARTY_MEMBERS_CHANGED(event)
-  local prefix, min, max = "raid", 1, GetNumRaidMembers()
-	if max == 0 then
-		prefix, min, max = "party", 1, GetNumPartyMembers()
-	end
-	if max == 0 then
-		-- not in a raid or a party
-		wipe(group_members)
-		group_members["player"] = player_guid
-		return
-	end
-
-	wipe(group_members)
-	for i = min, max do
-		local unit
-		if i == 0 then
-			unit = 'player'
-		else
-			unit = prefix .. i
-		end
-		local guid = UnitGUID(unit)
-		group_members[unit] = guid
-
-		if guid then
-			tmp[guid] = true
-		end
-	end
-
-	-- Cleanup any timers that reference people no longer in the party
-	for guid in pairs(offline_times) do
-		if not tmp[guid] then
-			offline_times[guid] = nil
-		end
-	end
-	for guid in pairs(dead_times) do
-		if not tmp[guid] then
-			dead_times[guid] = nil
-		end
-	end
-	for guid in pairs(afk_times) do
-		if not tmp[guid] then
-			afk_times[guid] = nil
-		end
-	end
-	wipe(tmp)
-end
-
-function PluginLuaTexts:OnEvent(event, unit, ...)
-	--[[local event_entry = event_cache[event]
-	if not event_entry then return end
-	local event_config = self.events[event]
-	local all, by_unit, player, pet, guid
-
-	if event_config then
-		all, by_unit = event_config.all, event_config.unit
-		player, pet = event_config.player, event_config.pet
-	else
-		-- Sucks but if for some reason the event entry is missing update all
-		all = true
-	end
-
-	if unit then
-		guid = UnitGUID(unit)
-	end
-	]]
-
-	if event == "PLAYER_FLAGS_CHANGED" then
-		update_timers()
-	elseif string.sub(event,1,15) == "UNIT_SPELLCAST_" then
-		-- spell casting events need to go through
-		update_cast_data(event, unit, ...)
-	end
-end
-
---[[
-local lastUpdate = 0
-local updateTimer = LibTimer:New(MAJOR .. " updateTimer", 500, true, function()
-	fix_cast_data()
-	
-	if GetTime() - lastUpdate > 1 then
-		update_timers()
-		lastUpdate = GetTime()
-	end
-end)
-updateTimer:Start()
 ]]
+-----------------End of ScriptEnv---------------------
 
 for k, v in pairs(ScriptEnv) do
 	PluginLuaTexts[k] = v
