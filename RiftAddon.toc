@@ -21,10 +21,10 @@ Website = ""
 Email = "sisibley@gmail.com"
 
 -- You may want to include a version string for your addon as well.
-Version = "1.0.2"
+Version = "1.0.5"
 
 -- Addons must include which version of Rift they're designed to work with. Right now, the only valid number is "1.3".
-Environment = "1.3"
+Environment = "1.6"
 
 -- Finally, addons must include a list of files that will be executed when the addon starts. These files must be packaged along with your addon and will be run in order.
 
