@@ -759,7 +759,6 @@ table.insert(Command.Slash.Register("showcolors"), {function (commands)
 	        texture:SetHeight(pixel)
 	        local text = UI.CreateFrame("Text", k, frame)
 	        text:SetPoint("TOPLEFT", texture, "TOPRIGHT")
-	        text:SetText(k)
 	        count = count + 1
 	end
 

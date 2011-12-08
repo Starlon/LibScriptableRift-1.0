@@ -372,14 +372,14 @@ ScriptEnv.UnitTier = UnitTier
 --- titlePrefix:	The unit's title prefix.
 local function UnitTitlePrefix(unit)
 	local details = Detail(unit)
-	if details then return details.prefix end
+	if details then return details.titlePrefixName end
 end
 ScriptEnv.UnitTitlePrefix = UnitTitlePrefix
 
 --- titleSuffix:	The unit's title suffix.
 local function UnitTitleSuffix(unit)
 	local details = Detail(unit)
-	if details then return details.suffix end
+	if details then return details.titleSuffixName end
 end
 ScriptEnv.UnitTitleSuffix = UnitTitleSuffix
 
