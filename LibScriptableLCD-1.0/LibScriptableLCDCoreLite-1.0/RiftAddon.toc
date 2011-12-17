@@ -37,5 +37,6 @@ Dependencies = {
   LibScriptablePluginSimpleMeter_1_0 = {"optional", "before"},
   LibScriptablePluginItem_1_0 = {"optional", "before"},
   LibScriptablePluginAbility_1_0 = {"optional", "before"},
+  LibScriptablePluginAchievement_1_0 = {"optional", "before"}
 }
 

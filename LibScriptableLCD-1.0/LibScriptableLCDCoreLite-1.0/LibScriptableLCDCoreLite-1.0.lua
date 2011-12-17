@@ -64,6 +64,8 @@ local PluginItem = LibStub("LibScriptablePluginItem-1.0")
 assert(PluginItem, MAJOR .. " requires LibScriptablePluginItem-1.0")
 local PluginAbility = LibStub("LibScriptablePluginAbility-1.0")
 assert(PluginAbility, MAJOR .. " requires LibScriptablePluginAbility-1.0")
+local PluginAchievement = LibStub("LibScriptablePluginAchievement-1.0")
+assert(PluginAchievement, MAJOR .. " requires LibScriptablePluginAchievement-1.0")
 
 local pool = setmetatable({}, {__mode = "k"})
 local objects = {}
@@ -135,7 +137,8 @@ function LibCore:New(environment, name, errorLevel)
 	PluginRift:New(environment)
         PluginSimpleMeter:New(environment)
 	PluginItem:New(environment)
-	PluginAbilty:New(environment)
+	PluginAbility:New(environment)
+	PluginAchievement:New(environment)
 	
 	environment._G = _G
 	environment.environment = environment

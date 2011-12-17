@@ -1,12 +1,12 @@
-local MAJOR = "LibScriptablePluginUnit-1.0" 
+local MAJOR = "LibScriptablePluginAbility-1.0" 
 local MINOR = 24
 
-local PluginUnit = LibStub:NewLibrary(MAJOR, MINOR)
-if not PluginUnit then return end
+local PluginAbility = LibStub:NewLibrary(MAJOR, MINOR)
+if not PluginAbility then return end
 local LibTimer = LibStub("LibScriptableUtilsTimer-1.0")
 
-if not PluginUnit.__index then
-	PluginUnit.__index = PluginUnit
+if not PluginAbility.__index then
+	PluginAbility.__index = PluginAbility
 end
 
 local Detail = Inspect.Ability.Detail
@@ -29,7 +29,7 @@ end
 -- @usage :New(environment) 
 -- @parma environment This will be the environment when setfenv is called.
 -- @return A new plugin object, aka the environment
-function PluginUnit:New(environment)
+function PluginAbility:New(environment)
 	for k, v in pairs(ScriptEnv) do
 		environment[k] = v
 	end

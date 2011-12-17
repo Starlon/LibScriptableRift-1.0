@@ -1,15 +1,15 @@
-local MAJOR = "LibScriptablePluginUnit-1.0" 
+local MAJOR = "LibScriptablePluginItem-1.0" 
 local MINOR = 24
 
-local PluginUnit = LibStub:NewLibrary(MAJOR, MINOR)
-if not PluginUnit then return end
+local PluginItem = LibStub:NewLibrary(MAJOR, MINOR)
+if not PluginItem then return end
 local LibTimer = LibStub("LibScriptableUtilsTimer-1.0")
 
-if not PluginUnit.__index then
-	PluginUnit.__index = PluginUnit
+if not PluginItem.__index then
+	PluginItem.__index = PluginItem
 end
 
-local Detail = Inspect.Unit.Detail
+local Detail = Inspect.Item.Detail
 local ScriptEnv = {}
 local GetTime = Inspect.Time.Real
 
@@ -28,7 +28,7 @@ end
 -- @usage :New(environment) 
 -- @parma environment This will be the environment when setfenv is called.
 -- @return A new plugin object, aka the environment
-function PluginUnit:New(environment)
+function PluginItem:New(environment)
 	for k, v in pairs(ScriptEnv) do
 		environment[k] = v
 	end
@@ -200,7 +200,7 @@ local function ItemRequiredCalling(item)
 	return details and details.requiredCalling
 
 end
-ScriptEnv.ItemRequiredCalling(item)
+ScriptEnv.ItemRequiredCalling = ItemRequiredCalling
 
 ---requiredFaction:	The ID of the faction required to use this item.
 local function ItemRequiredFaction(item)
