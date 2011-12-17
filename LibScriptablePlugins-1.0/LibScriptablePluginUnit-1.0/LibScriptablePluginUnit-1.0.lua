@@ -163,7 +163,7 @@ local function UnitFaction(unit)
 	local cached = cache[id] or {}
 	local details = cached.faction and cached or Detail(unit)
 	cached[id] = details
-	return details and details.factionName
+	return details and details.faction and details.factionName
 end
 ScriptEnv.UnitFaction = UnitFaction
 

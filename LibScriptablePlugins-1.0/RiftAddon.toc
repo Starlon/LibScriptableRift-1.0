@@ -27,5 +27,6 @@ Embed = {
   ["LibScriptablePluginDPS-1.0"] = true,
   ["LibScriptablePluginRift-1.0"] = true,
   ["LibScriptablePluginSimpleMeter-1.0"] = true,
-  ["LibScriptablePluginItem-1.0"] = true
+  ["LibScriptablePluginItem-1.0"] = true,
+  ["LibScriptablePluginAbility-1.0"] = true
 }
