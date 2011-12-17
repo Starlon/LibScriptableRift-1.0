@@ -34,6 +34,8 @@ Dependencies = {
   LibScriptablePluginLuaTexts_1_0 = {"optional", "before"},
   LibScriptablePluginDPS_1_0 = {"optional", "before"},
   LibScriptablePluginRift_1_0 = {"optional", "before"},
-  LibScriptablePluginSimpleMeter_1_0 = {"optional", "before"}
+  LibScriptablePluginSimpleMeter_1_0 = {"optional", "before"},
+  LibScriptablePluginItem_1_0 = {"optional", "before"},
+  LibScriptablePluginAbility_1_0 = {"optional", "before"},
 }
 
