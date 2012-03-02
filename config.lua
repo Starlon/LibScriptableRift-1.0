@@ -189,7 +189,7 @@ Update()
 				[10] = "widget_name"
 			},
             [2] = {
-                [1] "return 'Mana:'",
+                [1] = "return 'Mana:'",
                 [10] = "widget_mana",
             },
             [3] = {
