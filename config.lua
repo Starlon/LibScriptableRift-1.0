@@ -194,7 +194,7 @@ Update()
             },
             [3] = {
                 [1] = "return 'Health:'",
-                [10 = "widget_health"
+                [10] = "widget_health"
             },
 			[4] = {
 				[1] = "widget_icon_blob",
